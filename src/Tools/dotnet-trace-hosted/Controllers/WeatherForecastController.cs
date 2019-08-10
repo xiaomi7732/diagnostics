@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Diagnostics.Tools.RuntimeClient;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace HostedTrace.Controllers
 {
@@ -24,16 +27,30 @@ namespace HostedTrace.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public IEnumerable<string> Get()
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            var processes = EventPipeClient.ListAvailablePorts()
+                .Select(p => GetProcessById(p))
+                .Where(p => p != null)
+                .OrderBy(p => p.ProcessName)
+                .ThenBy(p => p.Id)
+                .Select(p => $"{p.ProcessName} - {p.Id}");
+
+            _logger.LogInformation(string.Join(Environment.NewLine, processes));
+
+            return processes.ToList();
+        }
+
+        private static Process GetProcessById(int processId)
+        {
+            try
             {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+                return Process.GetProcessById(processId);
+            }
+            catch (ArgumentException)
+            {
+                return null;
+            }
         }
     }
 }
