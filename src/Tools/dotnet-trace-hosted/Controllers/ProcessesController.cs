@@ -22,7 +22,8 @@ namespace HostedTrace.Controllers
                     .Select(p => new ProcessInfo()
                     {
                         Id = p.Id,
-                        Name = p.ProcessName + (p.Id == current.Id ? " [Dotnet-Trace]" : ""),
+                        Name = p.ProcessName + (p.Id == current.Id ? " [Dotnet-Trace]" : string.Empty),
+                        MainModule = TryGetMainModule(p, out string moduleName) ? moduleName : string.Empty,
                     }).ToList();
             return processInfos;
         }
@@ -36,6 +37,20 @@ namespace HostedTrace.Controllers
             catch (ArgumentException)
             {
                 return null;
+            }
+        }
+
+        private static bool TryGetMainModule(Process process, out string mainModuleName)
+        {
+            try
+            {
+                mainModuleName = process.MainModule.FileName;
+                return true;
+            }
+            catch
+            {
+                mainModuleName = null;
+                return false;
             }
         }
     }

@@ -4,5 +4,6 @@ namespace HostedTrace
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string MainModule { get; set; }
     }
 }
