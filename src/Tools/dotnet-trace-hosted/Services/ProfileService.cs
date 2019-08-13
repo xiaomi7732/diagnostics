@@ -52,7 +52,8 @@ namespace HostedTrace
                 "none",
                 null,
                 "Tracks nothing. Only providers specified by the --providers option will be available."),
-                new Profile("ai-profiler",new Provider[]{
+            new Profile("ai-profiler",
+                new Provider[]{
                     new Provider("Microsoft-Windows-DotNETRuntime", 0x4c14fccbd, EventLevel.Verbose),
                     new Provider("Microsoft-Windows-DotNETRuntimePrivate",  0x4002000b, EventLevel.Verbose),
                     new Provider("Microsoft-DotNETCore-SampleProfiler", 0x0, EventLevel.Verbose),
