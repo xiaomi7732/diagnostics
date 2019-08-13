@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HostedTrace
@@ -20,7 +21,11 @@ namespace HostedTrace
         {
             try
             {
-                return Ok(_traceRepoService.ListTraceFiles());
+                return Ok(_traceRepoService.ListTraceFiles().Select(file =>
+                {
+                    file.FullPath = "redacted";
+                    return file;
+                }));
             }
             catch (Exception ex)
             {
