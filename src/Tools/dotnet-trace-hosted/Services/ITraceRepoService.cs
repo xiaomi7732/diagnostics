@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 
 namespace HostedTrace
 {
@@ -7,5 +8,6 @@ namespace HostedTrace
         string GetRepoPath();
         string GetNewTraceFileFullPath(TraceFileFormat format = TraceFileFormat.NetTrace);
         IEnumerable<TraceFile> ListTraceFiles();
+        Stream GetFileStream(string fileName);
     }
 }

@@ -12,6 +12,20 @@ namespace HostedTrace
             {TraceFileFormat.Speedscope, "speedscope.json"}
         };
 
+        public Stream GetFileStream(string fileName)
+        {
+            string fullPath = Path.Combine(GetRepoPath(), fileName);
+            if (File.Exists(fullPath))
+            {
+                Stream fileStream = new FileStream(fullPath,FileMode.Open);
+                return fileStream;
+            }
+            else
+            {
+                throw new FileNotFoundException("File doesn't exists.", fullPath);
+            }
+        }
+
         public string GetNewTraceFileFullPath(TraceFileFormat format = TraceFileFormat.NetTrace)
         {
             return Path.ChangeExtension(Path.Combine(GetRepoPath(), DateTime.UtcNow.ToString("yyyyMMddHHmmss")), _traceFileExtensions[format]);
