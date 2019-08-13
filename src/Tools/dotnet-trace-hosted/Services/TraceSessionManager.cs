@@ -7,8 +7,6 @@ using Newtonsoft.Json;
 
 namespace HostedTrace
 {
-
-
     public class TraceSessionManager : ITraceSessionManager
     {
         private readonly ConcurrentDictionary<string, TraceSession> _sessions;
