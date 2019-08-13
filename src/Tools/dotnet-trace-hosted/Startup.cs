@@ -27,6 +27,8 @@ namespace HostedTrace
         {
             services.AddControllers();
             services.AddScoped<IProfileService, ProfileService>();
+            services.AddScoped<ITraceService, TraceService>();
+            services.AddSingleton<ITraceSessionManager, TraceSessionManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
