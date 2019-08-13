@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,6 +27,24 @@ namespace HostedTrace
                     file.FullPath = "redacted";
                     return file;
                 }));
+            }
+            catch (Exception ex)
+            {
+                return Conflict(ex.ToString());
+            }
+        }
+
+        [HttpGet("{fileName}")]
+        public IActionResult Download(string fileName)
+        {
+            try
+            {
+                Stream stream = _traceRepoService.GetFileStream(fileName);
+                if (stream == null)
+                {
+                    return NotFound();
+                }
+                return File(stream, "application/octet-stream");
             }
             catch (Exception ex)
             {

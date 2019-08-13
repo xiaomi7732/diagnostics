@@ -22,15 +22,15 @@ namespace HostedTrace.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ulong> Start([FromBody] TraceRequest request)
+        public IActionResult Start([FromBody] TraceRequest request)
         {
             _logger.LogDebug("Start a Trace . . .");
             try
             {
                 string output = Path.Combine(Path.GetTempPath(), "TestProfiling" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".nettrace");
                 FileInfo outputFileInfo = new FileInfo(output);
-                ulong sessionId = _traceService.Start(request.ProcessId, outputFileInfo, 256, "ai-profiler", TraceFileFormat.NetTrace);
-                return Ok(sessionId);
+                _traceService.Start(request.ProcessId, outputFileInfo, 256, "ai-profiler", TraceFileFormat.NetTrace);
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -40,11 +40,11 @@ namespace HostedTrace.Controllers
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<bool> Stop(int id, [FromQuery(Name = "sid")]ulong sessionId)
+        public ActionResult<bool> Stop(int id)
         {
             try
             {
-                if (_traceService.Stop(id, sessionId))
+                if (_traceService.Stop(id, null))
                 {
                     return NoContent();
                 }
