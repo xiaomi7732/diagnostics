@@ -29,7 +29,11 @@ namespace HostedTrace
             IEnumerable<TraceFile> result = Enumerable.Empty<TraceFile>();
             foreach (string ext in _traceFileExtensions.Values)
             {
-                result = result.Union(Directory.EnumerateFiles(searchBasePath, $"*." + ext.TrimStart('.')).Select(fullPath => new TraceFile() { FileName = fullPath.Substring(len) }));
+                result = result.Union(Directory.EnumerateFiles(searchBasePath, $"*." + ext.TrimStart('.')).Select(fullPath => new TraceFile()
+                {
+                    FileName = Path.GetFileName(fullPath),
+                    FullPath = fullPath,
+                }));
             }
             return result;
         }
