@@ -44,6 +44,7 @@ export default class App extends Component<any, AppState>{
           stopProfilingAsync={this.stopProfilingAsync}
           loadTraceSessionsAsync={this.loadTraceSessionsAsync} />
         <TraceRepo
+          loadTraceFilesAsync={this.loadTraceFilesAsync}
           fileArray={this.state.traceFileArray}
         />
       </div>
@@ -110,7 +111,7 @@ export default class App extends Component<any, AppState>{
 
     const result = !!response && response.ok;
     if (result) {
-      await this.loadTraceSessionsAsync();
+      await Promise.all([this.loadTraceSessionsAsync(), this.loadTraceFilesAsync()]);
     }
     return result;
   }
