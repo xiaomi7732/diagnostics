@@ -1,6 +1,6 @@
 {
-  "name": "dotnet-trace-webui",
-  "version": "0.1.0",
+  "name": "dotnet-trace-ui",
+  "version": "0.0.0",
   "private": true,
   "dependencies": {
     "@types/jest": "24.0.17",
