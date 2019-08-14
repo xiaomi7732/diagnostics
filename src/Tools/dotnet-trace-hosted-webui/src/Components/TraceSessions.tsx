@@ -3,6 +3,7 @@ import { TraceSession } from '../Models/TraceSession';
 
 interface TraceSessionsProps {
     loadTraceSessionsAsync: () => Promise<void>;
+    stopProfilingAsync: (processId: number, sessionId: number) => Promise<boolean>;
     traceSessions: TraceSession[] | undefined;
 }
 
@@ -19,7 +20,11 @@ export default class TraceSessions extends Component<TraceSessionsProps, {}>{
                         <span>ProcessId:</span>
                         <span>{session.processId}</span>&nbsp;
                         <span>SessionId:</span>
-                        <span>{session.sessionId}</span>
+                        <span>{session.sessionId}</span>&nbsp;
+                        <input type='button' value='Stop Profiling' onClick={() => {
+                            console.debug(`Stopping profiler: ${session.processId}:${session.sessionId}`);
+                            this.props.stopProfilingAsync(session.processId, session.sessionId);
+                        }} />
                     </div>);
                 })}
             </div>
