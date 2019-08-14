@@ -25,6 +25,7 @@ export default class App extends Component<any, AppState>{
     return this.state.isReady ? (
       <Processes
         refreshProcessAsync={this.refreshProcessesAsync}
+        startProfilingAsync={this.startProfilingAsync}
         processArray={this.state.processArray}
       />
     ) : null;
@@ -37,7 +38,7 @@ export default class App extends Component<any, AppState>{
     });
   }
 
-  private refreshProcessesAsync: () => Promise<any> = async () => {
+  private refreshProcessesAsync: () => Promise<void> = async () => {
     try {
       const processes = await this.loadProcessesAsync();
       this.setState({
@@ -56,6 +57,20 @@ export default class App extends Component<any, AppState>{
       return results;
     }
     return [];
+  }
+
+  private startProfilingAsync: (processId: number) => Promise<boolean> = async (processId: number) => {
+    const response = await fetch('https://localhost:5001/traces',{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        processId: processId
+      }),
+    });
+
+    return !!response && response.ok;
   }
 }
 
