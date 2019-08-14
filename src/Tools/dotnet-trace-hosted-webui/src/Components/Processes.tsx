@@ -14,7 +14,6 @@ export default class Processes extends Component<ProcessesProps, {}>{
 
         return (<div>
             <h2>Process</h2>
-            <hr />
             {
                 this.props.processArray.map((process: Process, index: number) => {
                     return (<div key={index}>
@@ -28,7 +27,6 @@ export default class Processes extends Component<ProcessesProps, {}>{
                 })
             }
             <input type='button' onClick={this.handleRefresh} value='Refresh'></input>
-            <hr />
         </div>
         );
     }
