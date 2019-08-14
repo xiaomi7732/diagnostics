@@ -2,13 +2,14 @@ import React, { PureComponent } from 'react';
 import TraceFile from '../Models/TraceFile';
 
 interface TraceRepoProps {
+    loadTraceFilesAsync: () => Promise<void>;
     fileArray: TraceFile[] | undefined;
 }
 
 export default class TraceRepo extends PureComponent<TraceRepoProps, {}>{
     render() {
         let content;
-        if (this.props.fileArray === undefined) {
+        if (this.props.fileArray === undefined || this.props.fileArray.length === 0) {
             content = <div>There's no trace file.</div>
         } else {
             content = <div>
@@ -16,8 +17,7 @@ export default class TraceRepo extends PureComponent<TraceRepoProps, {}>{
                     return a.fileName > b.fileName ? -1 : 1;
                 }).map((file, index) => {
                     return <div key={index}>
-                        <span>{file.fileName}</span>
-                        <input type='button' value='Download' />
+                        <a href={`https://localhost:5001/TraceFiles/${file.fileName}`}>{file.fileName}</a>
                     </div>
                 })}
             </div>
@@ -25,6 +25,7 @@ export default class TraceRepo extends PureComponent<TraceRepoProps, {}>{
         return (<div>
             <h2>Trace Files</h2>
             {content}
+            <input type='button' value='Refresh' onClick={async ()=> await this.props.loadTraceFilesAsync()}></input>
         </div>)
     }
 }
