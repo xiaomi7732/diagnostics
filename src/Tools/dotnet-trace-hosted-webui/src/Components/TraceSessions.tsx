@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { TraceSession } from '../Models/TraceSession';
 
 interface TraceSessionsProps {
-    traceSessions: TraceSession[] | undefined
+    loadTraceSessionsAsync: () => Promise<void>;
+    traceSessions: TraceSession[] | undefined;
 }
 
 export default class TraceSessions extends Component<TraceSessionsProps, {}>{
@@ -26,6 +27,7 @@ export default class TraceSessions extends Component<TraceSessionsProps, {}>{
         return (<div>
             <h2>Trace Sessions</h2>
             {list}
+            <input type='button' value='Refresh' onClick={this.props.loadTraceSessionsAsync} />
         </div>);
     }
 }
