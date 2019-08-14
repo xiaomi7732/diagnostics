@@ -37,6 +37,7 @@ namespace HostedTrace
         {
             if (env.IsDevelopment())
             {
+                app.UseCors(opt => opt.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
                 app.UseDeveloperExceptionPage();
             }
 
