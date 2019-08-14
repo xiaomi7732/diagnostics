@@ -31,18 +31,19 @@ export default class App extends Component<any, AppState>{
       <div>
 
         <Processes
-          refreshProcessAsync={this.refreshProcessesAsync}
+          refreshProcessAsync={this.loadProcessesAsync}
           startProfilingAsync={this.startProfilingAsync}
           processArray={this.state.processArray}
         />
         <TraceSessions
-          traceSessions={this.state.traceSessionArray} />
+          traceSessions={this.state.traceSessionArray}
+          loadTraceSessionsAsync={this.loadTraceSessionsAsync} />
       </div>
     ) : null;
   }
 
   private initializeAsync: () => Promise<any> = async () => {
-    await this.refreshProcessesAsync();
+    await this.loadProcessesAsync();
     await this.loadTraceSessionsAsync();
 
     this.setState({
@@ -50,9 +51,10 @@ export default class App extends Component<any, AppState>{
     });
   }
 
-  private refreshProcessesAsync: () => Promise<void> = async () => {
+  // Processes
+  private loadProcessesAsync: () => Promise<void> = async () => {
     try {
-      const processes = await this.loadProcessesAsync();
+      const processes = await this.getProcessesAsync();
       this.setState({
         processArray: processes,
       });
@@ -62,7 +64,7 @@ export default class App extends Component<any, AppState>{
       });
     }
   }
-  private loadProcessesAsync: () => Promise<Process[]> = async () => {
+  private getProcessesAsync: () => Promise<Process[]> = async () => {
     const response = await fetch('https://localhost:5001/processes');
     if (!!response && response.ok) {
       const results: Process[] = await response.json();
@@ -71,6 +73,7 @@ export default class App extends Component<any, AppState>{
     return [];
   }
 
+  // Traces
   private startProfilingAsync: (processId: number) => Promise<boolean> = async (processId: number) => {
     const response = await fetch('https://localhost:5001/traces', {
       method: 'POST',
@@ -85,6 +88,7 @@ export default class App extends Component<any, AppState>{
     return !!response && response.ok;
   }
 
+  // Sessions
   private loadTraceSessionsAsync: () => Promise<void> = async () => {
     try {
       const traceSessions = await this.getTraceSessionsAsync();
