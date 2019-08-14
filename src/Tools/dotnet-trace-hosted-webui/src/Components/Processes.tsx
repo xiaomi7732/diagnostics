@@ -6,24 +6,14 @@ interface ProcessesProps {
     processArray: Process[] | undefined;
 }
 
-export class Processes extends Component<ProcessesProps, {}>{
-    constructor(props: any) {
-        super(props);
-
-        this.state = {
-            isLoading: true,
-            isError: false,
-            errorMessage: undefined,
-        };
-    }
-
+export default class Processes extends Component<ProcessesProps, {}>{
     render(): ReactNode {
         if (this.props.processArray === undefined) {
             return null;
         }
 
         return (<div>
-            <div>Processes:</div>
+            <h2>Processes:</h2>
             <hr />
             {
                 this.props.processArray.map((process: Process, index: number) => {
