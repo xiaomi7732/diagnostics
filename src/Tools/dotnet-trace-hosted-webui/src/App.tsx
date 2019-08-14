@@ -1,9 +1,11 @@
 import React from 'react';
 import './App.css';
+import './Components/Processes'
+import { Processes } from './Components/Processes';
 
 const App: React.FC = () => {
   return (
-    <div>Hello</div>
+    <Processes />
   );
 }
 
