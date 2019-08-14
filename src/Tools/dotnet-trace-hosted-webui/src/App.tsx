@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
 import './App.css';
 import './Components/Processes'
-import { Process } from './Models/Process';
+import Process from './Models/Process';
 import { TraceSession } from './Models/TraceSession';
 
 import Processes from './Components/Processes';
 import TraceSessions from './Components/TraceSessions';
+import TraceFile from './Models/TraceFile';
+import TraceRepo from './Components/TraceRepo';
 
 interface AppState {
   processArray: Process[] | undefined;
   traceSessionArray: TraceSession[] | undefined;
+  traceFileArray: TraceFile[] | undefined;
   isReady: boolean;
 }
 
@@ -21,6 +24,7 @@ export default class App extends Component<any, AppState>{
     this.state = {
       processArray: undefined,
       traceSessionArray: undefined,
+      traceFileArray: undefined,
       isReady: false,
     };
 
@@ -37,15 +41,21 @@ export default class App extends Component<any, AppState>{
         />
         <TraceSessions
           traceSessions={this.state.traceSessionArray}
-          stopProfilingAsync={this.stopProfilingAsync} 
+          stopProfilingAsync={this.stopProfilingAsync}
           loadTraceSessionsAsync={this.loadTraceSessionsAsync} />
+        <TraceRepo
+          fileArray={this.state.traceFileArray}
+        />
       </div>
     ) : null;
   }
 
   private initializeAsync: () => Promise<any> = async () => {
-    await this.loadProcessesAsync();
-    await this.loadTraceSessionsAsync();
+    await Promise.all([
+      this.loadProcessesAsync(),
+      this.loadTraceSessionsAsync(),
+      this.loadTraceFilesAsync(),
+    ]);
 
     this.setState({
       isReady: true,
@@ -87,7 +97,7 @@ export default class App extends Component<any, AppState>{
     });
 
     const result = !!response && response.ok;
-    if(result){
+    if (result) {
       await this.loadTraceSessionsAsync();
     }
     return result;
@@ -99,7 +109,7 @@ export default class App extends Component<any, AppState>{
     });
 
     const result = !!response && response.ok;
-    if(result){
+    if (result) {
       await this.loadTraceSessionsAsync();
     }
     return result;
@@ -123,6 +133,29 @@ export default class App extends Component<any, AppState>{
     const response = await fetch('https://localhost:5001/sessions');
     if (!!response && response.ok) {
       const result: TraceSession[] = await response.json();
+      return result;
+    }
+    return [];
+  }
+
+  // Repository
+  private loadTraceFilesAsync: () => Promise<void> = async () => {
+    try {
+      const files = await this.getTraceFilesAsync();
+      this.setState({
+        traceFileArray: files,
+      });
+    } catch{
+      this.setState({
+        traceFileArray: undefined,
+      });
+    }
+  }
+
+  private getTraceFilesAsync: () => Promise<TraceFile[]> = async () => {
+    const response = await fetch('https://localhost:5001/traceFiles');
+    if (!!response && response.ok) {
+      const result: TraceFile[] = await response.json();
       return result;
     }
     return [];

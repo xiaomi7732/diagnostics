@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from 'react';
-import { Process } from '../Models/Process';
+import Process from '../Models/Process';
 interface ProcessesProps {
     refreshProcessAsync: () => Promise<void>;
     startProfilingAsync: (processId: number) => Promise<boolean>;

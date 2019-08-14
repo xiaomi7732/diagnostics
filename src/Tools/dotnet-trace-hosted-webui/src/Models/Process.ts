@@ -1,4 +1,4 @@
-export class Process {
+export default class Process {
     constructor(
         public id: number,
         public name: string,
