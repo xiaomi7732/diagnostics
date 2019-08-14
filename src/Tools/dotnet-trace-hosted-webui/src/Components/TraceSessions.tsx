@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { TraceSession } from '../Models/TraceSession';
 
 interface TraceSessionsProps {
@@ -7,7 +7,7 @@ interface TraceSessionsProps {
     traceSessions: TraceSession[] | undefined;
 }
 
-export default class TraceSessions extends Component<TraceSessionsProps, {}>{
+export default class TraceSessions extends PureComponent<TraceSessionsProps, {}>{
     render() {
         let list;
         if (this.props.traceSessions === undefined || this.props.traceSessions.length === 0) {
