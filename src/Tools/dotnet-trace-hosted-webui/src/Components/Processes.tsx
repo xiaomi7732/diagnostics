@@ -13,7 +13,7 @@ export default class Processes extends Component<ProcessesProps, {}>{
         }
 
         return (<div>
-            <h2>Processes:</h2>
+            <h2>Process</h2>
             <hr />
             {
                 this.props.processArray.map((process: Process, index: number) => {
