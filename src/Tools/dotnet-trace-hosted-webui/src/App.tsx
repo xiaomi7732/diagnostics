@@ -29,7 +29,7 @@ export default class App extends Component<any, AppState>{
   render() {
     return this.state.isReady ? (
       <div>
-
+        <h1>.NET Core Profiling Console</h1>
         <Processes
           refreshProcessAsync={this.loadProcessesAsync}
           startProfilingAsync={this.startProfilingAsync}
@@ -37,6 +37,7 @@ export default class App extends Component<any, AppState>{
         />
         <TraceSessions
           traceSessions={this.state.traceSessionArray}
+          stopProfilingAsync={this.stopProfilingAsync} 
           loadTraceSessionsAsync={this.loadTraceSessionsAsync} />
       </div>
     ) : null;
@@ -85,7 +86,23 @@ export default class App extends Component<any, AppState>{
       }),
     });
 
-    return !!response && response.ok;
+    const result = !!response && response.ok;
+    if(result){
+      await this.loadTraceSessionsAsync();
+    }
+    return result;
+  }
+
+  private stopProfilingAsync: (processId: number, sessionId: number) => Promise<boolean> = async (processId: number, sessionId: number) => {
+    const response = await fetch(`https://localhost:5001/traces/${processId}?sid=${sessionId}`, {
+      method: 'DELETE',
+    });
+
+    const result = !!response && response.ok;
+    if(result){
+      await this.loadTraceSessionsAsync();
+    }
+    return result;
   }
 
   // Sessions
