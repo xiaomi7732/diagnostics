@@ -41,15 +41,15 @@ namespace HostedTrace
             // Assuming remove failed.
             session = null;
 
-            // Find the target session by ProcessId or ProcessId+SessionId
-            KeyValuePair<string, TraceSession>? target = _sessions.FirstOrDefault(pair => pair.Value.ProcessId == spec.ProcessId && (spec.Id < 0 || spec.Id == pair.Value.Id));
-            if (target == null || !target.HasValue)
+            // Find the target session by ProcessId or (ProcessId and SessionId)
+            KeyValuePair<string, TraceSession> target = _sessions.FirstOrDefault(pair => pair.Value.ProcessId == spec.ProcessId && (spec.Id == null || spec.Id == pair.Value.Id));
+            if (string.IsNullOrEmpty(target.Key))
             {
                 return false;
             }
 
             // Try remove
-            return _sessions.TryRemove(target.Value.Key, out session);
+            return _sessions.TryRemove(target.Key, out session);
         }
     }
 }
