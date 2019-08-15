@@ -108,7 +108,7 @@ export default class App extends Component<any, AppState>{
   }
 
   private stopProfilingAsync: (processId: number, sessionId: number) => Promise<boolean> = async (processId: number, sessionId: number) => {
-    const response = await fetch(`${this.BaseUrl}/traces/${processId}?sid=${sessionId}`, {
+    const response = await fetch(`${this.BaseUrl}/traces/${processId}?sessionId=${sessionId}`, {
       method: 'DELETE',
     });
 
