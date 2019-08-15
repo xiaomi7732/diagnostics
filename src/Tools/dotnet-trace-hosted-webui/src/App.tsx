@@ -17,6 +17,8 @@ interface AppState {
 }
 
 export default class App extends Component<any, AppState>{
+  readonly BaseUrl: string = 'https://localhost:9400'
+
   constructor(props: any) {
     super(props);
 
@@ -44,6 +46,7 @@ export default class App extends Component<any, AppState>{
           stopProfilingAsync={this.stopProfilingAsync}
           loadTraceSessionsAsync={this.loadTraceSessionsAsync} />
         <TraceRepo
+          baseUrl={this.BaseUrl}
           loadTraceFilesAsync={this.loadTraceFilesAsync}
           fileArray={this.state.traceFileArray}
         />
@@ -77,7 +80,7 @@ export default class App extends Component<any, AppState>{
     }
   }
   private getProcessesAsync: () => Promise<Process[]> = async () => {
-    const response = await fetch('https://localhost:5001/processes');
+    const response = await fetch(`${this.BaseUrl}/processes`);
     if (!!response && response.ok) {
       const results: Process[] = await response.json();
       return results;
@@ -87,7 +90,7 @@ export default class App extends Component<any, AppState>{
 
   // Traces
   private startProfilingAsync: (processId: number) => Promise<boolean> = async (processId: number) => {
-    const response = await fetch('https://localhost:5001/traces', {
+    const response = await fetch(`${this.BaseUrl}/traces`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -105,7 +108,7 @@ export default class App extends Component<any, AppState>{
   }
 
   private stopProfilingAsync: (processId: number, sessionId: number) => Promise<boolean> = async (processId: number, sessionId: number) => {
-    const response = await fetch(`https://localhost:5001/traces/${processId}?sid=${sessionId}`, {
+    const response = await fetch(`${this.BaseUrl}/traces/${processId}?sid=${sessionId}`, {
       method: 'DELETE',
     });
 
@@ -131,7 +134,7 @@ export default class App extends Component<any, AppState>{
   }
 
   private getTraceSessionsAsync: () => Promise<TraceSession[]> = async () => {
-    const response = await fetch('https://localhost:5001/sessions');
+    const response = await fetch(`${this.BaseUrl}/sessions`);
     if (!!response && response.ok) {
       const result: TraceSession[] = await response.json();
       return result;
@@ -154,7 +157,7 @@ export default class App extends Component<any, AppState>{
   }
 
   private getTraceFilesAsync: () => Promise<TraceFile[]> = async () => {
-    const response = await fetch('https://localhost:5001/traceFiles');
+    const response = await fetch(`${this.BaseUrl}/traceFiles`);
     if (!!response && response.ok) {
       const result: TraceFile[] = await response.json();
       return result;
