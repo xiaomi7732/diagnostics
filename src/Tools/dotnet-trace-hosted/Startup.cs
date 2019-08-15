@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -33,7 +34,11 @@ namespace HostedTrace
                 app.UseCors(opt => opt.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
                 app.UseDeveloperExceptionPage();
             }
-
+            var defaultFileOption = new DefaultFilesOptions();
+            defaultFileOption.DefaultFileNames.Clear();
+            defaultFileOption.DefaultFileNames.Add("index.html");
+            app.UseDefaultFiles(defaultFileOption);
+            app.UseStaticFiles();
 
             app.UseHttpsRedirection();
 
