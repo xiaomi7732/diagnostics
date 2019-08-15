@@ -14,7 +14,7 @@ namespace HostedTrace
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>().UseUrls("https://*:9400");
+                    webBuilder.UseStartup<Startup>().UseUrls("http://*:9400");
                 });
     }
 }
