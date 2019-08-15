@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -39,8 +38,6 @@ namespace HostedTrace
             defaultFileOption.DefaultFileNames.Add("index.html");
             app.UseDefaultFiles(defaultFileOption);
             app.UseStaticFiles();
-
-            app.UseHttpsRedirection();
 
             app.UseRouting();
 
