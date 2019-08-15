@@ -10,10 +10,13 @@ interface TraceSessionsProps {
 export default class TraceSessions extends PureComponent<TraceSessionsProps, {}>{
     render() {
         let list;
+        let len: number = 0;
+
         if (this.props.traceSessions === undefined || this.props.traceSessions.length === 0) {
             list = <div>There's no trace sessions.</div>
         }
         else {
+            len = this.props.traceSessions.length;
             list = <div>
                 {this.props.traceSessions.map((session, index) => {
                     return (<div key={index}>
@@ -30,7 +33,7 @@ export default class TraceSessions extends PureComponent<TraceSessionsProps, {}>
             </div>
         }
         return (<div>
-            <h2>Trace Sessions</h2>
+            <h2>Trace Sessions ({len})</h2>
             {list}
             <input type='button' value='Refresh' onClick={this.props.loadTraceSessionsAsync} />
         </div>);
