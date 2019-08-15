@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import TraceFile from '../Models/TraceFile';
 
 interface TraceRepoProps {
+    baseUrl: string;
     loadTraceFilesAsync: () => Promise<void>;
     fileArray: TraceFile[] | undefined;
 }
@@ -19,7 +20,7 @@ export default class TraceRepo extends PureComponent<TraceRepoProps, {}>{
                     return a.fileName > b.fileName ? -1 : 1;
                 }).map((file, index) => {
                     return <div key={index}>
-                        <a href={`https://localhost:5001/TraceFiles/${file.fileName}`}>{file.fileName}</a>
+                        <a href={`${this.props.baseUrl}/TraceFiles/${file.fileName}`}>{file.fileName}</a>
                         <input type='button' value='Upload to SP Backend' onClick={() => alert(`Not implemented: ${file.fileName}`)} />
                     </div>
                 })}
