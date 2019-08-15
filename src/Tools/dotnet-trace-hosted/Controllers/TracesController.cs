@@ -40,11 +40,11 @@ namespace HostedTrace.Controllers
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<bool> Stop(int id)
+        public ActionResult<bool> Stop(int id, [FromQuery(Name = "sessionId")]ulong? sessionId = null)
         {
             try
             {
-                if (_traceService.Stop(id, null))
+                if (_traceService.Stop(id, sessionId))
                 {
                     return NoContent();
                 }
