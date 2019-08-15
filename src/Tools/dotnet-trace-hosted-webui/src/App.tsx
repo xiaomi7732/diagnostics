@@ -17,7 +17,7 @@ interface AppState {
 }
 
 export default class App extends Component<any, AppState>{
-  readonly BaseUrl: string = 'https://localhost:9400'
+  readonly BaseUrl: string = 'http://localhost:9400'
 
   constructor(props: any) {
     super(props);
