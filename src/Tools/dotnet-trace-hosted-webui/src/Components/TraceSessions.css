@@ -1,0 +1,22 @@
+.bold-text {
+    font-weight: bold;
+}
+
+.session-container{
+    display: flex;
+    flex-shrink: 1;
+    flex-flow: row;
+}
+
+.session-line {
+    display: inherit;
+    align-items: baseline;
+}
+
+.process-id-part {
+    min-width: 250px;
+}
+
+.session-id-part {
+    min-width: 250px;
+}

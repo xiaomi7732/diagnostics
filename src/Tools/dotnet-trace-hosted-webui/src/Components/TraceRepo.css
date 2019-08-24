@@ -1,0 +1,8 @@
+.trace-file-line {
+    display: flex;
+    align-items: baseline;
+}
+
+.trace-file {
+    min-width: 300px;
+}
