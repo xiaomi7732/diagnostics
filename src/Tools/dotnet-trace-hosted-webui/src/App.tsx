@@ -73,8 +73,8 @@ export default class App extends Component<any, AppState>{
     }
 
     return (
-      <div className='app-container'>
-        <div className='dark-theme'>
+      <div className='dark-theme'>
+        <div className='app-container'>
           {content}
         </div>
       </div>

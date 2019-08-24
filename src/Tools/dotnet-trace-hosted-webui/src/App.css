@@ -1,7 +1,6 @@
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: black;
+    background: #1e1e1e;
 }
 
 .app-container {
@@ -11,7 +10,7 @@ body {
 
 .dark-theme {
     color: white;
-    background: black;
+    background: #1e1e1e;
 }
 
 /* Connect to a backend */
