@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import TraceFile from '../Models/TraceFile';
+import './TraceRepo.css';
 
 interface TraceRepoProps {
     baseUrl: string;
@@ -19,8 +20,11 @@ export default class TraceRepo extends PureComponent<TraceRepoProps, {}>{
                 {this.props.fileArray.sort((a, b) => {
                     return a.fileName > b.fileName ? -1 : 1;
                 }).map((file, index) => {
-                    return <div key={index}>
-                        <a href={`${this.props.baseUrl}/TraceFiles/${file.fileName}`}>{file.fileName}</a>
+                    return <div key={index} className='trace-file-line'>
+                        <div className='trace-file'>
+                            <a href={`${this.props.baseUrl}/TraceFiles/${file.fileName}`}>{file.fileName}</a>
+                        </div>
+                        <input className='button' type='button' value='Get speedscope file'></input>
                         <input className='button' type='button' value='Upload to SP Backend' onClick={() => alert(`Not implemented: ${file.fileName}`)} />
                     </div>
                 })}
@@ -29,7 +33,7 @@ export default class TraceRepo extends PureComponent<TraceRepoProps, {}>{
         return (<div>
             <h2>Trace Files ({len})</h2>
             {content}
-            <input className='button' type='button' value='Refresh' onClick={async () => await this.props.loadTraceFilesAsync()}></input>
+            <input className='button' type='button' value='&#x1f5d8; Refresh' onClick={async () => await this.props.loadTraceFilesAsync()}></input>
         </div>)
     }
 }
