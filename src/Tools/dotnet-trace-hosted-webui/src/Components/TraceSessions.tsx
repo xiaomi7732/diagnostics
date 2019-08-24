@@ -24,7 +24,7 @@ export default class TraceSessions extends PureComponent<TraceSessionsProps, {}>
                         <span>{session.processId}</span>&nbsp;
                         <span>SessionId:</span>
                         <span>{session.sessionId}</span>&nbsp;
-                        <input type='button' value='Stop Profiling' onClick={() => {
+                        <input className='button' type='button' value='Stop Profiling' onClick={() => {
                             console.debug(`Stopping profiler: ${session.processId}:${session.sessionId}`);
                             this.props.stopProfilingAsync(session.processId, session.sessionId);
                         }} />
@@ -35,7 +35,7 @@ export default class TraceSessions extends PureComponent<TraceSessionsProps, {}>
         return (<div>
             <h2>Trace Sessions ({len})</h2>
             {list}
-            <input type='button' value='Refresh' onClick={this.props.loadTraceSessionsAsync} />
+            <input className='button' type='button' value='Refresh' onClick={this.props.loadTraceSessionsAsync} />
         </div>);
     }
 }
