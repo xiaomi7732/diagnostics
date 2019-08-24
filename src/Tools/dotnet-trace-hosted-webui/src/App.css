@@ -1,0 +1,65 @@
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: black;
+}
+
+.app-container {
+    padding: 24px;
+    margin: 0;
+}
+
+.dark-theme {
+    color: white;
+    background: black;
+}
+
+/* Connect to a backend */
+.new-endpoint-container {
+    margin: 12px 8px 12px 0;
+}
+
+label {
+    margin: 0 12px 0 0;
+}
+
+.tips {
+    font-style: italic;
+    font-size: 0.8rem;
+}
+
+.dark-theme a {
+    color: #0078d4;
+}
+
+.dark-theme a:hover{
+    color: #a9d3f2;
+}
+
+.dark-theme .text-input {
+    background-color: transparent;
+    border: inset 1px grey;
+    padding: 4px;
+    color: white;
+}
+
+.dark-theme .button {
+    background: transparent;
+    border: solid 1px white;
+    border-bottom: solid 1px #c8c8c8;
+    border-right: solid 1px #c8c8c8;
+    margin: 4px 4px;
+    color: white;
+    min-width: 100px;
+    min-height: 24px;
+}
+
+.dark-theme .button.primary {
+    background: #0078d4;
+    border: solid 1px #a9d3f2;
+    border-right-color: #1a86d9;
+    border-bottom-color: #1a86d9;
+    margin: 4px;
+    color: white;
+    font-weight: bolder;
+}
