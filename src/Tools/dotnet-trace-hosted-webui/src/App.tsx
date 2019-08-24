@@ -51,7 +51,7 @@ export default class App extends Component<any, AppState>{
         <div>
           <h1>.NET Core Profiling Console</h1>
           <div>
-            <span>You are connecting to: {this.state.baseUrl}</span>
+            <span>&#x1f5a7; You are connecting to: {this.state.baseUrl}</span>
             <input className='button' type='button' onClick={this.disconnectBackend} value='Disconnect'></input>
           </div>
           <Processes

@@ -1,5 +1,7 @@
 import React, { Component, ReactNode } from 'react';
 import Process from '../Models/Process';
+import './Processes.css';
+
 interface ProcessesProps {
     refreshProcessAsync: () => Promise<void>;
     startProfilingAsync: (processId: number) => Promise<boolean>;
@@ -18,8 +20,8 @@ export default class Processes extends Component<ProcessesProps, {}>{
         } else {
             len = this.props.processArray.length;
             content = this.props.processArray.map((process: Process, index: number) => {
-                return (<div key={index}>
-                    <span>{process.id}</span>-<span>{process.name}</span>-<span>{process.mainModule}</span>
+                return (<div className='process-line' key={index}>
+                    <span className='process-id'>{process.id}</span> <span className='process-name'>{process.name}</span> <span className='process-path'>{process.mainModule}</span>
                     <input className='button' type='button' value='Start Profiling'
                         onClick={() => {
                             console.debug(`Start Profiling for session: ${process.id}`)
@@ -32,7 +34,7 @@ export default class Processes extends Component<ProcessesProps, {}>{
         return (<div>
             <h2>Process ({len})</h2>
             {content}
-            <input className='button' type='button' onClick={this.handleRefresh} value='Refresh'></input>
+            <input className='button' type='button' onClick={this.handleRefresh} value='&#x1f5d8; Refresh'></input>
         </div>
         );
     }

@@ -1,0 +1,18 @@
+.process-line {
+    display: flex;
+    flex-shrink: 1;
+}
+
+.process-id {
+    font-weight: bold;
+    margin-right: 8px;
+    min-width: 60px;
+}
+
+.process-name {
+    min-width: 200px;
+}
+
+.process-path {
+    min-width: 300px;
+}
