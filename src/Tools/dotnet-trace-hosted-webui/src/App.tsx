@@ -208,8 +208,8 @@ export default class App extends Component<any, AppState>{
   private getList(): string[] {
     const urlListSerialized: string | null = localStorage.getItem(this.BackendListKey);
     let list: string[];
-    if (urlListSerialized === null || urlListSerialized === '') {
-      list = [];
+    if (urlListSerialized === null || urlListSerialized === '' || urlListSerialized === '[]') {
+      list = ['http://localhost:9400'];
     } else {
       list = JSON.parse(urlListSerialized);
     }
