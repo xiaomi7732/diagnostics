@@ -30,7 +30,7 @@ export default class ConnectingToBackend extends Component<ConnectingToBackendPr
             content = this.props.backendUrlArray.map((url, index) => {
                 return <div key={index}>
                     <span>{url}</span>
-                    <input type='button' value='Connect' onClick={async () => {
+                    <input className='button primary' type='button' value='Connect' onClick={async () => {
                         this.setState({
                             errorMessage: '',
                             isConnecting: true,
@@ -43,7 +43,7 @@ export default class ConnectingToBackend extends Component<ConnectingToBackendPr
                             });
                         }
                     }}></input>
-                    <input type='button' value='Remove' onClick={async () => {
+                    <input className='button' type='button' value='Remove' onClick={async () => {
                         this.props.removeBackend(url);
                     }}></input>
                 </div>
@@ -54,17 +54,20 @@ export default class ConnectingToBackend extends Component<ConnectingToBackendPr
             <div>
                 <h1>.NET Core Profiling Console</h1>
                 <div>
-                    <span>Pick a backend to connect to:</span>
+                    <h2>Pick a backend to connect to:</h2>
                     {content}
                     {!!this.state.isConnecting && <div>Connecting . . .</div>}
                     {!!this.state.errorMessage && <div>{this.state.errorMessage}</div>}
                 </div>
 
-                <div>
+                <div className='new-endpoint-container'>
                     <form onSubmit={this.handleAddBackend}>
                         <label htmlFor='newBackend'>Type in a new endpoint:</label>
-                        <input id='newBackend' type='textbox' placeholder='http://localhost:9400'
+                        <input className='text-input' id='newBackend' type='textbox' placeholder='http://localhost:9400'
                             value={this.state.newUrl} onChange={this.handleNewUrlChanged} />
+                        <div>
+                            <span className='tips'>Tips: Press enter to add the endpoint.</span>
+                        </div>
                     </form>
                 </div>
             </div>
