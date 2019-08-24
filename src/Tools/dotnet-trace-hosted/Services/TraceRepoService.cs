@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.Diagnostics.Tools.RuntimeClient;
 
 namespace HostedTrace
 {
@@ -12,12 +13,33 @@ namespace HostedTrace
             {TraceFileFormat.Speedscope, "speedscope.json"}
         };
 
+        public void ConvertFormat(string fileName, TraceFileFormat outputFormat)
+        {
+            if (outputFormat == TraceFileFormat.NetTrace)
+            {
+                throw new ArgumentException("Cannot convert to nettrace format.");
+            }
+
+            string sourceFile = Path.Combine(GetRepoPath(), fileName);
+            if (!File.Exists(sourceFile))
+            {
+                throw new FileNotFoundException("Source file is not found.", sourceFile);
+            }
+            string targetFile = Path.ChangeExtension(sourceFile, _traceFileExtensions[outputFormat]);
+            if (File.Exists(targetFile))
+            {
+                throw new AccessViolationException("Target file exist.");
+            }
+
+            Microsoft.Diagnostics.Tools.RuntimeClient.
+        }
+
         public Stream GetFileStream(string fileName)
         {
             string fullPath = Path.Combine(GetRepoPath(), fileName);
             if (File.Exists(fullPath))
             {
-                Stream fileStream = new FileStream(fullPath,FileMode.Open);
+                Stream fileStream = new FileStream(fullPath, FileMode.Open);
                 return fileStream;
             }
             else
