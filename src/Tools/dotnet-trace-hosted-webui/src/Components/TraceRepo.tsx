@@ -21,7 +21,7 @@ export default class TraceRepo extends PureComponent<TraceRepoProps, {}>{
                 }).map((file, index) => {
                     return <div key={index}>
                         <a href={`${this.props.baseUrl}/TraceFiles/${file.fileName}`}>{file.fileName}</a>
-                        <input type='button' value='Upload to SP Backend' onClick={() => alert(`Not implemented: ${file.fileName}`)} />
+                        <input className='button' type='button' value='Upload to SP Backend' onClick={() => alert(`Not implemented: ${file.fileName}`)} />
                     </div>
                 })}
             </div>
@@ -29,7 +29,7 @@ export default class TraceRepo extends PureComponent<TraceRepoProps, {}>{
         return (<div>
             <h2>Trace Files ({len})</h2>
             {content}
-            <input type='button' value='Refresh' onClick={async () => await this.props.loadTraceFilesAsync()}></input>
+            <input className='button' type='button' value='Refresh' onClick={async () => await this.props.loadTraceFilesAsync()}></input>
         </div>)
     }
 }

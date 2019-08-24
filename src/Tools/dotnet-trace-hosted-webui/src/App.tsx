@@ -37,20 +37,22 @@ export default class App extends Component<any, AppState>{
     };
   }
   render() {
+    let content;
+
     if (!this.state.isBackendReady) {
-      return (<ConnectingToBackend
+      content = <ConnectingToBackend
         backendUrlArray={this.state.backendUrlArray}
         addBackend={this.addBackend}
         removeBackend={this.removeBackend}
         connectToBackendAsync={this.connectToBackendAsync}
-      />);
+      />;
     } else {
-      return this.state.isReady ? (
+      content = this.state.isReady ? (
         <div>
           <h1>.NET Core Profiling Console</h1>
           <div>
             <span>You are connecting to: {this.state.baseUrl}</span>
-            <input type='button' onClick={this.disconnectBackend} value='Disconnect'></input>
+            <input className='button' type='button' onClick={this.disconnectBackend} value='Disconnect'></input>
           </div>
           <Processes
             refreshProcessAsync={this.loadProcessesAsync}
@@ -69,6 +71,14 @@ export default class App extends Component<any, AppState>{
         </div>
       ) : null;
     }
+
+    return (
+      <div className='app-container'>
+        <div className='dark-theme'>
+          {content}
+        </div>
+      </div>
+    );
   }
 
   private initializeAsync: () => Promise<any> = async () => {

@@ -20,7 +20,7 @@ export default class Processes extends Component<ProcessesProps, {}>{
             content = this.props.processArray.map((process: Process, index: number) => {
                 return (<div key={index}>
                     <span>{process.id}</span>-<span>{process.name}</span>-<span>{process.mainModule}</span>
-                    <input type='button' value='Start Profiling'
+                    <input className='button' type='button' value='Start Profiling'
                         onClick={() => {
                             console.debug(`Start Profiling for session: ${process.id}`)
                             this.props.startProfilingAsync(process.id)
@@ -32,7 +32,7 @@ export default class Processes extends Component<ProcessesProps, {}>{
         return (<div>
             <h2>Process ({len})</h2>
             {content}
-            <input type='button' onClick={this.handleRefresh} value='Refresh'></input>
+            <input className='button' type='button' onClick={this.handleRefresh} value='Refresh'></input>
         </div>
         );
     }
