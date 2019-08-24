@@ -227,7 +227,7 @@ export default class App extends Component<any, AppState>{
   private connectToBackendAsync: (url: string) => Promise<boolean> = async (url: string) => {
     try {
       url = url.trim();
-      if (!url.startsWith('http') || !url.startsWith('https')) {
+      if (!url.startsWith('http') && !url.startsWith('https')) {
         return false;
       }
       if (url.endsWith('/')) {
