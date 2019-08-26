@@ -2,7 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Diagnostics.Symbols;
 using Microsoft.Diagnostics.Tools.RuntimeClient;
+using Microsoft.Diagnostics.Tracing;
+using Microsoft.Diagnostics.Tracing.Etlx;
+using Microsoft.Diagnostics.Tracing.Stacks;
+using Microsoft.Diagnostics.Tracing.Stacks.Formats;
 
 namespace HostedTrace
 {
@@ -31,7 +37,7 @@ namespace HostedTrace
                 throw new AccessViolationException("Target file exist.");
             }
 
-            Microsoft.Diagnostics.Tools.RuntimeClient.
+            ConvertToSpeedScope(sourceFile, targetFile);
         }
 
         public Stream GetFileStream(string fileName)
@@ -72,6 +78,39 @@ namespace HostedTrace
                 }));
             }
             return result;
+        }
+
+        private void ConvertToSpeedScope(string inFile, string outFile)
+        {
+            string etlxFilePath = TraceLog.CreateFromEventPipeDataFile(inFile);
+            using (var symbolReader = new SymbolReader(System.IO.TextWriter.Null) { SymbolPath = SymbolPath.MicrosoftSymbolServerPath })
+            using (var eventLog = new TraceLog(etlxFilePath))
+            {
+                var stackSource = new MutableTraceEventStackSource(eventLog)
+                {
+                    OnlyManagedCodeStacks = true // EventPipe currently only has managed code stacks.
+                };
+
+                var computer = new SampleProfilerThreadTimeComputer(eventLog, symbolReader);
+                computer.GenerateThreadTimeStacks(stackSource);
+
+                SpeedScopeStackSourceWriter.WriteStackViewAsJson(stackSource, outFile);
+            }
+
+            Task.Run(() =>
+            {
+                try
+                {
+                    if (File.Exists(etlxFilePath))
+                    {
+                        File.Delete(etlxFilePath);
+                    }
+                }
+                catch
+                {
+                    // Best effort!
+                }
+            });
         }
     }
 }
