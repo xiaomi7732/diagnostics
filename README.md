@@ -7,10 +7,10 @@ This is a fork of the [.NET Core Diagnostics Repo](https://github.com/dotnet/dia
 > [**Rules of Optimization**](http://wiki.c2.com/?RulesOfOptimization)  
 First rule of optimization - Dont't  
 Second rule of optimization - Don't...yet.  
-ProfileBeforeOptimizing  
+Profile before optimizing  
 -- [Michael Jackson](http://wiki.c2.com/?MichaelJackson)
 
-If I ran to rule 3, I probably wanted the performance profiling to happen easily.
+If I would run to rule 3, I probably wanted the performance profiling to happen easily.
 
 .NET Core 3.0 provides CLI tools to do the profiling.
 
