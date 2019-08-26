@@ -51,5 +51,19 @@ namespace HostedTrace
                 return Conflict(ex.ToString());
             }
         }
+
+        [HttpPost()]
+        public IActionResult ConvertToSpeedscope([FromBody]TraceFile target)
+        {
+            try
+            {
+                _traceRepoService.ConvertFormat(target.FileName, TraceFileFormat.Speedscope);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return Conflict(ex.ToString());
+            }
+        }
     }
 }
