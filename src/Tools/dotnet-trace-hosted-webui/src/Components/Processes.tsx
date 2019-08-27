@@ -31,10 +31,12 @@ export default class Processes extends Component<ProcessesProps, {}>{
             });
         }
 
-        return (<div>
-            <h2>Process ({len})</h2>
+        return (<div className='processes'>
+            <div className='header'>
+                <h2>Remote Process ({len})</h2>
+                <input className='button header-button' type='button' onClick={this.handleRefresh} value='&#x1f5d8; Refresh'></input>
+            </div>
             {content}
-            <input className='button' type='button' onClick={this.handleRefresh} value='&#x1f5d8; Refresh'></input>
         </div>
         );
     }

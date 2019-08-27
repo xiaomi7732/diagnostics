@@ -1,22 +1,28 @@
-.bold-text {
+.trace-session .header {
+    display: flex;
+    flex-shrink: 1;
+    align-items: baseline;
+}
+
+.trace-session .bold-text {
     font-weight: bold;
 }
 
-.session-container{
+.trace-session .session-container{
     display: flex;
     flex-shrink: 1;
     flex-flow: row;
 }
 
-.session-line {
+.trace-session .session-line {
     display: inherit;
     align-items: baseline;
 }
 
-.process-id-part {
+.trace-session .process-id-part {
     min-width: 250px;
 }
 
-.session-id-part {
+.trace-session .session-id-part {
     min-width: 250px;
 }
