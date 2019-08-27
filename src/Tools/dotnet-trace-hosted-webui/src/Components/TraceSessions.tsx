@@ -40,7 +40,7 @@ export default class TraceSessions extends PureComponent<TraceSessionsProps, {}>
         return (<div className='trace-session'>
             <div className='header'>
                 <h2>Remote Trace Sessions ({len})</h2>
-                <input className='button header-button' type='button' defaultValue='&#x1f5d8; Refresh' onClick={this.props.loadTraceSessionsAsync} />
+                <input className='button header-button' type='button' defaultValue='&#x1f5d8;' onClick={this.props.loadTraceSessionsAsync} />
             </div>
             {list}
         </div>);

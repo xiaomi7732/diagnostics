@@ -34,7 +34,7 @@ export default class Processes extends Component<ProcessesProps, {}>{
         return (<div className='processes'>
             <div className='header'>
                 <h2>Remote Process ({len})</h2>
-                <input className='button header-button' type='button' onClick={this.handleRefresh} value='&#x1f5d8; Refresh'></input>
+                <input className='button header-button refresh-button' type='button' onClick={this.handleRefresh} value='&#x1f5d8;'></input>
             </div>
             {content}
         </div>
