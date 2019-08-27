@@ -44,7 +44,7 @@ label {
 
 .dark-theme .button {
     cursor: pointer;
-    background: #2A3439;
+    background: #107896;
     border: solid 1px #1F262A;
     border-bottom: solid 1px black;
     border-right: solid 1px black;
@@ -63,7 +63,7 @@ label {
 }
 
 .dark-theme .button.primary {
-    background: #0c374d;
+    background: #1287A8;
     border: solid 1px #0d3d56;
     border-right-color: #093145;
     border-bottom-color: #093145;
@@ -73,5 +73,5 @@ label {
 }
 
 .dark-theme .button.primary:hover {
-    background: #3c6478;
+    background: #1496BB;
 }
