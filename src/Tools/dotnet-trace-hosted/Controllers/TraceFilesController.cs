@@ -60,9 +60,27 @@ namespace HostedTrace
                 _traceRepoService.ConvertFormat(target.FileName, TraceFileFormat.Speedscope);
                 return Ok();
             }
+            catch (ArgumentException ex)
+            {
+                if (ex.Message == "Invalid samples, two samples can not happen at the same time.")
+                {
+                    return Conflict(new
+                    {
+                        Error = ex.Message,
+                    });
+                }
+                else
+                {
+                    throw;
+                }
+            }
             catch (Exception ex)
             {
-                return Conflict(ex.ToString());
+                return Conflict(new
+                {
+                    Error = ex.Message,
+                    Details = ex.ToString(),
+                });
             }
         }
     }
