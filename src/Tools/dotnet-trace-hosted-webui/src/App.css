@@ -54,6 +54,10 @@ label {
     min-height: 32px;
 }
 
+.dark-theme .button.header-button {
+    margin-left: 24px;
+}
+
 .dark-theme .button:hover{
     background: #848689;
 }

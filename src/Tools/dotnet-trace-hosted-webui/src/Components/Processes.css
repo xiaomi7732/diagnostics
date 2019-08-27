@@ -1,18 +1,23 @@
-.process-line {
+.processes .header{
+    display: flex;
+    align-items: baseline;
+}
+
+.processes .process-line {
     display: flex;
     flex-shrink: 1;
 }
 
-.process-id {
+.processes .process-id {
     font-weight: bold;
     margin-right: 8px;
     min-width: 60px;
 }
 
-.process-name {
+.processes .process-name {
     min-width: 200px;
 }
 
-.process-path {
+.processes .process-path {
     min-width: 300px;
 }
