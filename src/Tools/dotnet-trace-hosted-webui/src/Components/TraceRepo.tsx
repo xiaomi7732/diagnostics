@@ -38,7 +38,7 @@ export default class TraceRepo extends PureComponent<TraceRepoProps, {}>{
                 <input className='button header-button' type='button' value='&#x1f5d8;' onClick={async () => await this.props.loadTraceFilesAsync()}></input>
             </div>
             <div className='speed-scope-tips'>
-                To open trace in <a href='https://speedscope.app' target='_blank'>speedscope</a>, download the <span>speedscope.json</span> files to your local box and upload it to <a href='https://speedscope.app' target='_blank'>speedscope.app</a>.
+                To open trace in <a href='https://speedscope.app' target='_blank' rel='noopener noreferrer'>speedscope</a>, download the <span>speedscope.json</span> files to your local box and upload it to <a href='https://speedscope.app' target='_blank' rel='noopener noreferrer'>speedscope.app</a>.
             </div>
             {content}
 
