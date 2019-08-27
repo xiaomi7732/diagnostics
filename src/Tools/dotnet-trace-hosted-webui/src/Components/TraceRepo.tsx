@@ -5,6 +5,7 @@ import './TraceRepo.css';
 interface TraceRepoProps {
     baseUrl: string;
     loadTraceFilesAsync: () => Promise<void>;
+    convertToSpeedscopeAsync: (fileName: string) => Promise<boolean>;
     fileArray: TraceFile[] | undefined;
 }
 
@@ -20,12 +21,13 @@ export default class TraceRepo extends PureComponent<TraceRepoProps, {}>{
                 {this.props.fileArray.sort((a, b) => {
                     return a.fileName > b.fileName ? -1 : 1;
                 }).map((file, index) => {
+                    const fileFormat = file.fileName.toLowerCase().endsWith('.nettrace') ? 'nettrace' : 'speedscope';
                     return <div key={index} className='trace-file-line'>
                         <div className='trace-file'>
                             <a href={`${this.props.baseUrl}/TraceFiles/${file.fileName}`}>{file.fileName}</a>
                         </div>
-                        <input className='button' type='button' value='Get speedscope file'></input>
-                        <input className='button' type='button' value='Upload to SP Backend' onClick={() => alert(`Not implemented: ${file.fileName}`)} />
+                        {(fileFormat === 'nettrace') && <input className='button' type='button' value='Get speedscope file' onClick={() => this.props.convertToSpeedscopeAsync(file.fileName)}></input>}
+                        {/* <input className='button' type='button' value='Upload to SP Backend' onClick={() => alert(`Not implemented: ${file.fileName}`)} /> */}
                     </div>
                 })}
             </div>
