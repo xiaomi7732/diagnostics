@@ -34,7 +34,8 @@ export default class TraceRepo extends PureComponent<TraceRepoProps, {}>{
         }
         return (<div className='trace-repo'>
             <div className='header'>
-                <h2>Remote Trace Files ({len})</h2><input className='button header-button' type='button' value='&#x1f5d8; Refresh' onClick={async () => await this.props.loadTraceFilesAsync()}></input>
+                <h2>Remote Trace Files ({len})</h2>
+                <input className='button header-button' type='button' value='&#x1f5d8;' onClick={async () => await this.props.loadTraceFilesAsync()}></input>
             </div>
             <div className='speed-scope-tips'>
                 To open trace in <a href='https://speedscope.app' target='_blank'>speedscope</a>, download the <span>speedscope.json</span> files to your local box and upload it to <a href='https://speedscope.app' target='_blank'>speedscope.app</a>.
