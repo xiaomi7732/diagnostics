@@ -43,22 +43,31 @@ label {
 }
 
 .dark-theme .button {
-    background: transparent;
-    border: solid 1px white;
-    border-bottom: solid 1px #c8c8c8;
-    border-right: solid 1px #c8c8c8;
+    cursor: pointer;
+    background: #2A3439;
+    border: solid 1px #1F262A;
+    border-bottom: solid 1px black;
+    border-right: solid 1px black;
     margin: 4px 4px;
     color: white;
     min-width: 100px;
-    min-height: 24px;
+    min-height: 32px;
+}
+
+.dark-theme .button:hover{
+    background: #848689;
 }
 
 .dark-theme .button.primary {
-    background: #0078d4;
-    border: solid 1px #a9d3f2;
-    border-right-color: #1a86d9;
-    border-bottom-color: #1a86d9;
+    background: #0c374d;
+    border: solid 1px #0d3d56;
+    border-right-color: #093145;
+    border-bottom-color: #093145;
     margin: 4px;
     color: white;
     font-weight: bolder;
+}
+
+.dark-theme .button.primary:hover {
+    background: #3c6478;
 }

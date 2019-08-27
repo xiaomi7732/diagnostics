@@ -66,6 +66,7 @@ export default class App extends Component<any, AppState>{
           <TraceRepo
             baseUrl={this.state.baseUrl}
             loadTraceFilesAsync={this.loadTraceFilesAsync}
+            convertToSpeedscopeAsync = {this.convertToSpeedscopeAsync}
             fileArray={this.state.traceFileArray}
           />
         </div>
@@ -190,6 +191,23 @@ export default class App extends Component<any, AppState>{
       return result;
     }
     return [];
+  }
+
+  private convertToSpeedscopeAsync: (fileName: string) => Promise<boolean> = async (fileName) => {
+    const response = await fetch(`${this.state.baseUrl}/traceFiles`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        fileName,
+      }),
+    });
+    if (!!response && response.ok) {
+      await this.loadTraceFilesAsync();
+      return true;
+    }
+    return false;
   }
 
   // Backend
