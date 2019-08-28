@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './ConnectingToBackend.css';
 
 interface ConnectingToBackendProps {
     backendUrlArray: string[] | undefined,
@@ -29,20 +30,12 @@ export default class ConnectingToBackend extends Component<ConnectingToBackendPr
             content = <div>Please add backend.</div>
         } else {
             content = this.props.backendUrlArray.map((url, index) => {
-                return <div key={index}>
-                    <span>{url}</span>
-                    <input className='button primary' type='button' value='Connect' onClick={async () => {
-                        this.setState({
-                            errorMessage: '',
-                            isConnecting: true,
-                        });
-                        const result = await this.props.connectToBackendAsync(url);
-                        if (!result) {
-                            this.setState({
-                                errorMessage: `Failed to connecting to backend: ${url}.`,
-                                isConnecting: false,
-                            });
-                        }
+                return <div className='backend-item-container' key={index}>
+                    <span className='backend-url' onClick={async () => {
+                        await this.handleConnectAsync(url);
+                    }}>{url}</span>
+                    <input className='button' type='button' value='Connect' onClick={async () => {
+                        await this.handleConnectAsync(url);
                     }}></input>
                     <input className='button' type='button' value='Remove' onClick={async () => {
                         this.props.removeBackend(url);
@@ -52,14 +45,13 @@ export default class ConnectingToBackend extends Component<ConnectingToBackendPr
         }
 
         return (
-            <div>
-                <div>
-                    <h2>Pick a backend to connect to:</h2>
-                    {content}
-                    {!!this.state.isConnecting && <div>Connecting . . .</div>}
-                    {!!this.state.errorMessage && <div>{this.state.errorMessage}</div>}
-                </div>
+            <div className='connect-backend'>
+                <h2>Pick a backend</h2>
+                {content}
+                {!!this.state.isConnecting && <div>Connecting . . .</div>}
+                {!!this.state.errorMessage && <div>{this.state.errorMessage}</div>}
 
+                <h2>Adding new Backend</h2>
                 <div className='new-endpoint-container'>
                     <form onSubmit={this.handleAddBackend}>
                         <label htmlFor='newBackend'>Type in a new endpoint:</label>
@@ -72,6 +64,20 @@ export default class ConnectingToBackend extends Component<ConnectingToBackendPr
                 </div>
             </div>
         )
+    }
+
+    handleConnectAsync = async (url: string) => {
+        this.setState({
+            errorMessage: '',
+            isConnecting: true,
+        });
+        const result = await this.props.connectToBackendAsync(url);
+        if (!result) {
+            this.setState({
+                errorMessage: `Failed to connecting to backend: ${url}.`,
+                isConnecting: false,
+            });
+        }
     }
 
     handleAddBackend = (e: React.FormEvent<HTMLFormElement>) => {

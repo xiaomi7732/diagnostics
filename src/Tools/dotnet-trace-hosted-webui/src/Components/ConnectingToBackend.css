@@ -1,0 +1,11 @@
+.connect-backend .backend-item-container {
+    display: flex;
+    flex-shrink: 1;
+    justify-items: left;
+    align-items: baseline;
+}
+
+.connect-backend .backend-url {
+    cursor: pointer;
+    width: 250px;
+}
