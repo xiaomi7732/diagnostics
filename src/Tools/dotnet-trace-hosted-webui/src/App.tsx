@@ -9,6 +9,7 @@ import TraceSessions from './Components/TraceSessions';
 import TraceFile from './Models/TraceFile';
 import TraceRepo from './Components/TraceRepo';
 import ConnectingToBackend from './Components/ConnectingToBackend';
+import { AppHeader } from './Components/AppHeader';
 
 interface AppState {
   processArray: Process[] | undefined;
@@ -49,7 +50,6 @@ export default class App extends Component<any, AppState>{
     } else {
       content = this.state.isReady ? (
         <div>
-          <h1>.NET Core Profiling Console</h1>
           <div>
             <span>&#x1f5a7; You are connecting to: {this.state.baseUrl}</span>
             <input className='button' type='button' onClick={this.disconnectBackend} value='Disconnect'></input>
@@ -66,7 +66,7 @@ export default class App extends Component<any, AppState>{
           <TraceRepo
             baseUrl={this.state.baseUrl}
             loadTraceFilesAsync={this.loadTraceFilesAsync}
-            convertToSpeedscopeAsync = {this.convertToSpeedscopeAsync}
+            convertToSpeedscopeAsync={this.convertToSpeedscopeAsync}
             fileArray={this.state.traceFileArray}
           />
         </div>
@@ -75,6 +75,7 @@ export default class App extends Component<any, AppState>{
 
     return (
       <div className='dark-theme'>
+        <AppHeader />
         <div className='app-container'>
           {content}
         </div>
