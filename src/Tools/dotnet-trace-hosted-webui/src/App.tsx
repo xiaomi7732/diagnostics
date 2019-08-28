@@ -10,6 +10,7 @@ import TraceFile from './Models/TraceFile';
 import TraceRepo from './Components/TraceRepo';
 import ConnectingToBackend from './Components/ConnectingToBackend';
 import { AppHeader } from './Components/AppHeader';
+import { ConnectionStatus } from './Components/ConnectionStatus';
 
 interface AppState {
   processArray: Process[] | undefined;
@@ -50,10 +51,9 @@ export default class App extends Component<any, AppState>{
     } else {
       content = this.state.isReady ? (
         <div>
-          <div>
-            <span>&#x1f5a7; You are connecting to: {this.state.baseUrl}</span>
-            <input className='button' type='button' onClick={this.disconnectBackend} value='Disconnect'></input>
-          </div>
+          <ConnectionStatus baseUrl={this.state.baseUrl}
+            disconnectBackend={this.disconnectBackend}
+          />
           <Processes
             refreshProcessAsync={this.loadProcessesAsync}
             startProfilingAsync={this.startProfilingAsync}
