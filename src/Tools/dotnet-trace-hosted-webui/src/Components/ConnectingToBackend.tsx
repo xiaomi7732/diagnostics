@@ -22,6 +22,7 @@ export default class ConnectingToBackend extends Component<ConnectingToBackendPr
             newUrl: '',
         };
     }
+
     render() {
         let content;
         if (this.props.backendUrlArray === undefined || this.props.backendUrlArray.length === 0) {
