@@ -52,7 +52,6 @@ export default class ConnectingToBackend extends Component<ConnectingToBackendPr
 
         return (
             <div>
-                <h1>.NET Core Profiling Console</h1>
                 <div>
                     <h2>Pick a backend to connect to:</h2>
                     {content}
