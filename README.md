@@ -19,6 +19,11 @@ If I would run to rule 3, I probably wanted the performance profiling to happen 
 
 This repo does an experiment to put a web UI on top of the command lines to make it easier to use for various scenarios: premises box, locally hosted container, Azure container. Also, the web UI will stream the trace file gathered by dotnet-trace allows offline analysis.
 
+## Quick Start
+
+* [Dotnet Trace (Profiling) Basic Usage (Windows)](./documentation/dotnet-trace-hosted/GetStarted.md)
+* // More to come.
+
 ## Road map
 
 1. Provide a story for on premises profiling.
@@ -35,6 +40,6 @@ The implementation is provided at [src/Tools/dotnet-trace-hosted](./src/Tools/do
 
 // TODO: Add more details here.
 
-## Disclaim
+## Disclosure
 
 I currently work for Microsoft. However, this project is a pure hobby and is not funded by Microsoft.
