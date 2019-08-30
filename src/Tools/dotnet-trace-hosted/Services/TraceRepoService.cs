@@ -34,7 +34,7 @@ namespace HostedTrace
             string targetFile = Path.ChangeExtension(sourceFile, _traceFileExtensions[outputFormat]);
             if (File.Exists(targetFile))
             {
-                throw new AccessViolationException("Target file exist.");
+                throw new AccessViolationException($"Target file exist: {targetFile}");
             }
 
             ConvertToSpeedScope(sourceFile, targetFile);
@@ -83,34 +83,41 @@ namespace HostedTrace
         private void ConvertToSpeedScope(string inFile, string outFile)
         {
             string etlxFilePath = TraceLog.CreateFromEventPipeDataFile(inFile);
-            using (var symbolReader = new SymbolReader(System.IO.TextWriter.Null) { SymbolPath = SymbolPath.MicrosoftSymbolServerPath })
-            using (var eventLog = new TraceLog(etlxFilePath))
+            try
             {
-                var stackSource = new MutableTraceEventStackSource(eventLog)
+                using (var symbolReader = new SymbolReader(System.IO.TextWriter.Null) { SymbolPath = SymbolPath.MicrosoftSymbolServerPath })
+                using (var eventLog = new TraceLog(etlxFilePath))
                 {
-                    OnlyManagedCodeStacks = true // EventPipe currently only has managed code stacks.
-                };
-
-                var computer = new SampleProfilerThreadTimeComputer(eventLog, symbolReader);
-                computer.GenerateThreadTimeStacks(stackSource);
-
-                SpeedScopeStackSourceWriter.WriteStackViewAsJson(stackSource, outFile);
-            }
-
-            Task.Run(() =>
-            {
-                try
-                {
-                    if (File.Exists(etlxFilePath))
+                    var stackSource = new MutableTraceEventStackSource(eventLog)
                     {
-                        File.Delete(etlxFilePath);
-                    }
+                        OnlyManagedCodeStacks = true // EventPipe currently only has managed code stacks.
+                    };
+
+                    var computer = new SampleProfilerThreadTimeComputer(eventLog, symbolReader);
+                    computer.GenerateThreadTimeStacks(stackSource);
+
+                    SpeedScopeStackSourceWriter.WriteStackViewAsJson(stackSource, outFile);
                 }
-                catch
+            }
+            finally
+            {
+
+
+                Task.Run(() =>
                 {
+                    try
+                    {
+                        if (File.Exists(etlxFilePath))
+                        {
+                            File.Delete(etlxFilePath);
+                        }
+                    }
+                    catch
+                    {
                     // Best effort!
                 }
-            });
+                });
+            }
         }
     }
 }

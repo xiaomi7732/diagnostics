@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/../../../artifacts/bin/HostedTrace/Debug/netcoreapp3.0/HostedTrace.dll",
+            "program": "../../../artifacts/bin/dotnet-trace-hosted/Debug/netcoreapp3.0/dotnet-trace-hosted.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
