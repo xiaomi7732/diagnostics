@@ -207,6 +207,10 @@ export default class App extends Component<any, AppState>{
     if (!!response && response.ok) {
       await this.loadTraceFilesAsync();
       return true;
+    } else {
+      const error = await response.json();
+
+      alert('Converting failed.' + !!error.error ? ' Details: ' + error.error : '');
     }
     return false;
   }

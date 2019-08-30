@@ -26,6 +26,9 @@ export default class TraceRepo extends PureComponent<TraceRepoProps, {}>{
                         <div className='trace-file'>
                             <a href={`${this.props.baseUrl}/TraceFiles/${file.fileName}`}>{file.fileName}</a>
                         </div>
+                        <div className='trace-file-size'>
+                            {file.sizeInBytes} bytes
+                        </div>
                         {(fileFormat === 'nettrace') && <input className='button' type='button' value='Get speedscope file' onClick={() => this.props.convertToSpeedscopeAsync(file.fileName)}></input>}
                         {/* <input className='button' type='button' value='Upload to SP Backend' onClick={() => alert(`Not implemented: ${file.fileName}`)} /> */}
                     </div>
@@ -41,7 +44,6 @@ export default class TraceRepo extends PureComponent<TraceRepoProps, {}>{
                 To open trace in <a href='https://speedscope.app' target='_blank' rel='noopener noreferrer'>speedscope</a>, download the <span>speedscope.json</span> files to your local box and upload it to <a href='https://speedscope.app' target='_blank' rel='noopener noreferrer'>speedscope.app</a>.
             </div>
             {content}
-
         </div>)
     }
 }
