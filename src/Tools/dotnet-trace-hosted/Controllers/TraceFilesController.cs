@@ -64,7 +64,7 @@ namespace HostedTrace
             {
                 if (ex.Message == "Invalid samples, two samples can not happen at the same time.")
                 {
-                    return NotFound(new
+                    return Conflict(new
                     {
                         Error = ex.Message,
                     });
