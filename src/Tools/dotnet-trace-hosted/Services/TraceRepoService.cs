@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Diagnostics.Symbols;
-using Microsoft.Diagnostics.Tools.RuntimeClient;
 using Microsoft.Diagnostics.Tracing;
 using Microsoft.Diagnostics.Tracing.Etlx;
 using Microsoft.Diagnostics.Tracing.Stacks;
@@ -71,10 +70,11 @@ namespace HostedTrace
             IEnumerable<TraceFile> result = Enumerable.Empty<TraceFile>();
             foreach (string ext in _traceFileExtensions.Values)
             {
-                result = result.Union(Directory.EnumerateFiles(searchBasePath, $"*." + ext.TrimStart('.')).Select(fullPath => new TraceFile()
+                result = result.Union(Directory.EnumerateFiles(searchBasePath, $"*." + ext.TrimStart('.')).Select(fullPath => new FileInfo(fullPath)).Select(fileInfo => new TraceFile()
                 {
-                    FileName = Path.GetFileName(fullPath),
-                    FullPath = fullPath,
+                    FileName = fileInfo.Name,
+                    FullPath = fileInfo.FullName,
+                    SizeInBytes = (ulong)fileInfo.Length,
                 }));
             }
             return result;
@@ -99,10 +99,29 @@ namespace HostedTrace
                     SpeedScopeStackSourceWriter.WriteStackViewAsJson(stackSource, outFile);
                 }
             }
+            catch
+            {
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        if (File.Exists(outFile))
+                        {
+                            FileInfo fileInfo = new FileInfo(outFile);
+                            if (fileInfo.Length == 0)
+                            {
+                                File.Delete(outFile);
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // Best effort!
+                    }
+                });
+            }
             finally
             {
-
-
                 Task.Run(() =>
                 {
                     try
@@ -114,8 +133,8 @@ namespace HostedTrace
                     }
                     catch
                     {
-                    // Best effort!
-                }
+                        // Best effort!
+                    }
                 });
             }
         }
