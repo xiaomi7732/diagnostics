@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Diagnostics.Symbols;
-using Microsoft.Diagnostics.Tools.RuntimeClient;
 using Microsoft.Diagnostics.Tracing;
 using Microsoft.Diagnostics.Tracing.Etlx;
 using Microsoft.Diagnostics.Tracing.Stacks;
@@ -34,7 +33,7 @@ namespace HostedTrace
             string targetFile = Path.ChangeExtension(sourceFile, _traceFileExtensions[outputFormat]);
             if (File.Exists(targetFile))
             {
-                throw new AccessViolationException("Target file exist.");
+                throw new AccessViolationException($"Target file exist: {targetFile}");
             }
 
             ConvertToSpeedScope(sourceFile, targetFile);
@@ -71,10 +70,11 @@ namespace HostedTrace
             IEnumerable<TraceFile> result = Enumerable.Empty<TraceFile>();
             foreach (string ext in _traceFileExtensions.Values)
             {
-                result = result.Union(Directory.EnumerateFiles(searchBasePath, $"*." + ext.TrimStart('.')).Select(fullPath => new TraceFile()
+                result = result.Union(Directory.EnumerateFiles(searchBasePath, $"*." + ext.TrimStart('.')).Select(fullPath => new FileInfo(fullPath)).Select(fileInfo => new TraceFile()
                 {
-                    FileName = Path.GetFileName(fullPath),
-                    FullPath = fullPath,
+                    FileName = fileInfo.Name,
+                    FullPath = fileInfo.FullName,
+                    SizeInBytes = (ulong)fileInfo.Length,
                 }));
             }
             return result;
@@ -83,21 +83,42 @@ namespace HostedTrace
         private void ConvertToSpeedScope(string inFile, string outFile)
         {
             string etlxFilePath = TraceLog.CreateFromEventPipeDataFile(inFile);
-            using (var symbolReader = new SymbolReader(System.IO.TextWriter.Null) { SymbolPath = SymbolPath.MicrosoftSymbolServerPath })
-            using (var eventLog = new TraceLog(etlxFilePath))
+            try
             {
-                var stackSource = new MutableTraceEventStackSource(eventLog)
+                using (var symbolReader = new SymbolReader(System.IO.TextWriter.Null) { SymbolPath = SymbolPath.MicrosoftSymbolServerPath })
+                using (var eventLog = new TraceLog(etlxFilePath))
                 {
-                    OnlyManagedCodeStacks = true // EventPipe currently only has managed code stacks.
-                };
+                    var stackSource = new MutableTraceEventStackSource(eventLog)
+                    {
+                        OnlyManagedCodeStacks = true // EventPipe currently only has managed code stacks.
+                    };
 
-                var computer = new SampleProfilerThreadTimeComputer(eventLog, symbolReader);
-                computer.GenerateThreadTimeStacks(stackSource);
+                    var computer = new SampleProfilerThreadTimeComputer(eventLog, symbolReader);
+                    computer.GenerateThreadTimeStacks(stackSource);
 
-                SpeedScopeStackSourceWriter.WriteStackViewAsJson(stackSource, outFile);
+                    SpeedScopeStackSourceWriter.WriteStackViewAsJson(stackSource, outFile);
+                }
             }
-
-            Task.Run(() =>
+            catch
+            {
+                try
+                {
+                    if (File.Exists(outFile))
+                    {
+                        FileInfo fileInfo = new FileInfo(outFile);
+                        if (fileInfo.Length == 0)
+                        {
+                            File.Delete(outFile);
+                        }
+                    }
+                }
+                catch
+                {
+                    // Best effort!
+                }
+                throw;
+            }
+            finally
             {
                 try
                 {
@@ -110,7 +131,7 @@ namespace HostedTrace
                 {
                     // Best effort!
                 }
-            });
+            }
         }
     }
 }

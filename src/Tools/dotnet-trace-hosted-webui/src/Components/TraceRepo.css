@@ -13,6 +13,10 @@
     min-width: 350px;
 }
 
+.trace-repo .trace-file-size {
+    width: 200px;
+}
+
 .trace-repo .speed-scope-tips {
     margin: 8px 0;
     font-size: .75rem;
