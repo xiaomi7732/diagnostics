@@ -9,5 +9,8 @@ namespace HostedTrace
 
         [JsonProperty("fileName")]
         public string FileName { get; set; }
+
+        [JsonProperty("sizeInBytes")]
+        public ulong SizeInBytes { get; set; }
     }
 }
