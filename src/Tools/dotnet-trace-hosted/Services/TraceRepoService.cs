@@ -101,41 +101,36 @@ namespace HostedTrace
             }
             catch
             {
-                Task.Run(() =>
+                try
                 {
-                    try
+                    if (File.Exists(outFile))
                     {
-                        if (File.Exists(outFile))
+                        FileInfo fileInfo = new FileInfo(outFile);
+                        if (fileInfo.Length == 0)
                         {
-                            FileInfo fileInfo = new FileInfo(outFile);
-                            if (fileInfo.Length == 0)
-                            {
-                                File.Delete(outFile);
-                            }
+                            File.Delete(outFile);
                         }
                     }
-                    catch
-                    {
-                        // Best effort!
-                    }
-                });
+                }
+                catch
+                {
+                    // Best effort!
+                }
+                throw;
             }
             finally
             {
-                Task.Run(() =>
+                try
                 {
-                    try
+                    if (File.Exists(etlxFilePath))
                     {
-                        if (File.Exists(etlxFilePath))
-                        {
-                            File.Delete(etlxFilePath);
-                        }
+                        File.Delete(etlxFilePath);
                     }
-                    catch
-                    {
-                        // Best effort!
-                    }
-                });
+                }
+                catch
+                {
+                    // Best effort!
+                }
             }
         }
     }
