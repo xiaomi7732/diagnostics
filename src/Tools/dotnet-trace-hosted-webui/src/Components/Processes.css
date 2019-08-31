@@ -6,6 +6,7 @@
 .processes .process-line {
     display: flex;
     flex-shrink: 1;
+    align-items: baseline;
 }
 
 .processes .process-id {
