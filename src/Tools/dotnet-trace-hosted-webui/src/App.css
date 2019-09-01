@@ -31,7 +31,6 @@ h2 {
     background: #1e1e1e;
 }
 
-
 /* Connect to a backend */
 
 .new-endpoint-container {
@@ -91,4 +90,15 @@ label {
 
 .dark-theme .button:active {
     border: solid 1px white;
+}
+
+.dark-theme select {
+    color: white;
+    background-color: black;
+    min-height: 32px;
+    padding: 4px;
+}
+
+.dark-theme option {
+    min-height: 32px;
 }
