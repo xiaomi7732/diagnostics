@@ -11,6 +11,8 @@ import TraceRepo from './Components/TraceRepo';
 import ConnectingToBackend from './Components/ConnectingToBackend';
 import { AppHeader } from './Components/AppHeader';
 import { ConnectionStatus } from './Components/ConnectionStatus';
+import { Profile } from './Models/Profile';
+import ProfileViewer from './Components/ProfileViewer';
 
 interface AppState {
   processArray: Process[] | undefined;
@@ -20,6 +22,8 @@ interface AppState {
   isBackendReady: boolean;
   backendUrlArray: string[];
   baseUrl: string;
+  profileArray: Profile[] | undefined;
+  selectedProfile: string | undefined;
 }
 
 export default class App extends Component<any, AppState>{
@@ -36,6 +40,8 @@ export default class App extends Component<any, AppState>{
       isBackendReady: false,
       backendUrlArray: this.getList(),
       baseUrl: '',
+      profileArray: undefined,
+      selectedProfile: undefined,
     };
   }
   render() {
@@ -53,6 +59,11 @@ export default class App extends Component<any, AppState>{
         <div>
           <ConnectionStatus baseUrl={this.state.baseUrl}
             disconnectBackend={this.disconnectBackend}
+          />
+          <ProfileViewer
+            profileArray={this.state.profileArray}
+            onSelected={this.selectProfile}
+            selectedProfile={this.state.selectedProfile}
           />
           <Processes
             refreshProcessAsync={this.loadProcessesAsync}
@@ -88,6 +99,7 @@ export default class App extends Component<any, AppState>{
       this.loadProcessesAsync(),
       this.loadTraceSessionsAsync(),
       this.loadTraceFilesAsync(),
+      this.LoadProfilesAsync(),
     ]);
 
     this.setState({
@@ -280,5 +292,33 @@ export default class App extends Component<any, AppState>{
       return false;
     }
   }
-}
 
+  // Profiles
+  private LoadProfilesAsync: () => void = async () => {
+    const result = await this.getProfilesAsync();
+    if (result.length > 0) {
+      this.setState({
+        profileArray: result,
+      });
+    } else {
+      this.setState({
+        profileArray: undefined,
+      });
+    }
+  }
+
+  private getProfilesAsync: () => Promise<Profile[]> = async () => {
+    const response = await fetch(`${this.state.baseUrl}/profiles`);
+    if (!!response && response.ok) {
+      const result: Profile[] = await response.json();
+      return result;
+    }
+    return [];
+  }
+
+  private selectProfile: (newValue: string) => void = (newValue: string) => {
+    this.setState({
+      selectedProfile: newValue
+    });
+  }
+}
