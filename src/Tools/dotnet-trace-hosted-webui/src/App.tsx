@@ -12,7 +12,7 @@ import ConnectingToBackend from './Components/ConnectingToBackend';
 import { AppHeader } from './Components/AppHeader';
 import { ConnectionStatus } from './Components/ConnectionStatus';
 import { Profile } from './Models/Profile';
-import ProfileViewer from './Components/ProfileViewer';
+import ProfilePicker from './Components/ProfilePicker';
 
 interface AppState {
   processArray: Process[] | undefined;
@@ -60,10 +60,11 @@ export default class App extends Component<any, AppState>{
           <ConnectionStatus baseUrl={this.state.baseUrl}
             disconnectBackend={this.disconnectBackend}
           />
-          <ProfileViewer
+          <ProfilePicker
             profileArray={this.state.profileArray}
             onSelected={this.selectProfile}
             selectedProfile={this.state.selectedProfile}
+            onRefresh={this.LoadProfilesAsync}
           />
           <Processes
             refreshProcessAsync={this.loadProcessesAsync}
