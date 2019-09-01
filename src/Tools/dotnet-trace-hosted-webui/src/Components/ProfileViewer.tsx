@@ -11,17 +11,16 @@ export default class ProfileViewer extends PureComponent<ProfileViewerProps, any
     render() {
         let content;
         if (this.props.profileArray !== undefined) {
-            content = (<div className='ProfileListContainer'><select>{
-                this.props.profileArray.sort((a, b) => a > b ? 1 : -1).map((profile) => {
-                    const selected = (this.props.selectedProfile !== undefined && this.props.selectedProfile === profile.name) ? true : undefined;
-                    return <option key={profile.name} value={profile.name} selected={selected} onSelect={e => {
-                        const target = e.target as any;
-                        if (!!target && !!target.value) {
-                            this.props.onSelected(target.value);
-                        }
-                    }}>{profile.name}: {profile.description}</option>;
-                })
-            }</select></div>);
+            content = (<div className='ProfileListContainer'><select value={this.props.selectedProfile} onChange={e => {
+                const target = e.target as any;
+                if (!!target && !!target.value) {
+                    this.props.onSelected(target.value);
+                }
+            }}>{
+                    this.props.profileArray.sort((a, b) => a > b ? 1 : -1).map((profile) => {
+                        return <option key={profile.name} value={profile.name}>{profile.name}: {profile.description}</option>;
+                    })
+                }</select></div>);
         } else {
             content = "No tracing profile exist."
         }

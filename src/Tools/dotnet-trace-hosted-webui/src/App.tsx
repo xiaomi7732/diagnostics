@@ -102,6 +102,8 @@ export default class App extends Component<any, AppState>{
       this.LoadProfilesAsync(),
     ]);
 
+    this.selectProfile('runtime-basic');
+
     this.setState({
       isReady: true,
     });
@@ -137,7 +139,8 @@ export default class App extends Component<any, AppState>{
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        processId: processId
+        processId: processId,
+        profile: this.state.selectedProfile,
       }),
     });
 
