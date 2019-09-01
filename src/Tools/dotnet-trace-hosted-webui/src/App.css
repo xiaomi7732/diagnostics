@@ -94,7 +94,7 @@ label {
 
 .dark-theme select {
     color: white;
-    background-color: black;
+    background-color: #1e1e1e;
     min-height: 32px;
     padding: 4px;
 }
