@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HostedTrace.Controllers
@@ -16,9 +17,49 @@ namespace HostedTrace.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Profile>> Get()
+        public async Task<ActionResult<IEnumerable<Profile>>> Get()
         {
-            return Ok(_profileService.GetPreDefinedProfiles());
+            IEnumerable<Profile> profiles = await _profileService.LoadProfilesAsync().ConfigureAwait(false);
+            return Ok(profiles);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddAsync([FromBody] Profile newProfile)
+        {
+            Profile newInstance = await _profileService.AddProfileAsync(newProfile).ConfigureAwait(false);
+            if (newInstance != null)
+            {
+                return Created("", newInstance);
+            }
+
+            return Conflict();
+        }
+
+        [HttpDelete("{name}")]
+        public async Task<ActionResult> DeleteAsync(string name)
+        {
+            if (await _profileService.DeleteProfileByNameAsync(name).ConfigureAwait(false))
+            {
+                return NoContent();
+            }
+            return Conflict();
+        }
+
+        [HttpPut("{name}")]
+        public async Task<ActionResult> UpdateAsync(string name, [FromBody] Profile newProfile)
+        {
+            if (!string.Equals(name, newProfile.Name, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return ValidationProblem();
+            }
+
+            Profile newInstance = await _profileService.UpdateProfileAsync(newProfile).ConfigureAwait(false);
+            if (newInstance != null)
+            {
+                return Ok(newInstance);
+            }
+
+            return Conflict();
         }
     }
 }
