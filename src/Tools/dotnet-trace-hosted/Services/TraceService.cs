@@ -25,7 +25,11 @@ namespace HostedTrace
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public ulong Start(int processId, FileInfo output, uint buffersize, string profile, TraceFileFormat format)
+        public async Task<ulong> StartAsync(int processId, 
+            FileInfo output, 
+            uint buffersize, 
+            string profile, 
+            TraceFileFormat format)
         {
             if (output == null)
             {
@@ -42,7 +46,7 @@ namespace HostedTrace
                 throw new ArgumentOutOfRangeException(nameof(processId), "Process ID should not be negative.");
             }
 
-            Profile selectedProfile = _profileService.GetPreDefinedProfiles()
+            Profile selectedProfile = (await _profileService.LoadProfilesAsync().ConfigureAwait(false))
                    .FirstOrDefault(p => p.Name.Equals(profile, StringComparison.OrdinalIgnoreCase));
             if (selectedProfile == null)
             {
@@ -50,7 +54,10 @@ namespace HostedTrace
                 throw new ArgumentOutOfRangeException(nameof(profile), profile);
             }
 
-            List<Provider> providerCollection = new List<Provider>(selectedProfile.Providers);
+            List<Microsoft.Diagnostics.Tools.RuntimeClient.Provider> providerCollection = 
+                selectedProfile.Providers
+                .Select(p => new Microsoft.Diagnostics.Tools.RuntimeClient.Provider(p.Name, p.Keywords, p.EventLevel, p.FilterData))
+                .ToList();
 
             if (providerCollection.Count <= 0)
             {
@@ -139,7 +146,7 @@ namespace HostedTrace
 
 
         [Conditional("DEBUG")]
-        private static void PrintProviders(IReadOnlyList<Provider> providers)
+        private static void PrintProviders(IReadOnlyList<Microsoft.Diagnostics.Tools.RuntimeClient.Provider> providers)
         {
             Console.Out.WriteLine("Enabling the following providers");
             foreach (var provider in providers)

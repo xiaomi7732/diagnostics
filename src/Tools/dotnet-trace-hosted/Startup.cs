@@ -23,6 +23,7 @@ namespace HostedTrace
             services.AddScoped<ITraceService, TraceService>();
             services.AddSingleton<ITraceSessionManager, TraceSessionManager>();
             services.AddScoped<ITraceRepoService, TraceRepoService>();
+            services.AddScoped<IProfileRepo, ProfileRepo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
