@@ -1,7 +1,7 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Diagnostics.Tools.RuntimeClient;
 using Microsoft.Extensions.Logging;
 
 namespace HostedTrace.Controllers
@@ -22,15 +22,20 @@ namespace HostedTrace.Controllers
         }
 
         [HttpPost]
-        public IActionResult Start([FromBody] TraceRequest request)
+        public async Task<ActionResult> StartAsync([FromBody] TraceRequest request)
         {
             _logger.LogDebug("Start a Trace . . .");
             try
             {
                 string output = Path.Combine(Path.GetTempPath(), "TestProfiling" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".nettrace");
                 FileInfo outputFileInfo = new FileInfo(output);
-                _traceService.Start(request.ProcessId, outputFileInfo, 256, "ai-profiler", TraceFileFormat.NetTrace);
-                return Ok();
+                ulong sessionId = await _traceService.StartAsync(
+                        request.ProcessId,
+                        outputFileInfo,
+                        256,
+                        "ai-profiler",
+                        TraceFileFormat.NetTrace).ConfigureAwait(false);
+                return Ok(sessionId);
             }
             catch (Exception ex)
             {
