@@ -8,7 +8,6 @@ using System.CommandLine;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Microsoft.Diagnostics.Tools.Dump
@@ -32,7 +31,7 @@ namespace Microsoft.Diagnostics.Tools.Dump
         public async Task<int> Collect(IConsole console, int processId, string output, bool diag, DumpTypeOption type)
         {
             if (processId == 0) {
-                console.Error.WriteLine("ProcessId is required.");
+                console?.Error.WriteLine("ProcessId is required.");
                 return 1;
             }
 
@@ -50,7 +49,7 @@ namespace Microsoft.Diagnostics.Tools.Dump
 
                 // Display the type of dump and dump path
                 string dumpTypeMessage = type == DumpTypeOption.Mini ? "minidump" : "minidump with heap";
-                console.Out.WriteLine($"Writing {dumpTypeMessage} to {output}");
+                console?.Out.WriteLine($"Writing {dumpTypeMessage} to {output}");
 
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
@@ -83,11 +82,11 @@ namespace Microsoft.Diagnostics.Tools.Dump
                  ex is InvalidOperationException ||
                  ex is NotSupportedException)
             {
-                console.Error.WriteLine($"{ex.Message}");
+                console?.Error.WriteLine($"{ex.Message}");
                 return 1;
             }
 
-            console.Out.WriteLine($"Complete");
+            console?.Out.WriteLine($"Complete");
             return 0;
         }
     }

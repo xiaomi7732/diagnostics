@@ -69,6 +69,7 @@ export default class App extends Component<any, AppState>{
           <Processes
             refreshProcessAsync={this.loadProcessesAsync}
             startProfilingAsync={this.startProfilingAsync}
+            takeDumpAsync={this.takeDumpAsync}
             processArray={this.state.processArray}
           />
           <TraceSessions
@@ -324,5 +325,30 @@ export default class App extends Component<any, AppState>{
     this.setState({
       selectedProfile: newValue
     });
+  }
+
+  // Dumps
+  private takeDumpAsync: (processId: number, isMini: boolean) => Promise<any> = async (processId, isMini) => {
+    const DUMP_TYPE_HEAP = 0;
+    const DUMP_TYPE_MINI = 1;
+    const dumpType = isMini ? DUMP_TYPE_MINI : DUMP_TYPE_HEAP;
+    const response = await fetch(`${this.state.baseUrl}/dumps`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        processId,
+        dumpType,
+      }),
+    });
+    if (!!response && response.ok) {
+      await this.loadTraceFilesAsync();
+      alert('Dump crated for process ' + processId);
+      return true;
+    } else {
+      alert('Failed to create the dump for this process: ' + processId);
+    }
+    return false;
   }
 }
