@@ -79,6 +79,22 @@ label {
     min-height: 32px;
 }
 
+.dark-theme .button.disabled {
+    cursor: auto;
+    background: #707070;
+    border: solid 1px #1F262A;
+    border-bottom: solid 1px black;
+    border-right: solid 1px black;
+    margin: 4px 4px;
+    color: #cccccc;
+    min-width: 100px;
+    min-height: 32px;
+}
+
+.dark-theme .button.disabled:hover {
+    background: #707070;
+}
+
 .dark-theme .button.header-button {
     margin-left: 24px;
     min-width: 48px;

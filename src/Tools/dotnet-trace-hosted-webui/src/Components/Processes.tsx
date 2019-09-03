@@ -6,6 +6,7 @@ interface ProcessesProps {
     refreshProcessAsync: () => Promise<void>;
     startProfilingAsync: (processId: number) => Promise<boolean>;
     takeDumpAsync: (processId: number, isMini: boolean) => Promise<boolean>;
+    isDumping: boolean;
     processArray: Process[] | undefined;
 }
 
@@ -20,6 +21,7 @@ export default class Processes extends Component<ProcessesProps, {}>{
             </div>);
         } else {
             len = this.props.processArray.length;
+            const dumpButtonClassName: string = 'button' + (this.props.isDumping ? ' disabled' : '');
             content = this.props.processArray.map((process: Process, index: number) => {
                 return (<div className='process-line' key={index}>
                     <span className='process-id'>{process.id}</span> <span className='process-name'>{process.name}</span> <span className='process-path'>{process.mainModule}</span>
@@ -29,11 +31,11 @@ export default class Processes extends Component<ProcessesProps, {}>{
                             this.props.startProfilingAsync(process.id)
                         }} />
 
-                    <input className='button' type='button' value='Mini Dump'
+                    <input className={dumpButtonClassName} type='button' value='Mini Dump' disabled={this.props.isDumping}
                         onClick={async () => {
                             await this.props.takeDumpAsync(process.id, true)
                         }} />
-                    <input className='button' type='button' value='Heap Dump'
+                    <input className={dumpButtonClassName} type='button' value='Heap Dump' disabled={this.props.isDumping}
                         onClick={() => {
                             this.props.takeDumpAsync(process.id, false)
                         }} />
@@ -46,6 +48,7 @@ export default class Processes extends Component<ProcessesProps, {}>{
                 <h2>Remote Process ({len})</h2>
                 <input className='button header-button refresh-button' type='button' onClick={this.handleRefresh} value='&#x1f5d8;'></input>
             </div>
+            {this.props.isDumping ? <div>Dump in progress . . .</div> : null}
             {content}
         </div>
         );

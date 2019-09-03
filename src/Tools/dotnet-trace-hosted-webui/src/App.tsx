@@ -24,6 +24,7 @@ interface AppState {
   baseUrl: string;
   profileArray: Profile[] | undefined;
   selectedProfile: string | undefined;
+  isDumping: boolean;
 }
 
 export default class App extends Component<any, AppState>{
@@ -42,6 +43,7 @@ export default class App extends Component<any, AppState>{
       baseUrl: '',
       profileArray: undefined,
       selectedProfile: undefined,
+      isDumping: false,
     };
   }
   render() {
@@ -71,6 +73,7 @@ export default class App extends Component<any, AppState>{
             startProfilingAsync={this.startProfilingAsync}
             takeDumpAsync={this.takeDumpAsync}
             processArray={this.state.processArray}
+            isDumping={this.state.isDumping}
           />
           <TraceSessions
             traceSessions={this.state.traceSessionArray}
@@ -329,6 +332,9 @@ export default class App extends Component<any, AppState>{
 
   // Dumps
   private takeDumpAsync: (processId: number, isMini: boolean) => Promise<any> = async (processId, isMini) => {
+    this.setState({
+      isDumping: true,
+    });
     const DUMP_TYPE_HEAP = 0;
     const DUMP_TYPE_MINI = 1;
     const dumpType = isMini ? DUMP_TYPE_MINI : DUMP_TYPE_HEAP;
@@ -345,9 +351,11 @@ export default class App extends Component<any, AppState>{
     if (!!response && response.ok) {
       await this.loadTraceFilesAsync();
       alert('Dump crated for process ' + processId);
+      this.setState({ isDumping: false })
       return true;
     } else {
       alert('Failed to create the dump for this process: ' + processId);
+      this.setState({ isDumping: false })
     }
     return false;
   }
