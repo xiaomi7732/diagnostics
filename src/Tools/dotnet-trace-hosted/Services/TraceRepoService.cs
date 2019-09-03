@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Diagnostics.Symbols;
 using Microsoft.Diagnostics.Tracing;
 using Microsoft.Diagnostics.Tracing.Etlx;
@@ -15,7 +14,8 @@ namespace HostedTrace
     {
         private readonly IDictionary<TraceFileFormat, string> _traceFileExtensions = new Dictionary<TraceFileFormat, string>(){
             {TraceFileFormat.NetTrace, "nettrace"},
-            {TraceFileFormat.Speedscope, "speedscope.json"}
+            {TraceFileFormat.Speedscope, "speedscope.json"},
+            {TraceFileFormat.Dump, "dmp"},
         };
 
         public void ConvertFormat(string fileName, TraceFileFormat outputFormat)
