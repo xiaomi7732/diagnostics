@@ -5,6 +5,7 @@ import './Processes.css';
 interface ProcessesProps {
     refreshProcessAsync: () => Promise<void>;
     startProfilingAsync: (processId: number) => Promise<boolean>;
+    takeDumpAsync: (processId: number, isMini: boolean) => Promise<boolean>;
     processArray: Process[] | undefined;
 }
 
@@ -26,6 +27,15 @@ export default class Processes extends Component<ProcessesProps, {}>{
                         onClick={() => {
                             console.debug(`Start Profiling for session: ${process.id}`)
                             this.props.startProfilingAsync(process.id)
+                        }} />
+
+                    <input className='button' type='button' value='Mini Dump'
+                        onClick={async () => {
+                            await this.props.takeDumpAsync(process.id, true)
+                        }} />
+                    <input className='button' type='button' value='Heap Dump'
+                        onClick={() => {
+                            this.props.takeDumpAsync(process.id, false)
                         }} />
                 </div>)
             });
