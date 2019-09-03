@@ -26,9 +26,32 @@ namespace HostedTrace
             string osMoniker = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "win" : "linux";
             string output = Path.Combine(basePath, $"{processId}_{DateTime.UtcNow.ToString("yyyyMMddHHmmss")}_{osMoniker}");
             output = Path.ChangeExtension(output, ".dmp");
+            string working = Path.ChangeExtension(output, ".tdmp");
 
-            int returnCode = await _dumper.Collect(null, processId, output, diag, type).ConfigureAwait(false);
-            return returnCode == 0;
+            int returnCode = int.MinValue;
+            try
+            {
+                returnCode = await _dumper.Collect(null, processId, working, diag, type).ConfigureAwait(false);
+                if (returnCode == 0)
+                {
+                    File.Move(working, output);
+                    return true;
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+            finally
+            {
+                // Best effort
+                try
+                {
+                    File.Delete(working);
+                }
+                catch { }
+            }
         }
     }
 }
