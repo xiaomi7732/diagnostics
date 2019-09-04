@@ -101,9 +101,9 @@ namespace Microsoft.Diagnostics.Tools.Counters
                 {
                     EventPipeClient.StopTracing(_processId, _sessionId);
                 }
-                catch (Exception) {} // Swallow all exceptions for now.
-                
-                console.Out.WriteLine($"Complete");
+                catch (Exception) { } // Swallow all exceptions for now.
+
+                console?.Out.WriteLine($"Complete");
                 return 1;
             }
         }
@@ -184,7 +184,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
             if (_counterList.Count == 0)
             {
                 CounterProvider defaultProvider = null;
-                _console.Out.WriteLine($"counter_list is unspecified. Monitoring all counters by default.");
+                _console?.Out.WriteLine($"counter_list is unspecified. Monitoring all counters by default.");
 
                 // Enable the default profile if nothing is specified
                 if (!KnownData.TryGetProvider("System.Runtime", out defaultProvider))
@@ -210,9 +210,9 @@ namespace Microsoft.Diagnostics.Tools.Counters
                     }
                     else
                     {
-                        sb.Append(provider.ToProviderString(_interval));    
+                        sb.Append(provider.ToProviderString(_interval));
                     }
-                    
+
                     if (i != _counterList.Count - 1)
                     {
                         sb.Append(",");
@@ -225,8 +225,8 @@ namespace Microsoft.Diagnostics.Tools.Counters
                     else
                     {
                         string counterNames = tokens[1];
-                        string[] enabledCounters = counterNames.Substring(0, counterNames.Length-1).Split(',');
-                        
+                        string[] enabledCounters = counterNames.Substring(0, counterNames.Length - 1).Split(',');
+
                         filter.AddFilter(providerName, enabledCounters);
                     }
                 }
@@ -286,7 +286,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
 
             monitorTask.Start();
 
-            while(!shouldExit.WaitOne(250))
+            while (!shouldExit.WaitOne(250))
             {
                 while (true)
                 {
