@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import TraceFile from '../Models/TraceFile';
+import * as filesize from 'filesize';
 import './TraceRepo.css';
 
 interface TraceRepoProps {
@@ -22,12 +23,13 @@ export default class TraceRepo extends PureComponent<TraceRepoProps, {}>{
                     return a.fileName > b.fileName ? -1 : 1;
                 }).map((file, index) => {
                     const fileFormat = file.fileName.toLowerCase().endsWith('.nettrace') ? 'nettrace' : 'speedscope';
+                    const fileSize = filesize.default(file.sizeInBytes, { round: 0 });
                     return <div key={index} className='trace-file-line'>
                         <div className='trace-file'>
                             <a href={`${this.props.baseUrl}/TraceFiles/${file.fileName}`}>{file.fileName}</a>
                         </div>
                         <div className='trace-file-size'>
-                            {file.sizeInBytes} bytes
+                            {fileSize}
                         </div>
                         {(fileFormat === 'nettrace') && <input className='button' type='button' value='Get speedscope file' onClick={() => this.props.convertToSpeedscopeAsync(file.fileName)}></input>}
                         {/* <input className='button' type='button' value='Upload to SP Backend' onClick={() => alert(`Not implemented: ${file.fileName}`)} /> */}
