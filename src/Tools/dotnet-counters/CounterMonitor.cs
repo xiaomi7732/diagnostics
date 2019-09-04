@@ -35,6 +35,13 @@ namespace Microsoft.Diagnostics.Tools.Counters
             pauseCmdSet = false;
         }
 
+        public event EventHandler<(string, ICounterPayload)> Update;
+
+        private void OnUpdate(string providerName, ICounterPayload payload)
+        {
+            Update?.Invoke(this, (providerName, payload));
+        }
+
         private void Dynamic_All(TraceEvent obj)
         {
             // If we are paused, ignore the event. 
@@ -61,7 +68,10 @@ namespace Microsoft.Diagnostics.Tools.Counters
                 {
                     payload = payloadFields.Count == 6 ? (ICounterPayload)new IncrementingCounterPayload(payloadFields, _interval) : (ICounterPayload)new CounterPayload(payloadFields);
                 }
+
+
                 writer.Update(obj.ProviderName, payload, pauseCmdSet);
+                OnUpdate(obj.ProviderName, payload);
             }
         }
 
@@ -97,9 +107,9 @@ namespace Microsoft.Diagnostics.Tools.Counters
                 {
                     EventPipeClient.StopTracing(_processId, _sessionId);
                 }
-                catch (Exception) {} // Swallow all exceptions for now.
-                
-                console.Out.WriteLine($"Complete");
+                catch (Exception) { } // Swallow all exceptions for now.
+
+                console?.Out.WriteLine($"Complete");
                 return 1;
             }
         }
@@ -132,8 +142,9 @@ namespace Microsoft.Diagnostics.Tools.Counters
 
         private async Task<int> StartMonitor()
         {
-            if (_processId == 0) {
-                _console.Error.WriteLine("ProcessId is required.");
+            if (_processId == 0)
+            {
+                _console?.Error.WriteLine("ProcessId is required.");
                 return 1;
             }
 
@@ -142,12 +153,12 @@ namespace Microsoft.Diagnostics.Tools.Counters
             if (_counterList.Count == 0)
             {
                 CounterProvider defaultProvider = null;
-                _console.Out.WriteLine($"counter_list is unspecified. Monitoring all counters by default.");
+                _console?.Out.WriteLine($"counter_list is unspecified. Monitoring all counters by default.");
 
                 // Enable the default profile if nothing is specified
                 if (!KnownData.TryGetProvider("System.Runtime", out defaultProvider))
                 {
-                    _console.Error.WriteLine("No providers or profiles were specified and there is no default profile available.");
+                    _console?.Error.WriteLine("No providers or profiles were specified and there is no default profile available.");
                     return 1;
                 }
                 providerString = defaultProvider.ToProviderString(_interval);
@@ -168,9 +179,9 @@ namespace Microsoft.Diagnostics.Tools.Counters
                     }
                     else
                     {
-                        sb.Append(provider.ToProviderString(_interval));    
+                        sb.Append(provider.ToProviderString(_interval));
                     }
-                    
+
                     if (i != _counterList.Count - 1)
                     {
                         sb.Append(",");
@@ -183,8 +194,8 @@ namespace Microsoft.Diagnostics.Tools.Counters
                     else
                     {
                         string counterNames = tokens[1];
-                        string[] enabledCounters = counterNames.Substring(0, counterNames.Length-1).Split(',');
-                        
+                        string[] enabledCounters = counterNames.Substring(0, counterNames.Length - 1).Split(',');
+
                         filter.AddFilter(providerName, enabledCounters);
                     }
                 }
@@ -197,7 +208,8 @@ namespace Microsoft.Diagnostics.Tools.Counters
             var terminated = false;
             writer.AssignRowsAndInitializeDisplay();
 
-            Task monitorTask = new Task(() => {
+            Task monitorTask = new Task(() =>
+            {
                 try
                 {
                     RequestTracingV2(providerString);
@@ -220,7 +232,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
 
             monitorTask.Start();
 
-            while(!shouldExit.WaitOne(250))
+            while (!shouldExit.WaitOne(250))
             {
                 while (true)
                 {
@@ -252,7 +264,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
             {
                 StopMonitor();
             }
-            
+
             return await Task.FromResult(0);
         }
     }
