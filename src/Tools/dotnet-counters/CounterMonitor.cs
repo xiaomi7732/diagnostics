@@ -24,6 +24,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
         private List<string> _counterList;
         private CancellationToken _ct;
         private IConsole _console;
+<<<<<<< HEAD
         private ICounterRenderer _renderer;
         private CounterFilter filter;
         private ulong _sessionId;
@@ -32,15 +33,29 @@ namespace Microsoft.Diagnostics.Tools.Counters
 
         public CounterMonitor()
         {
+=======
+        // private ConsoleWriter writer;
+        private CounterFilter filter;
+        private ulong _sessionId;
+        // private bool pauseCmdSet;
+
+        public CounterMonitor()
+        {
+            // writer = new ConsoleWriter();
+>>>>>>> 90d74f8... WIP: Doing the monitoring
             filter = new CounterFilter();
-            pauseCmdSet = false;
+            // pauseCmdSet = false;
         }
 
         private void DynamicAllMonitor(TraceEvent obj)
         {
             // If we are paused, ignore the event. 
             // There's a potential race here between the two tasks but not a huge deal if we miss by one event.
+<<<<<<< HEAD
             _renderer.ToggleStatus(pauseCmdSet);
+=======
+            // writer.ToggleStatus(pauseCmdSet);
+>>>>>>> 90d74f8... WIP: Doing the monitoring
 
             if (obj.EventName.Equals("EventCounters"))
             {
@@ -50,8 +65,27 @@ namespace Microsoft.Diagnostics.Tools.Counters
                 // If it's not a counter we asked for, ignore it.
                 if (!filter.Filter(obj.ProviderName, payloadFields["Name"].ToString())) return;
 
+<<<<<<< HEAD
                 ICounterPayload payload = payloadFields["CounterType"].Equals("Sum") ? (ICounterPayload)new IncrementingCounterPayload(payloadFields, _interval) : (ICounterPayload)new CounterPayload(payloadFields);
                 _renderer.CounterPayloadReceived(obj.ProviderName, payload, pauseCmdSet);
+=======
+                // There really isn't a great way to tell whether an EventCounter payload is an instance of 
+                // IncrementingCounterPayload or CounterPayload, so here we check the number of fields 
+                // to distinguish the two.
+                ICounterPayload payload;
+                if (payloadFields.ContainsKey("CounterType"))
+                {
+                    payload = payloadFields["CounterType"].Equals("Sum") ? (ICounterPayload)new IncrementingCounterPayload(payloadFields, _interval) : (ICounterPayload)new CounterPayload(payloadFields);
+                }
+                else
+                {
+                    payload = payloadFields.Count == 6 ? (ICounterPayload)new IncrementingCounterPayload(payloadFields, _interval) : (ICounterPayload)new CounterPayload(payloadFields);
+                }
+
+
+                // writer.Update(obj.ProviderName, payload, pauseCmdSet);
+                OnUpdate(obj.ProviderName, payload);
+>>>>>>> 90d74f8... WIP: Doing the monitoring
             }
         }
 
@@ -236,6 +270,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
         }
         
 
+<<<<<<< HEAD
         private async Task<int> Start()
         {
             if (_processId == 0)
@@ -243,6 +278,13 @@ namespace Microsoft.Diagnostics.Tools.Counters
                 _console.Error.WriteLine("--process-id is required.");
                 return 1;
             }
+=======
+            ManualResetEvent shouldExit = new ManualResetEvent(false);
+            _ct.Register(() => shouldExit.Set());
+
+            var terminated = false;
+            // writer.AssignRowsAndInitializeDisplay();
+>>>>>>> 90d74f8... WIP: Doing the monitoring
 
             string providerString = BuildProviderString();
             if (providerString.Length == 0)
@@ -308,11 +350,11 @@ namespace Microsoft.Diagnostics.Tools.Counters
                 }
                 else if (cmd == ConsoleKey.P)
                 {
-                    pauseCmdSet = true;
+                    // pauseCmdSet = true;
                 }
                 else if (cmd == ConsoleKey.R)
                 {
-                    pauseCmdSet = false;
+                    // pauseCmdSet = false;
                 }
             }
 
