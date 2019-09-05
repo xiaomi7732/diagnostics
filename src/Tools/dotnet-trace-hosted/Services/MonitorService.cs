@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Diagnostics.Tools.Counters;
@@ -18,10 +17,10 @@ namespace HostedTrace
             _cancellationTokenSource = new CancellationTokenSource();
         }
 
-        public Task<int> StartMonitorAsync(int processId)
+        public Task<ulong> StartMonitorAsync(int processId)
         {
             _monitor.Update += Update;
-            return _monitor.Monitor(_cancellationTokenSource.Token, new List<string>(), null, processId, 1000);
+            return _monitor.StartMonitorAsync(null, processId, 1);
         }
 
         public Task StopMonitor(string processId, int sessionId)
@@ -33,7 +32,7 @@ namespace HostedTrace
 
         private void Update(object sender, (string, ICounterPayload) data)
         {
-            Console.WriteLine(data.Item2.GetDisplay() + ":" + data.Item2.GetValue());
+            Console.WriteLine("[" + data.Item1 + "] " + data.Item2.GetDisplay() + ":" + data.Item2.GetValue());
         }
     }
 }
