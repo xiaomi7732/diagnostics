@@ -23,7 +23,7 @@ namespace HostedTrace
             return _monitor.StartMonitorAsync(null, processId, 1);
         }
 
-        public Task StopMonitor(string processId, int sessionId)
+        public Task StopMonitorAsync(string processId, int sessionId)
         {
             _cancellationTokenSource.Cancel(false);
             _cancellationTokenSource = new CancellationTokenSource();

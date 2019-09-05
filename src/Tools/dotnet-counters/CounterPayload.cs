@@ -8,14 +8,6 @@ using System.Text;
 
 namespace Microsoft.Diagnostics.Tools.Counters
 {
-    public interface ICounterPayload
-    {
-        string GetName();
-        double GetValue();
-        string GetDisplay();
-    }
-
-
     class CounterPayload : ICounterPayload
     {
         public string m_Name;
