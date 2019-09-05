@@ -28,6 +28,8 @@ namespace Microsoft.Diagnostics.Tools.Counters
         private ulong _sessionId;
         // private bool pauseCmdSet;
 
+        private EventPipeEventSource _source;
+
         public CounterMonitor()
         {
             // writer = new ConsoleWriter();
@@ -114,63 +116,66 @@ namespace Microsoft.Diagnostics.Tools.Counters
             }
         }
 
-        // Use EventPipe CollectTracing2 command to start monitoring. This may throw.
-        private void RequestTracingV2(string providerString)
+        /// <summary>
+        /// Start a monitor session, return the session id.
+        /// </summary>
+        /// <returns>Session Id.</returns>
+        public Task<ulong> StartMonitorAsync(List<string> counterList, int processId, int intervalInSeconds)
         {
-            var configuration = new SessionConfigurationV2(
-                                        circularBufferSizeMB: 1000,
-                                        format: EventPipeSerializationFormat.NetTrace,
-                                        requestRundown: false,
-                                        providers: Trace.Extensions.ToProviders(providerString));
-            var binaryReader = EventPipeClient.CollectTracing2(_processId, configuration, out _sessionId);
-            EventPipeEventSource source = new EventPipeEventSource(binaryReader);
-            source.Dynamic.All += Dynamic_All;
-            source.Process();
-        }
-        // Use EventPipe CollectTracing command to start monitoring. This may throw.
-        private void RequestTracingV1(string providerString)
-        {
-            var configuration = new SessionConfiguration(
-                                        circularBufferSizeMB: 1000,
-                                        format: EventPipeSerializationFormat.NetTrace,
-                                        providers: Trace.Extensions.ToProviders(providerString));
-            var binaryReader = EventPipeClient.CollectTracing(_processId, configuration, out _sessionId);
-            EventPipeEventSource source = new EventPipeEventSource(binaryReader);
-            source.Dynamic.All += Dynamic_All;
-            source.Process();
-        }
 
-        private async Task<int> StartMonitor()
-        {
-            if (_processId == 0)
+            counterList = counterList ?? new List<string>();
+            string providerString = GetProviderString(counterList);
+            if (string.IsNullOrEmpty(providerString))
             {
-                _console?.Error.WriteLine("ProcessId is required.");
-                return 1;
+                throw new InvalidOperationException("No proper provider.");
             }
+            _processId = processId;
+            _interval = intervalInSeconds;
 
-            String providerString;
+            ulong sessionId = ulong.MinValue;
+            sessionId = RequestTracingNonBlocking(providerString);
 
-            if (_counterList.Count == 0)
+            return Task.FromResult(sessionId);
+        }
+
+        /// <summary>
+        /// Stops the monitor of the current process id.
+        /// </summary>
+        /// <returns></returns>
+        public Task<bool> StopMonitorAsync()
+        {
+            StopMonitor();
+            return Task.FromResult(true);
+        }
+
+        private string GetProviderString(List<string> counterList)
+        {
+            string providerString;
+
+            if (counterList.Count == 0)
             {
                 CounterProvider defaultProvider = null;
                 _console?.Out.WriteLine($"counter_list is unspecified. Monitoring all counters by default.");
 
                 // Enable the default profile if nothing is specified
-                if (!KnownData.TryGetProvider("System.Runtime", out defaultProvider))
+                string providerName = "Microsoft.AspNetCore.Hosting";
+                // string providerName = "System.Runtime";
+
+                if (!KnownData.TryGetProvider(providerName, out defaultProvider))
                 {
                     _console?.Error.WriteLine("No providers or profiles were specified and there is no default profile available.");
-                    return 1;
+                    return null;
                 }
                 providerString = defaultProvider.ToProviderString(_interval);
-                filter.AddFilter("System.Runtime");
+                filter.AddFilter(providerName);
             }
             else
             {
                 CounterProvider provider = null;
                 StringBuilder sb = new StringBuilder("");
-                for (var i = 0; i < _counterList.Count; i++)
+                for (var i = 0; i < counterList.Count; i++)
                 {
-                    string counterSpecifier = _counterList[i];
+                    string counterSpecifier = counterList[i];
                     string[] tokens = counterSpecifier.Split('[');
                     string providerName = tokens[0];
                     if (!KnownData.TryGetProvider(providerName, out provider))
@@ -182,7 +187,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
                         sb.Append(provider.ToProviderString(_interval));
                     }
 
-                    if (i != _counterList.Count - 1)
+                    if (i != counterList.Count - 1)
                     {
                         sb.Append(",");
                     }
@@ -201,6 +206,77 @@ namespace Microsoft.Diagnostics.Tools.Counters
                 }
                 providerString = sb.ToString();
             }
+
+            return providerString;
+        }
+
+        private ulong RequestTracingNonBlocking(string providerString)
+        {
+            Task.Run(() =>
+            {
+                try
+                {
+                    RequestTracingV2(providerString);
+                }
+                catch (EventPipeUnknownCommandException)
+                {
+                    try
+                    {
+                        RequestTracingV1(providerString);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.ToString());
+                    }
+                }
+            });
+            int retry = 0;
+            while (_sessionId == 0 && retry++ < 5)
+            {
+                Thread.Sleep(1000);
+            }
+            if (_sessionId == 0)
+            {
+                throw new InvalidOperationException("Failed to start a monitor session.");
+            }
+            return _sessionId;
+        }
+
+        // Use EventPipe CollectTracing2 command to start monitoring. This may throw.
+        private void RequestTracingV2(string providerString)
+        {
+            var configuration = new SessionConfigurationV2(
+                                        circularBufferSizeMB: 1000,
+                                        format: EventPipeSerializationFormat.NetTrace,
+                                        requestRundown: false,
+                                        providers: Trace.Extensions.ToProviders(providerString));
+            var binaryReader = EventPipeClient.CollectTracing2(_processId, configuration, out _sessionId);
+            _source = new EventPipeEventSource(binaryReader);
+            _source.Dynamic.All += Dynamic_All;
+            _source.Process();
+        }
+        // Use EventPipe CollectTracing command to start monitoring. This may throw.
+        private void RequestTracingV1(string providerString)
+        {
+            var configuration = new SessionConfiguration(
+                                        circularBufferSizeMB: 1000,
+                                        format: EventPipeSerializationFormat.NetTrace,
+                                        providers: Trace.Extensions.ToProviders(providerString));
+            var binaryReader = EventPipeClient.CollectTracing(_processId, configuration, out _sessionId);
+            _source = new EventPipeEventSource(binaryReader);
+            _source.Dynamic.All += Dynamic_All;
+            _source.Process();
+        }
+
+        private async Task<int> StartMonitor()
+        {
+            if (_processId == 0)
+            {
+                _console?.Error.WriteLine("ProcessId is required.");
+                return 1;
+            }
+
+            string providerString = GetProviderString(_counterList);
 
             ManualResetEvent shouldExit = new ManualResetEvent(false);
             _ct.Register(() => shouldExit.Set());
