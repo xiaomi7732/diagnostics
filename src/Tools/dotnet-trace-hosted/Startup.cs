@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Diagnostics.Tools.Counters;
 using Microsoft.Diagnostics.Tools.Dump;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +28,9 @@ namespace HostedTrace
             services.AddScoped<IProfileRepo, ProfileRepo>();
             services.AddScoped<Dumper>();
             services.AddScoped<IDumpService, DumpService>();
+            services.AddSingleton<CounterConfiguration>(new CounterConfiguration());
+            services.AddSingleton<CounterMonitor>();
+            services.AddSingleton<IMonitorService, MonitorService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

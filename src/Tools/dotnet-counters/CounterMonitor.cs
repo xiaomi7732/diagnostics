@@ -23,16 +23,16 @@ namespace Microsoft.Diagnostics.Tools.Counters
         private List<string> _counterList;
         private CancellationToken _ct;
         private IConsole _console;
-        private ConsoleWriter writer;
+        // private ConsoleWriter writer;
         private CounterFilter filter;
         private ulong _sessionId;
-        private bool pauseCmdSet;
+        // private bool pauseCmdSet;
 
         public CounterMonitor()
         {
-            writer = new ConsoleWriter();
+            // writer = new ConsoleWriter();
             filter = new CounterFilter();
-            pauseCmdSet = false;
+            // pauseCmdSet = false;
         }
 
         public event EventHandler<(string, ICounterPayload)> Update;
@@ -46,7 +46,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
         {
             // If we are paused, ignore the event. 
             // There's a potential race here between the two tasks but not a huge deal if we miss by one event.
-            writer.ToggleStatus(pauseCmdSet);
+            // writer.ToggleStatus(pauseCmdSet);
 
             if (obj.EventName.Equals("EventCounters"))
             {
@@ -70,7 +70,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
                 }
 
 
-                writer.Update(obj.ProviderName, payload, pauseCmdSet);
+                // writer.Update(obj.ProviderName, payload, pauseCmdSet);
                 OnUpdate(obj.ProviderName, payload);
             }
         }
@@ -206,7 +206,7 @@ namespace Microsoft.Diagnostics.Tools.Counters
             _ct.Register(() => shouldExit.Set());
 
             var terminated = false;
-            writer.AssignRowsAndInitializeDisplay();
+            // writer.AssignRowsAndInitializeDisplay();
 
             Task monitorTask = new Task(() =>
             {
@@ -253,11 +253,11 @@ namespace Microsoft.Diagnostics.Tools.Counters
                 }
                 else if (cmd == ConsoleKey.P)
                 {
-                    pauseCmdSet = true;
+                    // pauseCmdSet = true;
                 }
                 else if (cmd == ConsoleKey.R)
                 {
-                    pauseCmdSet = false;
+                    // pauseCmdSet = false;
                 }
             }
             if (!terminated)
