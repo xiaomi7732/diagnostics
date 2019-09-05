@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "D:\\Repos\\fork-dotnet-diagnostics\\src\\Tools\\dotnet-counters"
+		},
+		{
+			"path": "D:\\Repos\\fork-dotnet-diagnostics\\src\\Tools\\dotnet-trace"
 		}
 	],
 	"settings": {}
