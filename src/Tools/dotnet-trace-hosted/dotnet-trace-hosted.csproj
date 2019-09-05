@@ -6,8 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\dotnet-counters\KnownData.cs" Link="Models\KnownData.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Microsoft.Diagnostics.Tools.RuntimeClient\Microsoft.Diagnostics.Tools.RuntimeClient.csproj" />
     <ProjectReference Include="..\dotnet-dump\dotnet-dump.csproj" />
+    <ProjectReference Include="..\dotnet-counters\dotnet-counters.csproj" />
   </ItemGroup>
 
   <ItemGroup>
