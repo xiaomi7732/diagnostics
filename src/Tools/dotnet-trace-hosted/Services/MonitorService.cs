@@ -7,14 +7,10 @@ namespace HostedTrace
 {
     public class MonitorService : IMonitorService
     {
-        private readonly CounterMonitor _monitor;
-        private CancellationTokenSource _cancellationTokenSource;
-        private readonly CounterConfiguration _counterConfiguration;
-        public MonitorService(CounterMonitor counterMonitor, CounterConfiguration counterConfiguration)
+        private readonly ICounterMonitor _monitor;
+        public MonitorService(ICounterMonitor counterMonitor, CounterConfiguration counterConfiguration)
         {
             _monitor = counterMonitor ?? throw new ArgumentNullException(nameof(counterMonitor));
-            _counterConfiguration = counterConfiguration ?? throw new ArgumentNullException(nameof(counterConfiguration));
-            _cancellationTokenSource = new CancellationTokenSource();
         }
 
         public Task<ulong> StartMonitorAsync(int processId)
@@ -25,14 +21,12 @@ namespace HostedTrace
 
         public Task StopMonitorAsync(string processId, int sessionId)
         {
-            _cancellationTokenSource.Cancel(false);
-            _cancellationTokenSource = new CancellationTokenSource();
-            return Task.CompletedTask;
+            return _monitor.StopMonitorAsync();
         }
 
         private void Update(object sender, (string, ICounterPayload) data)
         {
-            Console.WriteLine("[" + data.Item1 + "] " + data.Item2.GetDisplay() + ":" + data.Item2.GetValue());
+            
         }
     }
 }
