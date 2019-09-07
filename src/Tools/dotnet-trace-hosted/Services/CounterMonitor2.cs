@@ -8,19 +8,21 @@ using Microsoft.Diagnostics.Tracing;
 
 namespace HostedTrace
 {
-    public class MonitorService2 : IMonitorService
+    public class CounterMonitor2 : ICounterMonitor
     {
         CounterConfiguration _configuration;
         CounterFilter _filter;
 
-        EventPipeEventSource _eventSource;
+        private EventPipeEventSource _eventSource;
 
-        public MonitorService2(CounterConfiguration configuration)
+        public CounterMonitor2(CounterConfiguration configuration)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        public Task<ulong> StartMonitorAsync(int processId)
+        public event EventHandler<(string, ICounterPayload)> Update;
+
+        public Task<ulong> StartMonitorAsync(List<string> counterList, int processId, int intervalInSeconds)
         {
             _filter = new CounterFilter();
 
@@ -58,10 +60,14 @@ namespace HostedTrace
             }
         }
 
-        public Task StopMonitorAsync(string processId, int sessionId)
+        public Task<bool> StopMonitorAsync()
         {
-            throw new System.NotImplementedException();
-
+            if (_eventSource != null)
+            {
+                _eventSource.Dispose();
+                _eventSource = null;
+            }
+            return Task.FromResult(true);
         }
 
         private EventPipeEventSource RequestTracing(string providerStrings, int processId, out ulong sessionId)
@@ -89,8 +95,6 @@ namespace HostedTrace
             }
             return source;
         }
-
-        public event EventHandler<(string, ICounterPayload)> Update;
 
         private void OnUpdate(string providerName, ICounterPayload payload)
         {
