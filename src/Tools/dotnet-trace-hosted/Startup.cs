@@ -29,8 +29,8 @@ namespace HostedTrace
             services.AddScoped<Dumper>();
             services.AddScoped<IDumpService, DumpService>();
             services.AddSingleton<CounterConfiguration>(new CounterConfiguration());
-            // services.AddSingleton<CounterMonitor>();
-            services.AddSingleton<IMonitorService, MonitorService2>();
+            services.AddSingleton<ICounterMonitor, CounterMonitor2>();
+            services.AddSingleton<IMonitorService, MonitorService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
