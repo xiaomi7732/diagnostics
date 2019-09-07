@@ -9,12 +9,12 @@ namespace HostedTrace
 {
     public class TraceSessionManager : ITraceSessionManager
     {
-        private readonly ConcurrentDictionary<string, TraceSession> _sessions;
+        private readonly ConcurrentDictionary<string, TraceSessionId> _sessions;
         private readonly ILogger _logger;
 
         public TraceSessionManager(ILogger<TraceSessionManager> logger)
         {
-            _sessions = new ConcurrentDictionary<string, TraceSession>();
+            _sessions = new ConcurrentDictionary<string, TraceSessionId>();
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
         public string ListAll()
@@ -24,32 +24,36 @@ namespace HostedTrace
             return result;
         }
 
-        public bool TryAdd(TraceSession session)
+        public bool TryAdd(TraceSessionId session)
         {
             string key = $"{session.ProcessId}_{session.Id}";
             return _sessions.TryAdd(key, session);
         }
 
-        public bool TryRemove(ref TraceSession session)
+        private bool TryRemove(ref TraceSessionId session)
         {
             string key = $"{session.ProcessId}_{session.Id}";
             return _sessions.TryRemove(key, out session);
         }
 
-        public bool TryRemove(TraceSessionId spec, out TraceSession session)
+        public bool TryRemove<T>(TraceSessionId spec, out T session)
+            where T: TraceSessionId
         {
             // Assuming remove failed.
-            session = null;
+            TraceSessionId traceSessionId = null;
+            session=null;
 
             // Find the target session by ProcessId or (ProcessId and SessionId)
-            KeyValuePair<string, TraceSession> target = _sessions.FirstOrDefault(pair => pair.Value.ProcessId == spec.ProcessId && (spec.Id == null || spec.Id == pair.Value.Id));
+            KeyValuePair<string, TraceSessionId> target = _sessions.FirstOrDefault(pair => pair.Value.ProcessId == spec.ProcessId && (spec.Id == null || spec.Id == pair.Value.Id));
             if (string.IsNullOrEmpty(target.Key))
             {
                 return false;
             }
 
             // Try remove
-            return _sessions.TryRemove(target.Key, out session);
+            bool result = _sessions.TryRemove(target.Key, out traceSessionId);
+            session = (T)traceSessionId;
+            return result;
         }
     }
 }
