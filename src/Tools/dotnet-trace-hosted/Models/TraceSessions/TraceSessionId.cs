@@ -9,7 +9,7 @@ namespace HostedTrace
     }
 
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-    public abstract class TraceSessionId
+    public class TraceSessionId
     {
         [JsonProperty("processId")]
         public int ProcessId { get; set; }
@@ -17,6 +17,5 @@ namespace HostedTrace
         [JsonProperty("sessionId")]
         public ulong? Id { get; set; }
 
-        public abstract TraceSessionType Type { get; }
     }
 }
