@@ -5,6 +5,7 @@ import './TraceSessions.css';
 interface TraceSessionsProps {
     loadTraceSessionsAsync: () => Promise<void>;
     stopProfilingAsync: (processId: number, sessionId: number) => Promise<boolean>;
+    stopMonitoringAsync: (processId: number, sessionId: number) => Promise<boolean>;
     traceSessions: TraceSession[] | undefined;
 }
 
@@ -29,10 +30,12 @@ export default class TraceSessions extends PureComponent<TraceSessionsProps, {}>
                             <span className='bold-text'>SessionId:</span>
                             <span>{session.sessionId}</span>&nbsp;
                         </div>
-                        <input className='button' type='button' value='Stop Profiling' onClick={() => {
-                            console.debug(`Stopping profiler: ${session.processId}:${session.sessionId}`);
+                        {session.type === 0 && <input className='button' type='button' value='Stop Profiling' onClick={() => {
                             this.props.stopProfilingAsync(session.processId, session.sessionId);
-                        }} />
+                        }} />}
+                        {session.type === 1 && <input className='button' type='button' value='Stop Monitoring' onClick={() => {
+                            this.props.stopMonitoringAsync(session.processId, session.sessionId);
+                        }} />}
                     </div>);
                 })}
             </div>
