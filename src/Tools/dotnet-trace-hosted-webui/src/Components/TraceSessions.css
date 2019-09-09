@@ -11,7 +11,7 @@
 .trace-session .session-container{
     display: flex;
     flex-shrink: 1;
-    flex-flow: row;
+    flex-flow: column;
 }
 
 .trace-session .session-line {

@@ -79,6 +79,7 @@ export default class App extends Component<any, AppState>{
           <TraceSessions
             traceSessions={this.state.traceSessionArray}
             stopProfilingAsync={this.stopProfilingAsync}
+            stopMonitoringAsync={this.stopMonitoringAsync}
             loadTraceSessionsAsync={this.loadTraceSessionsAsync} />
           <TraceRepo
             baseUrl={this.state.baseUrl}
@@ -169,6 +170,7 @@ export default class App extends Component<any, AppState>{
     return result;
   }
 
+  // Monitoring
   private startMonitoringAsync: (processId: number) => Promise<boolean> = async (processId) => {
     const response = await fetch(`${this.state.baseUrl}/monitors`, {
       method: 'POST',
@@ -177,6 +179,25 @@ export default class App extends Component<any, AppState>{
       },
       body: JSON.stringify({
         processId
+      }),
+    });
+
+    const result = !!response && response.ok;
+    if (result) {
+      await this.loadTraceSessionsAsync();
+    }
+    return result;
+  }
+
+  private stopMonitoringAsync: (processId: number, sessionId: number) => Promise<boolean> = async (processId, sessionId) => {
+    const response = await fetch(`${this.state.baseUrl}/monitors`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        processId,
+        id: sessionId,
       }),
     });
 
