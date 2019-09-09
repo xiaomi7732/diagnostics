@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +20,20 @@ namespace HostedTrace
         {
             ulong sessionId = await _monitorService.StartMonitorAsync(requestParam.ProcessId).ConfigureAwait(false);
             return Ok(sessionId);
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult> StopAsync([FromBody]TraceSessionId traceSessionId)
+        {
+            try
+            {
+                await _monitorService.StopMonitorAsync(traceSessionId.ProcessId, traceSessionId.Id.Value);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return Conflict(ex.ToString());
+            }
         }
     }
 }

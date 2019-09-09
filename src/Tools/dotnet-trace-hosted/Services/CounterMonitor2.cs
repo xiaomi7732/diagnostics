@@ -13,11 +13,14 @@ namespace HostedTrace
         CounterConfiguration _configuration;
         CounterFilter _filter;
 
-        private EventPipeEventSource _eventSource;
+        private readonly ITraceSessionManager _sessionManager;
 
-        public CounterMonitor2(CounterConfiguration configuration)
+        public CounterMonitor2(CounterConfiguration configuration,
+            ITraceSessionManager sessionManager
+        )
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _sessionManager = sessionManager ?? throw new ArgumentNullException(nameof(sessionManager));
         }
 
         public event EventHandler<(string, ICounterPayload)> Update;
@@ -44,14 +47,22 @@ namespace HostedTrace
 
             Debug.WriteLine("Provider strings: {0}", providerStrings);
 
-            _eventSource = RequestTracing(providerStrings, processId, out ulong sessionId);
+            MonitorTraceSession monitorTraceSession = new MonitorTraceSession()
+            {
+                ProcessId = processId,
+            };
+
+            monitorTraceSession.EventSource = RequestTracing(providerStrings, processId, out ulong sessionId);
             if (sessionId > 0)
             {
+                monitorTraceSession.Id = sessionId;
                 Task.Run(() =>
                 {
-                    _eventSource.Dynamic.All += Dynamic_All;
-                    _eventSource.Process();
+                    monitorTraceSession.EventSource.Dynamic.All += Dynamic_All;
+                    monitorTraceSession.EventSource.Process();
                 });
+
+                _sessionManager.TryAdd(monitorTraceSession);
                 return Task.FromResult(sessionId);
             }
             else
@@ -60,14 +71,18 @@ namespace HostedTrace
             }
         }
 
-        public Task<bool> StopMonitorAsync()
+        public Task<bool> StopMonitorAsync(int processId, ulong sessionId)
         {
-            if (_eventSource != null)
+            if (_sessionManager.TryRemove(new MonitorTraceSession() { ProcessId = processId, Id = sessionId }, out MonitorTraceSession targetSession))
             {
-                _eventSource.Dispose();
-                _eventSource = null;
+                if (targetSession.EventSource != null)
+                {
+                    targetSession.EventSource.Dispose();
+                    targetSession.EventSource = null;
+                }
+                return Task.FromResult(true);
             }
-            return Task.FromResult(true);
+            throw new ArgumentException($"Can't find the session. Pid: {processId}, SessiondId: {sessionId}");
         }
 
         private EventPipeEventSource RequestTracing(string providerStrings, int processId, out ulong sessionId)

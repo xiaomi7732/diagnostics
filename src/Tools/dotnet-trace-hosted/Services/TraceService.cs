@@ -25,10 +25,10 @@ namespace HostedTrace
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<ulong> StartAsync(int processId, 
-            FileInfo output, 
-            uint buffersize, 
-            string profile, 
+        public async Task<ulong> StartAsync(int processId,
+            FileInfo output,
+            uint buffersize,
+            string profile,
             TraceFileFormat format)
         {
             if (output == null)
@@ -54,7 +54,7 @@ namespace HostedTrace
                 throw new ArgumentOutOfRangeException(nameof(profile), profile);
             }
 
-            List<Microsoft.Diagnostics.Tools.RuntimeClient.Provider> providerCollection = 
+            List<Microsoft.Diagnostics.Tools.RuntimeClient.Provider> providerCollection =
                 selectedProfile.Providers
                 .Select(p => new Microsoft.Diagnostics.Tools.RuntimeClient.Provider(p.Name, p.Keywords, p.EventLevel, p.FilterData))
                 .ToList();
@@ -95,7 +95,7 @@ namespace HostedTrace
                 }
             }, cancellationTokenSource.Token);
 
-            _sessionManager.TryAdd(new TraceSession()
+            _sessionManager.TryAdd(new ProfileTraceSession()
             {
                 ProcessId = processId,
                 Id = sessionId,
@@ -111,12 +111,12 @@ namespace HostedTrace
         {
             try
             {
-                TraceSessionId spec = new TraceSessionId()
+                TraceSessionId spec = new ProfileTraceSession()
                 {
                     ProcessId = processId,
                     Id = sessionId,
                 };
-                if (_sessionManager.TryRemove(spec, out TraceSession session))
+                if (_sessionManager.TryRemove(spec, out ProfileTraceSession session))
                 {
                     Debug.Assert(session.Id != null, "Returned session should always have an id.");
                     ulong stopResult = EventPipeClient.StopTracing(session.ProcessId, session.Id.Value);
