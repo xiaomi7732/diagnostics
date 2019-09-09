@@ -71,6 +71,7 @@ export default class App extends Component<any, AppState>{
           <Processes
             refreshProcessAsync={this.loadProcessesAsync}
             startProfilingAsync={this.startProfilingAsync}
+            startMonitoringAsync={this.startMonitoringAsync}
             takeDumpAsync={this.takeDumpAsync}
             processArray={this.state.processArray}
             isDumping={this.state.isDumping}
@@ -164,6 +165,24 @@ export default class App extends Component<any, AppState>{
     const result = !!response && response.ok;
     if (result) {
       await Promise.all([this.loadTraceSessionsAsync(), this.loadTraceFilesAsync()]);
+    }
+    return result;
+  }
+
+  private startMonitoringAsync: (processId: number) => Promise<boolean> = async (processId) => {
+    const response = await fetch(`${this.state.baseUrl}/monitors`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        processId
+      }),
+    });
+
+    const result = !!response && response.ok;
+    if (result) {
+      await this.loadTraceSessionsAsync();
     }
     return result;
   }

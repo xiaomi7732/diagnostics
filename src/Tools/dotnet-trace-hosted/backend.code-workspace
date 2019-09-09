@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "D:\\Repos\\fork-dotnet-diagnostics\\src\\Tools\\dotnet-trace"
+		},
+		{
+			"path": "D:\\Repos\\fork-dotnet-diagnostics\\src\\Tools\\dotnet-trace-hosted-webui"
 		}
 	],
 	"settings": {}
