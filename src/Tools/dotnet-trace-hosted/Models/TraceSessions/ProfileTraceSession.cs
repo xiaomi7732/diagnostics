@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace HostedTrace
 {
-    public class ProfileTraceSession : TraceSessionId
+    public class ProfileTraceSession : TraceSession
     {
         public Task Task { get; set; }
         public CancellationTokenSource CancellationTokenSource { get; set; }
