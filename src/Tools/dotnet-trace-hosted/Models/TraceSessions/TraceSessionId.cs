@@ -17,5 +17,7 @@ namespace HostedTrace
         [JsonProperty("sessionId")]
         public ulong? Id { get; set; }
 
+        [JsonProperty("type", DefaultValueHandling = DefaultValueHandling.Populate)]
+        public TraceSessionType Type { get; set; } = TraceSessionType.Profile;
     }
 }
