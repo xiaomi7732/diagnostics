@@ -9,6 +9,6 @@ namespace HostedTrace
     {
         event EventHandler<(string, ICounterPayload)> Update;
         Task<ulong> StartMonitorAsync(List<string> counterList, int processId, int intervalInSeconds);
-        Task<bool> StopMonitorAsync();
+        Task<bool> StopMonitorAsync(int processId, ulong sessionId);
     }
 }
