@@ -5,6 +5,6 @@ namespace HostedTrace
     public interface IMonitorService
     {
         Task<ulong> StartMonitorAsync(int processId);
-        Task StopMonitorAsync(string processId, int sessionId);
+        Task StopMonitorAsync(int processId, ulong sessionId);
     }
 }
