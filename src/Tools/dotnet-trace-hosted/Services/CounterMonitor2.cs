@@ -58,8 +58,15 @@ namespace HostedTrace
                 monitorTraceSession.Id = sessionId;
                 Task.Run(() =>
                 {
-                    monitorTraceSession.EventSource.Dynamic.All += Dynamic_All;
-                    monitorTraceSession.EventSource.Process();
+                    try
+                    {
+                        monitorTraceSession.EventSource.Dynamic.All += Dynamic_All;
+                        monitorTraceSession.EventSource.Process();
+                    }
+                    catch
+                    {
+                        // Best effort.
+                    }
                 });
 
                 _sessionManager.TryAdd(monitorTraceSession);

@@ -15,7 +15,7 @@ namespace HostedTrace
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<TraceSession>> Get()
+        public ActionResult<IEnumerable<TraceSessionId>> Get()
         {
             return Ok(_sessionManager.ListAll());
         }
