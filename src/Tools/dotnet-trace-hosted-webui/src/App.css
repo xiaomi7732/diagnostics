@@ -3,7 +3,6 @@ body {
 }
 
 .app-header {
-    width: 100%;
     margin: 0;
     margin-bottom: 16px;
     background-color: #005697;
@@ -19,6 +18,14 @@ body {
 
 h2 {
     font-size: 18px;
+}
+
+h3 {
+    font-size: 14px;
+}
+
+h4 {
+    font-size: 12px;
 }
 
 .app-container {
@@ -117,4 +124,8 @@ label {
 
 .dark-theme option {
     min-height: 32px;
+}
+
+.dark-theme .chart-title {
+    text-align: center;
 }
