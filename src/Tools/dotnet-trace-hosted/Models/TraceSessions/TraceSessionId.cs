@@ -11,6 +11,14 @@ namespace HostedTrace
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
     public class TraceSessionId
     {
+        public TraceSessionId() : this(default, default) { }
+
+        public TraceSessionId(int processId, ulong sessionId)
+        {
+            ProcessId = processId;
+            Id = sessionId;
+        }
+
         [JsonProperty("processId")]
         public int ProcessId { get; set; }
 
