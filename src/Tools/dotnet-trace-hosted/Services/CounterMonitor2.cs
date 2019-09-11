@@ -11,8 +11,6 @@ namespace HostedTrace
     public class CounterMonitor2 : ICounterMonitor
     {
         CounterConfiguration _configuration;
-        CounterFilter _filter;
-
         private readonly ITraceSessionManager _sessionManager;
 
         public CounterMonitor2(CounterConfiguration configuration,
@@ -23,11 +21,9 @@ namespace HostedTrace
             _sessionManager = sessionManager ?? throw new ArgumentNullException(nameof(sessionManager));
         }
 
-        public event EventHandler<(string, ICounterPayload)> Update;
-
         public Task<ulong> StartMonitorAsync(List<string> counterList, int processId, int intervalInSeconds)
         {
-            _filter = new CounterFilter();
+            CounterFilter filter = new CounterFilter();
 
             List<string> providerStringList = new List<string>();
             foreach (string providerName in _configuration.ProviderNames)
@@ -36,7 +32,7 @@ namespace HostedTrace
                 {
                     string providerString = provider.ToProviderString(_configuration.IntervalInSeconds);
                     providerStringList.Add(providerString);
-                    _filter.AddFilter(providerName);
+                    filter.AddFilter(providerName);
                 }
             }
             if (providerStringList.Count == 0)
@@ -47,28 +43,15 @@ namespace HostedTrace
 
             Debug.WriteLine("Provider strings: {0}", providerStrings);
 
-            MonitorTraceSession monitorTraceSession = new MonitorTraceSession()
-            {
-                ProcessId = processId,
-            };
-
-            monitorTraceSession.EventSource = RequestTracing(providerStrings, processId, out ulong sessionId);
+            EventPipeEventSource eventSource = RequestTracing(providerStrings, processId, out ulong sessionId);
             if (sessionId > 0)
             {
-                monitorTraceSession.Id = sessionId;
-                Task.Run(() =>
-                {
-                    try
-                    {
-                        monitorTraceSession.EventSource.Dynamic.All += Dynamic_All;
-                        monitorTraceSession.EventSource.Process();
-                    }
-                    catch
-                    {
-                        // Best effort.
-                    }
-                });
-
+                MonitorTraceSession monitorTraceSession = new MonitorTraceSession(
+                    processId,
+                    sessionId,
+                    eventSource,
+                    filter,
+                    _configuration.IntervalInSeconds);
                 _sessionManager.TryAdd(monitorTraceSession);
                 return Task.FromResult(sessionId);
             }
@@ -80,12 +63,11 @@ namespace HostedTrace
 
         public Task<bool> StopMonitorAsync(int processId, ulong sessionId)
         {
-            if (_sessionManager.TryRemove(new MonitorTraceSession() { ProcessId = processId, Id = sessionId }, out MonitorTraceSession targetSession))
+            if (_sessionManager.TryRemove(new TraceSessionId() { ProcessId = processId, Id = sessionId }, out MonitorTraceSession targetSession))
             {
-                if (targetSession.EventSource != null)
+                if (targetSession != null)
                 {
-                    targetSession.EventSource.Dispose();
-                    targetSession.EventSource = null;
+                    targetSession.Dispose();
                 }
                 return Task.FromResult(true);
             }
@@ -118,43 +100,6 @@ namespace HostedTrace
             return source;
         }
 
-        private void OnUpdate(string providerName, ICounterPayload payload)
-        {
-            Debug.WriteLine("[{0}] {1} {2}", providerName, payload.GetDisplay(), payload.GetValue());
-            Update?.Invoke(this, (providerName, payload));
-        }
 
-        private void Dynamic_All(TraceEvent obj)
-        {
-            // If we are paused, ignore the event. 
-            // There's a potential race here between the two tasks but not a huge deal if we miss by one event.
-            // writer.ToggleStatus(pauseCmdSet);
-
-            if (obj.EventName.Equals("EventCounters"))
-            {
-                IDictionary<string, object> payloadVal = (IDictionary<string, object>)(obj.PayloadValue(0));
-                IDictionary<string, object> payloadFields = (IDictionary<string, object>)(payloadVal["Payload"]);
-
-                // If it's not a counter we asked for, ignore it.
-                if (!_filter.Filter(obj.ProviderName, payloadFields["Name"].ToString())) return;
-
-                // There really isn't a great way to tell whether an EventCounter payload is an instance of 
-                // IncrementingCounterPayload or CounterPayload, so here we check the number of fields 
-                // to distinguish the two.
-                ICounterPayload payload;
-                if (payloadFields.ContainsKey("CounterType"))
-                {
-                    payload = payloadFields["CounterType"].Equals("Sum") ? (ICounterPayload)new IncrementingCounterPayload(payloadFields, _configuration.IntervalInSeconds) : (ICounterPayload)new CounterPayload(payloadFields);
-                }
-                else
-                {
-                    payload = payloadFields.Count == 6 ? (ICounterPayload)new IncrementingCounterPayload(payloadFields, _configuration.IntervalInSeconds) : (ICounterPayload)new CounterPayload(payloadFields);
-                }
-
-
-                // writer.Update(obj.ProviderName, payload, pauseCmdSet);
-                OnUpdate(obj.ProviderName, payload);
-            }
-        }
     }
 }
