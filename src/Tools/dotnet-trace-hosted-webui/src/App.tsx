@@ -13,6 +13,8 @@ import { AppHeader } from './Components/AppHeader';
 import { ConnectionStatus } from './Components/ConnectionStatus';
 import { Profile } from './Models/Profile';
 import ProfilePicker from './Components/ProfilePicker';
+import MonitorViz from './Components/MonitorViz';
+import { MonitorReport } from './Models/MonitorReport';
 
 interface AppState {
   processArray: Process[] | undefined;
@@ -25,6 +27,7 @@ interface AppState {
   profileArray: Profile[] | undefined;
   selectedProfile: string | undefined;
   isDumping: boolean;
+  selectedSession: undefined | TraceSession;
 }
 
 export default class App extends Component<any, AppState>{
@@ -44,6 +47,7 @@ export default class App extends Component<any, AppState>{
       profileArray: undefined,
       selectedProfile: undefined,
       isDumping: false,
+      selectedSession: undefined,
     };
   }
   render() {
@@ -57,11 +61,19 @@ export default class App extends Component<any, AppState>{
         connectToBackendAsync={this.connectToBackendAsync}
       />;
     } else {
+      const { selectedSession } = this.state;
       content = this.state.isReady ? (
         <div>
           <ConnectionStatus baseUrl={this.state.baseUrl}
             disconnectBackend={this.disconnectBackend}
           />
+          {
+            selectedSession !== undefined &&
+            <MonitorViz
+              processId={selectedSession.processId}
+              sessionId={selectedSession.sessionId}
+              getReportAsync={this.getReportAsync}/>
+          }
           <ProfilePicker
             profileArray={this.state.profileArray}
             onSelected={this.selectProfile}
@@ -80,7 +92,8 @@ export default class App extends Component<any, AppState>{
             traceSessions={this.state.traceSessionArray}
             stopProfilingAsync={this.stopProfilingAsync}
             stopMonitoringAsync={this.stopMonitoringAsync}
-            loadTraceSessionsAsync={this.loadTraceSessionsAsync} />
+            loadTraceSessionsAsync={this.loadTraceSessionsAsync}
+            setAsSelected={this.setSelectedSession} />
           <TraceRepo
             baseUrl={this.state.baseUrl}
             loadTraceFilesAsync={this.loadTraceFilesAsync}
@@ -229,6 +242,26 @@ export default class App extends Component<any, AppState>{
       return result;
     }
     return [];
+  }
+
+  private setSelectedSession: (traceSession: TraceSession | undefined) => void = (selectedSession) => {
+    this.setState({
+      selectedSession,
+    });
+  }
+
+  private getReportAsync: () => Promise<MonitorReport | undefined> = async () => {
+    const { selectedSession } = this.state;
+    if (selectedSession === undefined) {
+      return undefined;
+    }
+    const response = await fetch(`${this.state.baseUrl}/Monitors/${selectedSession.processId}/${selectedSession.sessionId}`);
+    if (!!response && response.ok) {
+      const result: MonitorReport = await response.json();
+      return result;
+    } else {
+      return undefined;
+    }
   }
 
   // Repository

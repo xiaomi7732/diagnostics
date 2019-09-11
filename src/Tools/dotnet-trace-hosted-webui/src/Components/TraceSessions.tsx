@@ -3,6 +3,7 @@ import { TraceSession } from '../Models/TraceSession';
 import './TraceSessions.css';
 
 interface TraceSessionsProps {
+    setAsSelected: (session: TraceSession) => void;
     loadTraceSessionsAsync: () => Promise<void>;
     stopProfilingAsync: (processId: number, sessionId: number) => Promise<boolean>;
     stopMonitoringAsync: (processId: number, sessionId: number) => Promise<boolean>;
@@ -23,18 +24,21 @@ export default class TraceSessions extends PureComponent<TraceSessionsProps, {}>
                 {this.props.traceSessions.map((session, index) => {
                     return (<div className='session-line' key={index}>
                         <div className='process-id-part'>
-                            <span className='bold-text'>ProcessId:</span>
-                            <span>{session.processId}</span>&nbsp;
+                            <span className='bold-text'>ProcessId:&nbsp;</span>
+                            <span>{session.processId}</span>
                         </div>
                         <div className='session-id-part'>
-                            <span className='bold-text'>SessionId:</span>
-                            <span>{session.sessionId}</span>&nbsp;
+                            <span className='bold-text'>SessionId:&nbsp;</span>
+                            <span>{session.sessionId}</span>
                         </div>
                         {session.type === 0 && <input className='button' type='button' value='Stop Profiling' onClick={() => {
                             this.props.stopProfilingAsync(session.processId, session.sessionId);
                         }} />}
                         {session.type === 1 && <input className='button' type='button' value='Stop Monitoring' onClick={() => {
                             this.props.stopMonitoringAsync(session.processId, session.sessionId);
+                        }} />}
+                        {session.type === 1 && <input className='button' type='button' value='Visualize' onClick={() => {
+                            this.props.setAsSelected(session);
                         }} />}
                     </div>);
                 })}
