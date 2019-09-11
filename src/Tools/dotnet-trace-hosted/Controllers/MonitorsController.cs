@@ -9,10 +9,26 @@ namespace HostedTrace
     public class MonitorsController : ControllerBase
     {
         private readonly IMonitorService _monitorService;
+        private readonly ITraceSessionManager _sessionManager;
 
-        public MonitorsController(IMonitorService monitorService)
+        public MonitorsController(IMonitorService monitorService, ITraceSessionManager sessionManager)
         {
-            this._monitorService = monitorService;
+            this._monitorService = monitorService ?? throw new ArgumentNullException(nameof(monitorService));
+            this._sessionManager = sessionManager ?? throw new ArgumentNullException(nameof(sessionManager));
+        }
+
+        [HttpGet("{processId}/{sessionId}")]
+        public ActionResult GetReport(int processId, ulong sessionId)
+        {
+            var targetSession = _sessionManager.GetSession<MonitorTraceSession>(new TraceSessionId(processId, sessionId));
+            if (targetSession != null)
+            {
+                return Ok(targetSession.GetMetrics());
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         [HttpPost]
