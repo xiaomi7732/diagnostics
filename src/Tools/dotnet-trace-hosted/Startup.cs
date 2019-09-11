@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Diagnostics.Tools.Counters;
 using Microsoft.Diagnostics.Tools.Dump;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
