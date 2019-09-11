@@ -6,5 +6,8 @@ namespace HostedTrace
         bool TryAdd(TraceSessionId session);
         bool TryRemove<T>(TraceSessionId spec, out T session)
             where T : TraceSessionId;
+
+        T GetSession<T>(TraceSessionId spec)
+            where T : TraceSessionId;
     }
 }

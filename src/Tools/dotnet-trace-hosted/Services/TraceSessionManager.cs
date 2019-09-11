@@ -37,11 +37,11 @@ namespace HostedTrace
         }
 
         public bool TryRemove<T>(TraceSessionId spec, out T session)
-            where T: TraceSessionId
+            where T : TraceSessionId
         {
             // Assuming remove failed.
             TraceSessionId traceSessionId = null;
-            session=null;
+            session = null;
 
             // Find the target session by ProcessId or (ProcessId and SessionId)
             KeyValuePair<string, TraceSessionId> target = _sessions.FirstOrDefault(pair => pair.Value.ProcessId == spec.ProcessId && (spec.Id == null || spec.Id == pair.Value.Id));
@@ -54,6 +54,12 @@ namespace HostedTrace
             bool result = _sessions.TryRemove(target.Key, out traceSessionId);
             session = (T)traceSessionId;
             return result;
+        }
+
+        public T GetSession<T>(TraceSessionId spec) where T : TraceSessionId
+        {
+            string key = $"{spec.ProcessId}_{spec.Id}";
+            return (T)_sessions[key];
         }
     }
 }

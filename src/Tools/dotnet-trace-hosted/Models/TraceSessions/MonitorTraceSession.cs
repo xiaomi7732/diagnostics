@@ -11,7 +11,8 @@ namespace HostedTrace
 {
     public sealed class MonitorTraceSession : TraceSessionId, IDisposable
     {
-        private const int MaxMetricsCount = 20;
+        // Worth of 1 minute of data when the interval is 1 second
+        private const int MaxMetricsCount = 60;
         private EventPipeEventSource _eventSource;
         private readonly ConcurrentDictionary<string, Queue<double>> _metrics;
         private readonly CounterFilter _counterFilter;
