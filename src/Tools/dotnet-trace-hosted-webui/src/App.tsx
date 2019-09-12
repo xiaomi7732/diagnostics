@@ -13,8 +13,8 @@ import { AppHeader } from './Components/AppHeader';
 import { ConnectionStatus } from './Components/ConnectionStatus';
 import { Profile } from './Models/Profile';
 import ProfilePicker from './Components/ProfilePicker';
-import MonitorViz from './Components/MonitorViz';
 import { MonitorReport } from './Models/MonitorReport';
+import MonitorPage from './Components/MonitorPage';
 
 interface AppState {
   processArray: Process[] | undefined;
@@ -28,6 +28,7 @@ interface AppState {
   selectedProfile: string | undefined;
   isDumping: boolean;
   selectedSession: undefined | TraceSession;
+  isShowMonitor: boolean;
 }
 
 export default class App extends Component<any, AppState>{
@@ -48,6 +49,7 @@ export default class App extends Component<any, AppState>{
       selectedProfile: undefined,
       isDumping: false,
       selectedSession: undefined,
+      isShowMonitor: false,
     };
   }
   render() {
@@ -61,46 +63,53 @@ export default class App extends Component<any, AppState>{
         connectToBackendAsync={this.connectToBackendAsync}
       />;
     } else {
-      const { selectedSession } = this.state;
+      const { isShowMonitor, selectedSession } = this.state;
       content = this.state.isReady ? (
-        <div>
-          <ConnectionStatus baseUrl={this.state.baseUrl}
-            disconnectBackend={this.disconnectBackend}
-          />
+        <>
           {
-            selectedSession !== undefined &&
-            <MonitorViz
+            isShowMonitor && selectedSession !== undefined &&
+            <MonitorPage
+              isDumping={this.state.isDumping}
               processId={selectedSession.processId}
               sessionId={selectedSession.sessionId}
-              getReportAsync={this.getReportAsync}/>
+              getReportAsync={this.getReportAsync}
+              exitMonitor={() => { this.setShowMonitoring(false); }}
+              takeDumpAsync={this.takeDumpAsync.bind(this)} />
           }
-          <ProfilePicker
-            profileArray={this.state.profileArray}
-            onSelected={this.selectProfile}
-            selectedProfile={this.state.selectedProfile}
-            onRefresh={this.LoadProfilesAsync}
-          />
-          <Processes
-            refreshProcessAsync={this.loadProcessesAsync}
-            startProfilingAsync={this.startProfilingAsync}
-            startMonitoringAsync={this.startMonitoringAsync}
-            takeDumpAsync={this.takeDumpAsync}
-            processArray={this.state.processArray}
-            isDumping={this.state.isDumping}
-          />
-          <TraceSessions
-            traceSessions={this.state.traceSessionArray}
-            stopProfilingAsync={this.stopProfilingAsync}
-            stopMonitoringAsync={this.stopMonitoringAsync}
-            loadTraceSessionsAsync={this.loadTraceSessionsAsync}
-            setAsSelected={this.setSelectedSession} />
-          <TraceRepo
-            baseUrl={this.state.baseUrl}
-            loadTraceFilesAsync={this.loadTraceFilesAsync}
-            convertToSpeedscopeAsync={this.convertToSpeedscopeAsync}
-            fileArray={this.state.traceFileArray}
-          />
-        </div>
+          {(!isShowMonitor || selectedSession === undefined) &&
+            <div className='section'>
+              <ConnectionStatus baseUrl={this.state.baseUrl}
+                disconnectBackend={this.disconnectBackend}
+              />
+              <ProfilePicker
+                profileArray={this.state.profileArray}
+                onSelected={this.selectProfile}
+                selectedProfile={this.state.selectedProfile}
+                onRefresh={this.LoadProfilesAsync}
+              />
+              <Processes
+                refreshProcessAsync={this.loadProcessesAsync}
+                startProfilingAsync={this.startProfilingAsync}
+                startMonitoringAsync={this.startMonitoringAsync}
+                takeDumpAsync={this.takeDumpAsync}
+                processArray={this.state.processArray}
+                isDumping={this.state.isDumping}
+              />
+              <TraceSessions
+                traceSessions={this.state.traceSessionArray}
+                stopProfilingAsync={this.stopProfilingAsync}
+                stopMonitoringAsync={this.stopMonitoringAsync}
+                loadTraceSessionsAsync={this.loadTraceSessionsAsync}
+                setAsSelected={this.setSelectedSession} />
+              <TraceRepo
+                baseUrl={this.state.baseUrl}
+                loadTraceFilesAsync={this.loadTraceFilesAsync}
+                convertToSpeedscopeAsync={this.convertToSpeedscopeAsync}
+                fileArray={this.state.traceFileArray}
+              />
+            </div>
+          }
+        </>
       ) : null;
     }
 
@@ -245,9 +254,15 @@ export default class App extends Component<any, AppState>{
   }
 
   private setSelectedSession: (traceSession: TraceSession | undefined) => void = (selectedSession) => {
-    this.setState({
-      selectedSession,
-    });
+    const newState: Partial<AppState> = {
+      selectedSession
+    };
+    if (selectedSession === undefined) {
+      newState.isShowMonitor = false;
+    } else if (!this.state.isShowMonitor) {
+      newState.isShowMonitor = true;
+    }
+    this.setState(newState as AppState);
   }
 
   private getReportAsync: () => Promise<MonitorReport | undefined> = async () => {
@@ -262,6 +277,12 @@ export default class App extends Component<any, AppState>{
     } else {
       return undefined;
     }
+  }
+
+  private setShowMonitoring: (value: boolean) => void = (value) => {
+    this.setState({
+      isShowMonitor: value,
+    });
   }
 
   // Repository

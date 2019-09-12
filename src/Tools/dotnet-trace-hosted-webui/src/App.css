@@ -1,5 +1,24 @@
-body {
+html, body {
     background: #1e1e1e;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    flex-flow: column;
+}
+
+#root {
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+}
+
+.dark-theme {
+    color: white;
+    background: #1e1e1e;
+    height: 100%;
+    display: flex;
+    flex-flow: column;
 }
 
 .app-header {
@@ -7,6 +26,8 @@ body {
     margin-bottom: 16px;
     background-color: #005697;
     display: flex;
+    flex-shrink: 1;
+    flex-grow: 0;
     align-items: center;
     padding: 0px;
     padding-left: 24px;
@@ -29,19 +50,22 @@ h4 {
 }
 
 .app-container {
-    padding: 24px;
+    display: flex;
     margin: 0;
-}
-
-.dark-theme {
-    color: white;
-    background: #1e1e1e;
+    flex-shrink: 1;
+    flex-grow: 1;
+    height: 100%;
+    overflow-y: auto;
 }
 
 /* Connect to a backend */
 
 .new-endpoint-container {
     margin: 12px 8px 12px 0;
+}
+
+.section {
+    margin: 24px;
 }
 
 label {
@@ -84,6 +108,8 @@ label {
     color: white;
     min-width: 100px;
     min-height: 32px;
+    border-radius: 2px;
+    padding: 0 8px;
 }
 
 .dark-theme .button.disabled {

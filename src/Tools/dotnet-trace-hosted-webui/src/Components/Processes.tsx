@@ -26,23 +26,23 @@ export default class Processes extends Component<ProcessesProps, {}>{
             content = this.props.processArray.map((process: Process, index: number) => {
                 return (<div className='process-line' key={index}>
                     <span className='process-id'>{process.id}</span> <span className='process-name'>{process.name}</span> <span className='process-path'>{process.mainModule}</span>
-                    <input className='button' type='button' value='Start Profiling'
+                    <input className='button' type='button' value='&#x25B6; Start Profiling'
                         onClick={() => {
                             this.props.startProfilingAsync(process.id)
                         }} />
 
-                    <input className='button' type='button' value='Start Monitoring'
+                    <input className='button' type='button' value='&#x25B6; Start Monitoring'
                         onClick={() => {
                             this.props.startMonitoringAsync(process.id);
                         }} />
 
-                    <input className={dumpButtonClassName} type='button' value='Mini Dump' disabled={this.props.isDumping}
+                    <input className={dumpButtonClassName} type='button' value='&#128248; Mini Dump' disabled={this.props.isDumping}
                         onClick={async () => {
                             await this.props.takeDumpAsync(process.id, true)
                         }} />
-                    <input className={dumpButtonClassName} type='button' value='Heap Dump' disabled={this.props.isDumping}
-                        onClick={() => {
-                            this.props.takeDumpAsync(process.id, false)
+                    <input className={dumpButtonClassName} type='button' value='&#128248; Heap Dump' disabled={this.props.isDumping}
+                        onClick={async () => {
+                            await this.props.takeDumpAsync(process.id, false)
                         }} />
                 </div>)
             });

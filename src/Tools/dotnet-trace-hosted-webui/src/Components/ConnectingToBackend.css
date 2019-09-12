@@ -1,3 +1,7 @@
+.connect-backend {
+    margin: 24px;
+}
+
 .connect-backend .backend-item-container {
     display: flex;
     flex-shrink: 1;

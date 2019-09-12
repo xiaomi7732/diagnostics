@@ -1,93 +1,93 @@
 import React from 'react';
 import { MonitorReport } from '../Models/MonitorReport';
 import { AreaChart, YAxis, XAxis, CartesianGrid, Area, Tooltip } from 'recharts';
+import './MonitorViz.css';
 
 interface MonitorVizProps {
-    processId: number,
-    sessionId: number,
-
     getReportAsync: () => Promise<MonitorReport | undefined>,
 }
 
 interface MonitorVizState {
     width: number;
     report: MonitorReport | undefined;
+    interval: NodeJS.Timeout | null;
 }
 
 export default class MonitorViz extends React.Component<MonitorVizProps, MonitorVizState> {
-    private _timer: NodeJS.Timeout | null = null;
-
     constructor(props: MonitorVizProps) {
         super(props);
 
         this.state = {
             report: undefined,
-            width: 0
+            width: 0,
+            interval: null,
         };
     }
 
     async componentDidMount() {
-        this._timer = await this.loadDataAsync();
+        const interval = await this.loadDataAsync();
         this.updateWindowDimensions();
         window.addEventListener('resize', this.updateWindowDimensions);
+        this.setState({
+            interval
+        });
     }
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateWindowDimensions);
-        this._timer = null;
+        if (this.state.interval !== null) {
+            clearInterval(this.state.interval);
+        }
     }
 
     render() {
-        const { processId, sessionId } = this.props;
         const { report, width } = this.state;
 
         let content;
         if (report === undefined) {
-            content = <div>No visualize data yet.</div>
+            content = <div className='data-loading-message'>Visualization data not available.</div>
         } else {
-            content = <div>{
-                Object.keys(report).map(metricName => {
+            let chartWidth = width < 600 ? width - 24 : width / 3 - 8;
+            if (chartWidth < 300) {
+                chartWidth = 300;
+            }
+            content = <>{
+                Object.keys(report).map((metricName, idxKey) => {
                     const reportItem = (report as unknown as { [key: string]: number[] })[metricName];
                     const data = reportItem.map((point, index) => {
                         return { key: metricName, value: point, x: index };
                     }) as ReadonlyArray<object>;
 
-                    return <div>
+                    return <div key={idxKey} style={{ display: 'flex', flexFlow: 'column' }} >
                         <h4 className='chart-title'>{metricName}</h4>
                         <AreaChart
-                            width={width - 150}
+                            width={chartWidth}
                             height={400}
                             data={data}
                             margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
                         >
                             <defs>
                                 <linearGradient id="areaColor" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#FFC100" stopOpacity={0.6} />
-                                    <stop offset="95%" stopColor="#FFC100" stopOpacity={.2} />
+                                    <stop offset="5%" stopColor="#005697" stopOpacity={0.6} />
+                                    <stop offset="95%" stopColor="#005697" stopOpacity={.2} />
                                 </linearGradient>
                             </defs>
                             <XAxis stroke='white' dataKey='x' type='number' />
                             <YAxis stroke='white' type='number' />
                             <CartesianGrid strokeDasharray="5 2" vertical={false} strokeWidth='1' stroke='#888888' />
                             <Tooltip wrapperStyle={{ color: 'blue', backgroundColor: 'red' }} isAnimationActive={false} />
-                            <Area type="monotone" dataKey="value" strokeWidth={2} stroke="#FFC100" fillOpacity={1} fill="url(#areaColor)"
+                            <Area type="monotone" dataKey="value" strokeWidth={2} stroke="#005697" fillOpacity={1} fill="url(#areaColor)"
                                 isAnimationActive={false}>
                             </Area>
                         </AreaChart>
                     </div>
                 })
             }
-            </div>
+            </>
         }
 
-        return <div>
-            <div role='group'>
-                <h2>Process Monitor</h2>
-                <h3>Process: {processId} Session: {sessionId}</h3>
-            </div>
-            <div>
-                {content}
-            </div>
+        return <div className='monitor-viz'>
+            {content}
         </div>;
     }
 

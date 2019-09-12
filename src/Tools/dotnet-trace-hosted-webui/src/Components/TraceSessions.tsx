@@ -31,13 +31,13 @@ export default class TraceSessions extends PureComponent<TraceSessionsProps, {}>
                             <span className='bold-text'>SessionId:&nbsp;</span>
                             <span>{session.sessionId}</span>
                         </div>
-                        {session.type === 0 && <input className='button' type='button' value='Stop Profiling' onClick={() => {
+                        {session.type === 0 && <input className='button' type='button' value='&#x25A0; Stop Profiling' onClick={() => {
                             this.props.stopProfilingAsync(session.processId, session.sessionId);
                         }} />}
-                        {session.type === 1 && <input className='button' type='button' value='Stop Monitoring' onClick={() => {
+                        {session.type === 1 && <input className='button' type='button' value='&#x25A0; Stop Monitoring' onClick={() => {
                             this.props.stopMonitoringAsync(session.processId, session.sessionId);
                         }} />}
-                        {session.type === 1 && <input className='button' type='button' value='Visualize' onClick={() => {
+                        {session.type === 1 && <input className='button' type='button' value='&#x1F5E0; Visualize' onClick={() => {
                             this.props.setAsSelected(session);
                         }} />}
                     </div>);
