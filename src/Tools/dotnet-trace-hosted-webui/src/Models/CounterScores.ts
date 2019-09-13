@@ -15,6 +15,7 @@ export enum CounterScores {
     'GC Heap Size',
     '% Time in GC since last GC',
     'Gen 0 Size',
+    'Gen 0 GC Count',
     'Gen 1 Size',
     'Gen 1 GC Count',
     'LOH Size',
@@ -23,6 +24,7 @@ export enum CounterScores {
 
     // Requests
     'Current Requests',
+    'Failed Requests',
     'Total Requests',
     'Request Rate',
     'Monitor Lock Contention Count',
