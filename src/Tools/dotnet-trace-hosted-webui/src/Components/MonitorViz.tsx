@@ -2,6 +2,7 @@ import React from 'react';
 import { MonitorReport } from '../Models/MonitorReport';
 import { AreaChart, YAxis, XAxis, CartesianGrid, Area, Tooltip } from 'recharts';
 import './MonitorViz.css';
+import { CounterScores } from '../Models/CounterScores';
 
 interface MonitorVizProps {
     getReportAsync: () => Promise<MonitorReport | undefined>,
@@ -52,7 +53,7 @@ export default class MonitorViz extends React.Component<MonitorVizProps, Monitor
                 chartWidth = 300;
             }
             content = <>{
-                Object.keys(report).map((metricName, idxKey) => {
+                Object.keys(report).sort(this.metricsNameComparer).map((metricName, idxKey) => {
                     const reportItem = (report as unknown as { [key: string]: number[] })[metricName];
                     const data = reportItem.map((point, index) => {
                         return { key: metricName, value: point, x: index };
@@ -102,5 +103,26 @@ export default class MonitorViz extends React.Component<MonitorVizProps, Monitor
 
     private updateWindowDimensions = () => {
         this.setState({ width: window.innerWidth });
+    }
+
+    private metricsNameComparer: (name1: string, name2: string) => number = (name1, name2) => {
+        const fallback = 1000000;
+        const n1Score = this.getScore(name1, fallback);
+        const n2Score = this.getScore(name2, fallback);
+        return n1Score - n2Score;
+    }
+
+    private getScore: (name: string, fallBack: number) => number = (name, fallBack) => {
+        let score = fallBack;
+        for (let counterScore in CounterScores) {
+            if (name.startsWith(counterScore)) {
+                score = +CounterScores[counterScore];
+                break;
+            }
+        }
+        if (score === fallBack) {
+            console.warn(name + ' is an unknown metrics.');
+        }
+        return score;
     }
 }
