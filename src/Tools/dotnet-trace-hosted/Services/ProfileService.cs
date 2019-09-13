@@ -105,6 +105,7 @@ namespace HostedTrace
                     new Provider("Microsoft-DotNETCore-SampleProfiler", 0x0, EventLevel.Verbose),
                     new Provider("System.Threading.Tasks.TplEventSource", 0x1 | 0x2 | 0x4 | 0x40 | 0x80, EventLevel.Verbose),
                     new Provider("Microsoft-ApplicationInsights-DataRelay", 0xffffffff, EventLevel.Verbose),
+                    new Provider("Microsoft-ApplicationInsights-Data", 0xffffffff, EventLevel.Verbose),
                 },
                 "Providers required to work with AI Profiling"),
         };
