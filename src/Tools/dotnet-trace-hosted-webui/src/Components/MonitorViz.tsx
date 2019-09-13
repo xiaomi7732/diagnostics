@@ -3,6 +3,7 @@ import { MonitorReport } from '../Models/MonitorReport';
 import { AreaChart, YAxis, XAxis, CartesianGrid, Area, Tooltip } from 'recharts';
 import './MonitorViz.css';
 import { CounterScores } from '../Models/CounterScores';
+import { ColorPalette } from '../Models/ColorPalette';
 
 interface MonitorVizProps {
     getReportAsync: () => Promise<MonitorReport | undefined>,
@@ -52,6 +53,10 @@ export default class MonitorViz extends React.Component<MonitorVizProps, Monitor
             if (chartWidth < 300) {
                 chartWidth = 300;
             }
+            let chartHeight = chartWidth * 2 / 4;
+            if (chartHeight < 200) {
+                chartHeight = 200;
+            }
             content = <>{
                 Object.keys(report).sort(this.metricsNameComparer).map((metricName, idxKey) => {
                     const reportItem = (report as unknown as { [key: string]: number[] })[metricName];
@@ -59,25 +64,26 @@ export default class MonitorViz extends React.Component<MonitorVizProps, Monitor
                         return { key: metricName, value: point, x: index };
                     }) as ReadonlyArray<object>;
 
+                    const color = ColorPalette[idxKey % (Object.keys(ColorPalette).length / 2)];
                     return <div key={idxKey} style={{ display: 'flex', flexFlow: 'column' }} >
                         <h4 className='chart-title'>{metricName}</h4>
                         <AreaChart
                             width={chartWidth}
-                            height={400}
+                            height={chartHeight}
                             data={data}
                             margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
                         >
                             <defs>
-                                <linearGradient id="areaColor" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#005697" stopOpacity={0.6} />
-                                    <stop offset="95%" stopColor="#005697" stopOpacity={.2} />
+                                <linearGradient id={color} x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor={color} stopOpacity={0.6} />
+                                    <stop offset="95%" stopColor={color} stopOpacity={.2} />
                                 </linearGradient>
                             </defs>
                             <XAxis stroke='white' dataKey='x' type='number' />
                             <YAxis stroke='white' type='number' />
                             <CartesianGrid strokeDasharray="5 2" vertical={false} strokeWidth='1' stroke='#888888' />
                             <Tooltip wrapperStyle={{ color: 'blue', backgroundColor: 'red' }} isAnimationActive={false} />
-                            <Area type="monotone" dataKey="value" strokeWidth={2} stroke="#005697" fillOpacity={1} fill="url(#areaColor)"
+                            <Area type="monotone" dataKey="value" strokeWidth={2} stroke={color} fillOpacity={1} fill={"url(#" + color + ")"}
                                 isAnimationActive={false}>
                             </Area>
                         </AreaChart>
@@ -114,6 +120,9 @@ export default class MonitorViz extends React.Component<MonitorVizProps, Monitor
 
     private getScore: (name: string, fallBack: number) => number = (name, fallBack) => {
         let score = fallBack;
+        if (name === null || name === undefined) {
+            return fallBack;
+        }
         for (let counterScore in CounterScores) {
             if (name.startsWith(counterScore)) {
                 score = +CounterScores[counterScore];
