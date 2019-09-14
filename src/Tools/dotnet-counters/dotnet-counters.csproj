@@ -8,6 +8,7 @@
     <Description>.NET Core Performance Counter Tool</Description>
     <PackageTags>Diagnostic</PackageTags>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
+    <PackAsToolShimRuntimeIdentifiers></PackAsToolShimRuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>
