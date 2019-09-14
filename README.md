@@ -1,6 +1,10 @@
 # .NET Core Diagnostics - Fancy Trace
 
-This is a fork of the [.NET Core Diagnostics Repo](https://github.com/dotnet/diagnostics) intending to provide a better experiences/solutions for dotnet-trace tool of .NET Core 3.0.
+This is a fork of the [.NET Core Diagnostics Repo](https://github.com/dotnet/diagnostics) repository, intending to provide a better experiences/solutions for dotnet diagnostic tools of .NET Core 3.0.
+
+## First glance
+
+![First glance](documentation/dotnet-trace-hosted/media/webui-03.png)
 
 ## Motivation
 
@@ -32,9 +36,7 @@ This repo does an experiment to put a web UI on top of the command lines to make
 
 ## Develop status
 
-The implementation is provided at [src/Tools/dotnet-trace-hosted](./src/Tools/dotnet-trace-hosted) and [src/Tools/dotnet-trace-hosted-webui](./src/Tools/dotnet-trace-hosted-webui). Here's how the UI looks like today:
-
-![dotnet-trace WebUI](./media/DotnetTraceWebUI.png)
+The implementation is provided at [src/Tools/dotnet-trace-hosted](./src/Tools/dotnet-trace-hosted) and [src/Tools/dotnet-trace-hosted-webui](./src/Tools/dotnet-trace-hosted-webui).
 
 ## Architecture
 
