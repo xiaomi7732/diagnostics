@@ -15,6 +15,7 @@
     <ProjectReference Include="..\..\Microsoft.Diagnostics.Tools.RuntimeClient\Microsoft.Diagnostics.Tools.RuntimeClient.csproj" />
     <ProjectReference Include="..\dotnet-dump\dotnet-dump.csproj" />
     <ProjectReference Include="..\dotnet-counters\dotnet-counters.csproj" />
+    <ProjectReference Include="..\..\SOS\SOS.Package\SOS.Package.csproj" />
   </ItemGroup>
 
   <ItemGroup>
