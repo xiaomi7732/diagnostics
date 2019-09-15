@@ -7,6 +7,7 @@ interface ProfileViewerProps {
     selectedProfile: string | undefined;
     onSelected: (newValue: string) => void;
     onRefresh: () => void;
+    manageProfile: () => void;
 }
 
 export default class ProfileViewer extends PureComponent<ProfileViewerProps, any> {
@@ -17,16 +18,20 @@ export default class ProfileViewer extends PureComponent<ProfileViewerProps, any
 
         if (profileArray !== undefined) {
             count = profileArray.length;
-            content = (<div className='ProfileListContainer'><select value={this.props.selectedProfile} onChange={e => {
-                const target = e.target as any;
-                if (!!target && !!target.value) {
-                    this.props.onSelected(target.value);
-                }
-            }}>{
-                    profileArray.sort((a, b) => a > b ? 1 : -1).map((profile) => {
-                        return <option key={profile.name} value={profile.name}>{profile.name}: {profile.description}</option>;
-                    })
-                }</select></div>);
+            content = (<div className='ProfileListContainer'>
+                <select value={this.props.selectedProfile} onChange={e => {
+                    const target = e.target as any;
+                    if (!!target && !!target.value) {
+                        this.props.onSelected(target.value);
+                    }
+                }}>
+                    {
+                        profileArray.sort((a, b) => a > b ? 1 : -1).map((profile) => {
+                            return <option key={profile.name} value={profile.name}>{profile.name}: {profile.description}</option>;
+                        })
+                    }</select>
+                <input type='button' className='button' value='Manage ...' onClick={this.props.manageProfile} />
+            </div>);
         } else {
             content = "No tracing profile exist."
         }

@@ -15,6 +15,7 @@ import { Profile } from './Models/Profile';
 import ProfilePicker from './Components/ProfilePicker';
 import { MonitorReport } from './Models/MonitorReport';
 import MonitorPage from './Components/MonitorPage';
+import { ProfileManager } from './Components/ProfileManager';
 
 interface AppState {
   processArray: Process[] | undefined;
@@ -29,6 +30,8 @@ interface AppState {
   isDumping: boolean;
   selectedSession: undefined | TraceSession;
   isShowMonitor: boolean;
+  isManageProfile: boolean;
+  selectedProfileForManage: Profile | undefined;
 }
 
 export default class App extends Component<any, AppState>{
@@ -47,9 +50,11 @@ export default class App extends Component<any, AppState>{
       baseUrl: '',
       profileArray: undefined,
       selectedProfile: undefined,
+      selectedProfileForManage: undefined,
       isDumping: false,
       selectedSession: undefined,
       isShowMonitor: false,
+      isManageProfile: false,
     };
   }
   render() {
@@ -63,58 +68,66 @@ export default class App extends Component<any, AppState>{
         connectToBackendAsync={this.connectToBackendAsync}
       />;
     } else {
-      const { isShowMonitor, selectedSession } = this.state;
-      content = this.state.isReady ? (
-        <>
-          {
-            isShowMonitor && selectedSession !== undefined &&
-            <MonitorPage
-              traceSessionArray={this.state.traceSessionArray}
-              isDumping={this.state.isDumping}
-              processId={selectedSession.processId}
-              sessionId={selectedSession.sessionId}
-              getReportAsync={this.getReportAsync}
-              exitMonitor={() => { this.setShowMonitoring(false); }}
-              takeDumpAsync={this.takeDumpAsync.bind(this)} 
+      const { isShowMonitor, selectedSession, isManageProfile, profileArray } = this.state;
+      if (!this.state.isReady) {
+        return null;
+      }
+
+      if (isShowMonitor && selectedSession !== undefined) {
+        content = <MonitorPage
+          traceSessionArray={this.state.traceSessionArray}
+          isDumping={this.state.isDumping}
+          processId={selectedSession.processId}
+          sessionId={selectedSession.sessionId}
+          getReportAsync={this.getReportAsync}
+          exitMonitor={() => { this.setShowMonitoring(false); }}
+          takeDumpAsync={this.takeDumpAsync.bind(this)}
+          startProfilingAsync={this.startProfilingAsync}
+          stopProfilingAsync={this.stopProfilingAsync}
+        />
+      }
+      else if (isManageProfile) {
+        content = <ProfileManager
+          profileArray={profileArray}
+          selectedProfile={this.state.selectedProfileForManage}
+          setManageProfile={this.setManageProfile}
+        ></ProfileManager>
+      } else {
+        content = <>
+          <div className='section'>
+            <ConnectionStatus baseUrl={this.state.baseUrl}
+              disconnectBackend={this.disconnectBackend}
+            />
+            <ProfilePicker
+              manageProfile={() => this.manageProfile(true)}
+              profileArray={this.state.profileArray}
+              onSelected={this.selectProfile}
+              selectedProfile={this.state.selectedProfile}
+              onRefresh={this.loadProfilesAsync}
+            />
+            <Processes
+              refreshProcessAsync={this.loadProcessesAsync}
               startProfilingAsync={this.startProfilingAsync}
+              startMonitoringAsync={this.startMonitoringAsync}
+              takeDumpAsync={this.takeDumpAsync}
+              processArray={this.state.processArray}
+              isDumping={this.state.isDumping}
+            />
+            <TraceSessions
+              traceSessions={this.state.traceSessionArray}
               stopProfilingAsync={this.stopProfilingAsync}
-              />
-          }
-          {(!isShowMonitor || selectedSession === undefined) &&
-            <div className='section'>
-              <ConnectionStatus baseUrl={this.state.baseUrl}
-                disconnectBackend={this.disconnectBackend}
-              />
-              <ProfilePicker
-                profileArray={this.state.profileArray}
-                onSelected={this.selectProfile}
-                selectedProfile={this.state.selectedProfile}
-                onRefresh={this.LoadProfilesAsync}
-              />
-              <Processes
-                refreshProcessAsync={this.loadProcessesAsync}
-                startProfilingAsync={this.startProfilingAsync}
-                startMonitoringAsync={this.startMonitoringAsync}
-                takeDumpAsync={this.takeDumpAsync}
-                processArray={this.state.processArray}
-                isDumping={this.state.isDumping}
-              />
-              <TraceSessions
-                traceSessions={this.state.traceSessionArray}
-                stopProfilingAsync={this.stopProfilingAsync}
-                stopMonitoringAsync={this.stopMonitoringAsync}
-                loadTraceSessionsAsync={this.loadTraceSessionsAsync}
-                setAsSelected={this.setSelectedSession} />
-              <TraceRepo
-                baseUrl={this.state.baseUrl}
-                loadTraceFilesAsync={this.loadTraceFilesAsync}
-                convertToSpeedscopeAsync={this.convertToSpeedscopeAsync}
-                fileArray={this.state.traceFileArray}
-              />
-            </div>
-          }
-        </>
-      ) : null;
+              stopMonitoringAsync={this.stopMonitoringAsync}
+              loadTraceSessionsAsync={this.loadTraceSessionsAsync}
+              setAsSelected={this.setSelectedSession} />
+            <TraceRepo
+              baseUrl={this.state.baseUrl}
+              loadTraceFilesAsync={this.loadTraceFilesAsync}
+              convertToSpeedscopeAsync={this.convertToSpeedscopeAsync}
+              fileArray={this.state.traceFileArray}
+            />
+          </div>
+        </>;
+      }
     }
 
     return (
@@ -132,7 +145,7 @@ export default class App extends Component<any, AppState>{
       this.loadProcessesAsync(),
       this.loadTraceSessionsAsync(),
       this.loadTraceFilesAsync(),
-      this.LoadProfilesAsync(),
+      this.loadProfilesAsync(),
     ]);
 
     this.selectProfile('runtime-basic');
@@ -400,7 +413,19 @@ export default class App extends Component<any, AppState>{
   }
 
   // Profiles
-  private LoadProfilesAsync: () => void = async () => {
+  private manageProfile: (value: boolean) => void = (value) => {
+    this.setState({
+      isManageProfile: value,
+    });
+  }
+
+  private setManageProfile: (value: Profile | undefined) => void = (value) => {
+    this.setState({
+      selectedProfileForManage: value,
+    });
+  }
+
+  private loadProfilesAsync: () => void = async () => {
     const result = await this.getProfilesAsync();
     if (result.length > 0) {
       this.setState({
