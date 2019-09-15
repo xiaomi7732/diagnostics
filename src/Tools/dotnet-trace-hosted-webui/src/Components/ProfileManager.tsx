@@ -1,5 +1,6 @@
 import React from 'react';
 import { Profile } from '../Models/Profile';
+import './ProfileManager.css';
 
 interface IProfileManagerProps {
     profileArray: Profile[] | undefined;
@@ -25,7 +26,7 @@ export class ProfileManager extends React.Component<IProfileManagerProps, any> {
                 if (p1.name > p2.name) return 1;
                 return -1;
             }).map((profile, index) => {
-                return <div key={index}>
+                return <div className='ProfileNameRadioButton' key={index} title={profile.name}>
                     <input type='radio'
                         name='profileName'
                         value={profile.name}
@@ -53,20 +54,24 @@ export class ProfileManager extends React.Component<IProfileManagerProps, any> {
                 <div>{selectedProfile.description}</div>
                 <h3>Providers</h3>
                 <table>
-                    <tr>
-                        <th>Name</th>
-                        <th>Keywords</th>
-                        <th>EventLevel</th>
-                        <th>filter</th>
-                    </tr>
-                    {selectedProfile.providers.map((provider, index) => {
-                        return <tr key={index}>
-                            <td>{provider.name}</td>
-                            <td>{provider.keywords}</td>
-                            <td>{provider.eventLevel}</td>
-                            <td>{provider.filterData}</td>
-                        </tr>;
-                    })}
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Keywords</th>
+                            <th>EventLevel</th>
+                            <th>Filter</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {selectedProfile.providers.map((provider, index) => {
+                            return <tr key={index}>
+                                <td>{provider.name}</td>
+                                <td>0x{parseInt(provider.keywords).toString(16)}</td>
+                                <td>{provider.eventLevel}</td>
+                                <td>{provider.filterData}</td>
+                            </tr>;
+                        })}
+                    </tbody>
                 </table>
             </>
         } else {
@@ -75,6 +80,7 @@ export class ProfileManager extends React.Component<IProfileManagerProps, any> {
 
         return <div className='ProfileManager'>
             <div className='ProfileList'>
+                <h2>Pick a Profile</h2>
                 {profileList}
             </div>
             <div className='ProfileDetails'>
