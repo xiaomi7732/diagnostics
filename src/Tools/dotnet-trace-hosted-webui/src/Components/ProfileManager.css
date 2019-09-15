@@ -1,0 +1,23 @@
+.ProfileManager {
+    display: flex;
+    flex-flow: row;
+}
+
+.ProfileManager .ProfileList {
+    display: flex;
+    flex-flow: column;
+    width: 200px;
+    margin: 0 24px;
+}
+
+.ProfileManager .ProfileNameRadioButton {
+    margin: 8px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ProfileManager td{
+    height: 24px;
+    padding: 8px;
+}
