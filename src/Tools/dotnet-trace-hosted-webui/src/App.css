@@ -155,3 +155,24 @@ label {
 .dark-theme .chart-title {
     text-align: center;
 }
+
+.dark-theme input {
+    background-color: #1e1e1e;
+    padding: 4px 8px;
+    border: 1px solid #1e1e1e;
+    color: white;
+}
+
+.ms-Dialog-main .title-container {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 16px;
+}
+
+.ms-Dialog-main .content-container {
+    margin: 16px;
+}
+
+.ms-Dialog-main .button-section {
+    margin-top: 16px;
+}
