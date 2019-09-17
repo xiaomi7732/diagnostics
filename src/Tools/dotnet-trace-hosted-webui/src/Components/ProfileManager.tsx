@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { Profile } from '../Models/Profile';
+import { Modal } from 'office-ui-fabric-react/lib/Modal';
 import './ProfileManager.css';
+import { getId } from '@uifabric/utilities';
 
 interface IProfileManagerProps {
     profileArray: Profile[] | undefined;
@@ -9,7 +11,23 @@ interface IProfileManagerProps {
     setManageProfile: (value: Profile | undefined) => void;
 }
 
-export class ProfileManager extends React.Component<IProfileManagerProps, any> {
+interface IProfileManagerState {
+    isShowNewProfileModel: boolean;
+    newProfileName: string;
+}
+
+export class ProfileManager extends React.Component<IProfileManagerProps, IProfileManagerState> {
+    private readonly _newProfileInputId = getId('_newProfileInputId');
+
+    constructor(props: IProfileManagerProps) {
+        super(props);
+
+        this.state = {
+            isShowNewProfileModel: true,
+            newProfileName: '',
+        };
+    }
+
     componentDidMount() {
         if (!!this.props.profileArray && this.props.profileArray.length > 0 && !this.props.selectedProfile) {
             this.props.setManageProfile(this.props.profileArray[0]);
@@ -41,6 +59,32 @@ export class ProfileManager extends React.Component<IProfileManagerProps, any> {
                     />{profile.name}
                 </div>;
             });
+            profileList = <div>
+                {profileList}
+                <Modal
+                    isOpen={this.state.isShowNewProfileModel}
+                    isBlocking={true}>
+                    <div className='dialog-container dark-theme'>
+                        <div className='title-container'>Add a Profile</div>
+                        <div className='content-container' role='presentation'>
+                            <form>
+                                <label htmlFor={this._newProfileInputId}>Profile Name:</label>
+                                <input id={this._newProfileInputId} type='input' value={this.state.newProfileName} onChange={this.handleNewProfileName}
+                                    placeholder='New profile name.'></input>
+                                <div className='button-section'>
+                                    <input type='submit' className='button' value='Submit' />
+                                    <input type='button' className='button' value='Cancel' onClick={() => {
+                                        this.setState({
+                                            isShowNewProfileModel: false,
+                                            newProfileName: '',
+                                        });
+                                    }} />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </Modal>
+            </div>
         } else {
             profileList = <div>No profile.</div>
         }
@@ -80,12 +124,22 @@ export class ProfileManager extends React.Component<IProfileManagerProps, any> {
 
         return <div className='ProfileManager'>
             <div className='ProfileList'>
-                <h2>Pick a Profile</h2>
+                <div className='HeaderContainer'>
+                    <h2>Pick a Profile</h2>
+                    &nbsp;(<div className='AddRemoveButton' onClick={() => this.setState({ isShowNewProfileModel: true })}>+</div>/<div>-</div>)
+                </div>
                 {profileList}
             </div>
             <div className='ProfileDetails'>
                 {profileDetails}
             </div>
+
         </div>
+    }
+
+    private handleNewProfileName: ((event: ChangeEvent<HTMLInputElement>) => void) | undefined = (event) => {
+        this.setState({
+            newProfileName: event.target.value,
+        });
     }
 }

@@ -10,6 +10,16 @@
     margin: 0 24px;
 }
 
+.ProfileManager .ProfileList .HeaderContainer {
+    display: flex;
+    flex-flow: row;
+    align-items: baseline;
+}
+
+.ProfileManager .ProfileList .HeaderContainer .AddRemoveButton {
+    cursor: pointer;
+}
+
 .ProfileManager .ProfileNameRadioButton {
     margin: 8px 0;
     white-space: nowrap;
@@ -17,7 +27,7 @@
     text-overflow: ellipsis;
 }
 
-.ProfileManager td{
+.ProfileManager td {
     height: 24px;
     padding: 8px;
 }
