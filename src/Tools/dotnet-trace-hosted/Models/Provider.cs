@@ -25,16 +25,16 @@ namespace HostedTrace
         }
 
         [JsonProperty("keywords")]
-        public ulong Keywords { get; }
+        public ulong Keywords { get; set; }
 
         [JsonProperty("eventLevel")]
-        public EventLevel EventLevel { get; }
+        public EventLevel EventLevel { get; set; }
 
         [JsonProperty("name")]
-        public string Name { get; }
+        public string Name { get; set; }
 
         [JsonProperty("filterData")]
-        public string FilterData { get; }
+        public string FilterData { get; set; }
 
         public override string ToString() =>
             $"{Name}:0x{Keywords:X16}:{(uint)EventLevel}{(FilterData == null ? "" : $":{FilterData}")}";

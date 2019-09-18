@@ -18,6 +18,10 @@ namespace HostedTrace
 
         public async Task<Profile> AddProfileAsync(Profile newProfile)
         {
+            if (string.IsNullOrEmpty(newProfile.Name))
+            {
+                throw new ArgumentNullException("Name");
+            }
             IEnumerable<Profile> allProfiles = await LoadProfilesAsync().ConfigureAwait(false);
             if (allProfiles.FirstOrDefault(p => string.Equals(p.Name, newProfile.Name, StringComparison.InvariantCultureIgnoreCase)) == null)
             {
