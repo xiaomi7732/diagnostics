@@ -91,6 +91,8 @@ export default class App extends Component<any, AppState>{
           profileArray={profileArray}
           selectedProfile={this.state.selectedProfileForManage}
           setManageProfile={this.setManageProfile}
+          addProfileAsync={this.addNewProfileAsync}
+          refreshProfile={this.loadProfilesAsync}
         ></ProfileManager>
       } else {
         content = <>
@@ -451,6 +453,23 @@ export default class App extends Component<any, AppState>{
     this.setState({
       selectedProfile: newValue
     });
+  }
+
+  private addNewProfileAsync: (newProfile: Profile) => Promise<Profile> = async (newProfile) => {
+    const response = await fetch(`${this.state.baseUrl}/profiles`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newProfile),
+    });
+    if (!!response && response.ok) {
+      return response.json();
+    } else {
+      const error = await response.json();
+      alert(error);
+    }
+    return null;
   }
 
   // Dumps
