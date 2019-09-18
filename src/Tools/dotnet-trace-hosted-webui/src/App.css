@@ -163,6 +163,23 @@ label {
     color: white;
 }
 
+.dark-theme ::placeholder {
+    /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #707070;
+    opacity: 1;
+    /* Firefox */
+}
+
+.dark-theme :-ms-input-placeholder {
+    /* Internet Explorer 10-11 */
+    color: #707070;
+}
+
+.dark-theme ::-ms-input-placeholder {
+    /* Microsoft Edge */
+    color: #707070;
+}
+
 .ms-Dialog-main .title-container {
     font-size: 14px;
     font-weight: bold;
