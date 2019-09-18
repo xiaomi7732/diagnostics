@@ -26,13 +26,20 @@ namespace HostedTrace.Controllers
         [HttpPost]
         public async Task<ActionResult> AddAsync([FromBody] Profile newProfile)
         {
-            Profile newInstance = await _profileService.AddProfileAsync(newProfile).ConfigureAwait(false);
-            if (newInstance != null)
+            try
             {
-                return Created("", newInstance);
-            }
+                Profile newInstance = await _profileService.AddProfileAsync(newProfile).ConfigureAwait(false);
+                if (newInstance != null)
+                {
+                    return Created("", newInstance);
+                }
 
-            return Conflict();
+                return Conflict();
+            }
+            catch (Exception ex)
+            {
+                return Conflict(ex.ToString());
+            }
         }
 
         [HttpDelete("{name}")]
