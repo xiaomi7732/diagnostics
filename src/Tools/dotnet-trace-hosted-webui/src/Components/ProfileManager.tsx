@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, FormEvent } from 'react';
 import { Profile } from '../Models/Profile';
 import { Modal } from 'office-ui-fabric-react/lib/Modal';
 import './ProfileManager.css';
@@ -9,22 +9,27 @@ interface IProfileManagerProps {
     selectedProfile: Profile | undefined;
 
     setManageProfile: (value: Profile | undefined) => void;
+    addProfileAsync: (newProfile: Profile) => Promise<Profile>;
+    refreshProfile: () => void;
 }
 
 interface IProfileManagerState {
     isShowNewProfileModel: boolean;
     newProfileName: string;
+    newProfileDescription: string;
 }
 
 export class ProfileManager extends React.Component<IProfileManagerProps, IProfileManagerState> {
     private readonly _newProfileInputId = getId('_newProfileInputId');
+    private readonly _newProfileDescriptionId = getId('_newProfileDescriptionId');
 
     constructor(props: IProfileManagerProps) {
         super(props);
 
         this.state = {
-            isShowNewProfileModel: true,
+            isShowNewProfileModel: false,
             newProfileName: '',
+            newProfileDescription: '',
         };
     }
 
@@ -67,10 +72,17 @@ export class ProfileManager extends React.Component<IProfileManagerProps, IProfi
                     <div className='dialog-container dark-theme'>
                         <div className='title-container'>Add a Profile</div>
                         <div className='content-container' role='presentation'>
-                            <form>
-                                <label htmlFor={this._newProfileInputId}>Profile Name:</label>
-                                <input id={this._newProfileInputId} type='input' value={this.state.newProfileName} onChange={this.handleNewProfileName}
-                                    placeholder='New profile name.'></input>
+                            <form onSubmit={this.handleNewProfileSubmit}>
+                                <div role='presentation'>
+                                    <label htmlFor={this._newProfileInputId}>Profile Name:</label>
+                                    <input id={this._newProfileInputId} type='input' value={this.state.newProfileName} onChange={this.handleNewProfileName}
+                                        placeholder='New profile name.'></input>
+                                </div>
+                                <div role='presentation'>
+                                    <label htmlFor={this._newProfileDescriptionId}>Description:</label>
+                                    <input id={this._newProfileDescriptionId} type='input' value={this.state.newProfileDescription} onChange={this.handleNewProfileDescription}
+                                        placeholder='Description of the Profile.'></input>
+                                </div>
                                 <div className='button-section'>
                                     <input type='submit' className='button' value='Submit' />
                                     <input type='button' className='button' value='Cancel' onClick={() => {
@@ -141,5 +153,29 @@ export class ProfileManager extends React.Component<IProfileManagerProps, IProfi
         this.setState({
             newProfileName: event.target.value,
         });
+    }
+
+    private handleNewProfileDescription: ((event: ChangeEvent<HTMLInputElement>) => void) | undefined = (event) => {
+        this.setState({
+            newProfileDescription: event.target.value,
+        });
+    }
+
+    private handleNewProfileSubmit: ((event: FormEvent<HTMLFormElement>) => void) | undefined = async (event) => {
+        event.preventDefault();
+        const result = await this.props.addProfileAsync({
+            name: this.state.newProfileName,
+            description: this.state.newProfileDescription,
+            providers: []
+        });
+
+        if (result !== null) {
+            this.setState({
+                isShowNewProfileModel: false,
+                newProfileDescription: '',
+                newProfileName: '',
+            });
+            this.props.refreshProfile();
+        }
     }
 }
