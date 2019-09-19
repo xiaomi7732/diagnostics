@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Diagnostics.Tools.Counters;
 using Microsoft.Diagnostics.Tracing;
 
@@ -17,9 +18,12 @@ namespace HostedTrace
         private readonly ConcurrentDictionary<string, Queue<double>> _metrics;
         private readonly CounterFilter _counterFilter;
         private readonly int _intervalInSeconds;
+        private readonly IHubContext<CounterHub> _hubContext;
+
         public MonitorTraceSession(
             int processId, ulong sessionId,
-            EventPipeEventSource eventPipeEventSource, CounterFilter filter, int intervalInSeconds) :
+            EventPipeEventSource eventPipeEventSource, CounterFilter filter, int intervalInSeconds,
+            IHubContext<CounterHub> hubContext) :
             base(processId, sessionId)
         {
             this.Type = TraceSessionType.Monitor;
@@ -27,7 +31,7 @@ namespace HostedTrace
             _eventSource = eventPipeEventSource ?? throw new System.ArgumentNullException(nameof(eventPipeEventSource));
             _counterFilter = filter ?? throw new ArgumentNullException(nameof(filter));
             _intervalInSeconds = intervalInSeconds;
-
+            _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
             Task.Run(() =>
             {
                 try
@@ -57,6 +61,7 @@ namespace HostedTrace
                 queue.Dequeue();
             }
             queue.Enqueue(metricValue);
+            _hubContext.Clients.All.SendAsync("UpdateCounterAsync", ProcessId, Id, metricName, metricValue);
         }
 
         public Dictionary<string, List<double>> GetMetrics()

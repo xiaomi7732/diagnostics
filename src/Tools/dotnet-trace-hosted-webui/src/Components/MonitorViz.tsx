@@ -1,18 +1,15 @@
 import React from 'react';
-import { MonitorReport } from '../Models/MonitorReport';
 import { AreaChart, YAxis, XAxis, CartesianGrid, Area, Tooltip } from 'recharts';
 import './MonitorViz.css';
 import { CounterScores } from '../Models/CounterScores';
 import { ColorPalette } from '../Models/ColorPalette';
 
 interface MonitorVizProps {
-    getReportAsync: () => Promise<MonitorReport | undefined>,
+    report: Map<string, number[]>;
 }
 
 interface MonitorVizState {
     width: number;
-    report: MonitorReport | undefined;
-    interval: NodeJS.Timeout | null;
 }
 
 export default class MonitorViz extends React.Component<MonitorVizProps, MonitorVizState> {
@@ -20,33 +17,24 @@ export default class MonitorViz extends React.Component<MonitorVizProps, Monitor
         super(props);
 
         this.state = {
-            report: undefined,
             width: 0,
-            interval: null,
         };
     }
 
     async componentDidMount() {
-        const interval = await this.loadDataAsync();
         this.updateWindowDimensions();
         window.addEventListener('resize', this.updateWindowDimensions);
-        this.setState({
-            interval
-        });
     }
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateWindowDimensions);
-        if (this.state.interval !== null) {
-            clearInterval(this.state.interval);
-        }
     }
 
     render() {
-        const { report, width } = this.state;
-
+        const { width } = this.state;
+        const { report } = this.props;
         let content;
-        if (report === undefined) {
+        if (report === undefined || report.size === 0) {
             content = <div className='data-loading-message'>Visualization data not available.</div>
         } else {
             let chartWidth = width < 600 ? width - 24 : width / 3 - 8;
@@ -57,37 +45,40 @@ export default class MonitorViz extends React.Component<MonitorVizProps, Monitor
             if (chartHeight < 200) {
                 chartHeight = 200;
             }
-            content = <>{
-                Object.keys(report).sort(this.metricsNameComparer).map((metricName, idxKey) => {
-                    const reportItem = (report as unknown as { [key: string]: number[] })[metricName];
-                    const data = reportItem.map((point, index) => {
-                        return { key: metricName, value: point, x: index };
-                    }) as ReadonlyArray<object>;
 
-                    const color = ColorPalette[idxKey % (Object.keys(ColorPalette).length / 2)];
-                    return <div key={idxKey} style={{ display: 'flex', flexFlow: 'column' }} >
-                        <h4 className='chart-title'>{metricName}</h4>
-                        <AreaChart
-                            width={chartWidth}
-                            height={chartHeight}
-                            data={data}
-                            margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
-                        >
-                            <defs>
-                                <linearGradient id={color} x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor={color} stopOpacity={0.6} />
-                                    <stop offset="95%" stopColor={color} stopOpacity={.2} />
-                                </linearGradient>
-                            </defs>
-                            <XAxis stroke='white' dataKey='x' type='number' />
-                            <YAxis stroke='white' type='number' />
-                            <CartesianGrid strokeDasharray="5 2" vertical={false} strokeWidth='1' stroke='#888888' />
-                            <Tooltip wrapperStyle={{ color: 'blue', backgroundColor: 'red' }} isAnimationActive={false} />
-                            <Area type="monotone" dataKey="value" strokeWidth={2} stroke={color} fillOpacity={1} fill={"url(#" + color + ")"}
-                                isAnimationActive={false}>
-                            </Area>
-                        </AreaChart>
-                    </div>
+            content = <>{
+                Array.from(report.keys()).sort(this.metricsNameComparer).map((metricName, idxKey) => {
+                    const reportItem = report.get(metricName);
+                    if (reportItem !== undefined) {
+                        const data = reportItem.map((value, index) => { return { key: metricName, value: value, x: index } }) as ReadonlyArray<object>;
+                        const color = ColorPalette[idxKey % (Object.keys(ColorPalette).length / 2)];
+
+                        return <div key={idxKey} style={{ display: 'flex', flexFlow: 'column' }} >
+                            <h4 className='chart-title'>{metricName}</h4>
+                            <AreaChart
+                                width={chartWidth}
+                                height={chartHeight}
+                                data={data}
+                                margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+                            >
+                                <defs>
+                                    <linearGradient id={color} x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor={color} stopOpacity={0.6} />
+                                        <stop offset="95%" stopColor={color} stopOpacity={.2} />
+                                    </linearGradient>
+                                </defs>
+                                <XAxis stroke='white' dataKey='x' type='number' />
+                                <YAxis stroke='white' type='number' />
+                                <CartesianGrid strokeDasharray="5 2" vertical={false} strokeWidth='1' stroke='#888888' />
+                                <Tooltip wrapperStyle={{ color: 'blue', backgroundColor: 'red' }} isAnimationActive={false} />
+                                <Area type="monotone" dataKey="value" strokeWidth={2} stroke={color} fillOpacity={1} fill={"url(#" + color + ")"}
+                                    isAnimationActive={false}>
+                                </Area>
+                            </AreaChart>
+                        </div>
+                    } else {
+                        return null;
+                    }
                 })
             }
             </>
@@ -96,15 +87,6 @@ export default class MonitorViz extends React.Component<MonitorVizProps, Monitor
         return <div className='monitor-viz'>
             {content}
         </div>;
-    }
-
-    private loadDataAsync = async (): Promise<NodeJS.Timeout> => {
-        return setInterval(async () => {
-            const report = await this.props.getReportAsync();
-            this.setState({
-                report,
-            });
-        }, 500);
     }
 
     private updateWindowDimensions = () => {
