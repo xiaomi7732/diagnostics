@@ -19,6 +19,7 @@ namespace HostedTrace
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSignalR();
             services.AddControllers();
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<ITraceService, TraceService>();
@@ -37,7 +38,7 @@ namespace HostedTrace
         {
             if (env.IsDevelopment())
             {
-                app.UseCors(opt => opt.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+                app.UseCors(opt => opt.WithOrigins("http://localhost:9400", "http://localhost:3000").AllowAnyMethod().AllowAnyHeader().AllowCredentials());
                 app.UseDeveloperExceptionPage();
             }
             var defaultFileOption = new DefaultFilesOptions();
@@ -53,6 +54,7 @@ namespace HostedTrace
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<CounterHub>("/counterHub");
             });
         }
     }

@@ -75,11 +75,11 @@ export default class App extends Component<any, AppState>{
 
       if (isShowMonitor && selectedSession !== undefined) {
         content = <MonitorPage
+          selectedEndpoint={this.state.baseUrl}
           traceSessionArray={this.state.traceSessionArray}
           isDumping={this.state.isDumping}
           processId={selectedSession.processId}
           sessionId={selectedSession.sessionId}
-          getReportAsync={this.getReportAsync}
           exitMonitor={() => { this.setShowMonitoring(false); }}
           takeDumpAsync={this.takeDumpAsync.bind(this)}
           startProfilingAsync={this.startProfilingAsync}

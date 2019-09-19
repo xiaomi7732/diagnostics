@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Diagnostics.Tools.Counters;
 using Microsoft.Diagnostics.Tools.RuntimeClient;
 using Microsoft.Diagnostics.Tracing;
@@ -12,13 +13,16 @@ namespace HostedTrace
     {
         CounterConfiguration _configuration;
         private readonly ITraceSessionManager _sessionManager;
+        private readonly IHubContext<CounterHub> _counterHub;
 
         public CounterMonitor2(CounterConfiguration configuration,
-            ITraceSessionManager sessionManager
+            ITraceSessionManager sessionManager,
+            IHubContext<CounterHub> counterHub
         )
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _sessionManager = sessionManager ?? throw new ArgumentNullException(nameof(sessionManager));
+            _counterHub = counterHub ?? throw new ArgumentNullException(nameof(counterHub));
         }
 
         public Task<ulong> StartMonitorAsync(List<string> counterList, int processId, int intervalInSeconds)
@@ -51,7 +55,8 @@ namespace HostedTrace
                     sessionId,
                     eventSource,
                     filter,
-                    _configuration.IntervalInSeconds);
+                    _configuration.IntervalInSeconds,
+                    _counterHub);
                 _sessionManager.TryAdd(monitorTraceSession);
                 return Task.FromResult(sessionId);
             }
