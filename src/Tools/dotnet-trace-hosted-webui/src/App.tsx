@@ -93,6 +93,7 @@ export default class App extends Component<any, AppState>{
           setManageProfile={this.setManageProfile}
           addProfileAsync={this.addNewProfileAsync}
           refreshProfile={this.loadProfilesAsync}
+          deleteProfileAsync={this.deleteProfileAsync}
         ></ProfileManager>
       } else {
         content = <>
@@ -470,6 +471,23 @@ export default class App extends Component<any, AppState>{
       alert(error);
     }
     return null;
+  }
+
+  private deleteProfileAsync: (name: string) => Promise<boolean> = async (name) => {
+    const response = await fetch(`${this.state.baseUrl}/profiles/${encodeURI(name)}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    let result: boolean = false;
+    if (!!response && response.ok) {
+      result = true;
+    } else {
+      const error = await response.json();
+      alert(error);
+    }
+    return result;
   }
 
   // Dumps
