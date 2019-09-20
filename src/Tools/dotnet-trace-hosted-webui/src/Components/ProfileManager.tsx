@@ -10,6 +10,7 @@ interface IProfileManagerProps {
 
     setManageProfile: (value: Profile | undefined) => void;
     addProfileAsync: (newProfile: Profile) => Promise<Profile>;
+    deleteProfileAsync: (name: string) => Promise<boolean>;
     refreshProfile: () => void;
 }
 
@@ -17,26 +18,38 @@ interface IProfileManagerState {
     isShowNewProfileModel: boolean;
     newProfileName: string;
     newProfileDescription: string;
+    isConfirmDeletingProfile: boolean;
+    isShowAddProvider: boolean;
 }
 
 export class ProfileManager extends React.Component<IProfileManagerProps, IProfileManagerState> {
     private readonly _newProfileInputId = getId('_newProfileInputId');
     private readonly _newProfileDescriptionId = getId('_newProfileDescriptionId');
 
+    private readonly _newProviderNameId = getId('_newProviderNameId');
+    private readonly _newProviderKeywordId = getId('_newProviderKeywordId');
+    private readonly _newProviderEventLevelId = getId('_newProviderEventLevelId');
+    private readonly _newProviderFilterId = getId('_newProviderFilterId');
+
+
     constructor(props: IProfileManagerProps) {
         super(props);
 
         this.state = {
             isShowNewProfileModel: false,
+            isConfirmDeletingProfile: false,
             newProfileName: '',
             newProfileDescription: '',
+            isShowAddProvider: false,
         };
     }
 
     componentDidMount() {
-        if (!!this.props.profileArray && this.props.profileArray.length > 0 && !this.props.selectedProfile) {
-            this.props.setManageProfile(this.props.profileArray[0]);
-        }
+        this.pickFirstProfile();
+    }
+
+    componentDidUpdate() {
+        this.pickFirstProfile();
     }
 
     render() {
@@ -96,6 +109,25 @@ export class ProfileManager extends React.Component<IProfileManagerProps, IProfi
                         </div>
                     </div>
                 </Modal>
+                <Modal isOpen={this.state.isConfirmDeletingProfile}
+                    isBlocking={true} isDarkOverlay={true}>
+                    <div className='dialog-container dark-theme'>
+                        <div className='title-container'>Delete a Profile</div>
+                        <div className='content-container' role='presentation'>
+                            <form onSubmit={this.handleDeleteProfileSubmit}>
+                                <span>Are you sure you want to delete the profile: {!!this.props.selectedProfile && this.props.selectedProfile.name}</span>
+                                <div className='button-section'>
+                                    <input type='submit' className='button' value='Yes' />
+                                    <input type='button' className='button' value='No' onClick={() => {
+                                        this.setState({
+                                            isConfirmDeletingProfile: false,
+                                        });
+                                    }} />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </Modal>
             </div>
         } else {
             profileList = <div>No profile.</div>
@@ -116,19 +148,59 @@ export class ProfileManager extends React.Component<IProfileManagerProps, IProfi
                             <th>Keywords</th>
                             <th>EventLevel</th>
                             <th>Filter</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {selectedProfile.providers.map((provider, index) => {
-                            return <tr key={index}>
+                            return <tr key={provider.name}>
                                 <td>{provider.name}</td>
                                 <td>0x{parseInt(provider.keywords).toString(16)}</td>
                                 <td>{provider.eventLevel}</td>
                                 <td>{provider.filterData}</td>
+                                <td><input type='button' value='Delete' className='button' /></td>
                             </tr>;
                         })}
                     </tbody>
                 </table>
+                <input type='button' value='Add' className='button' onClick={() => this.setState({ isShowAddProvider: true })} />
+                <Modal isOpen={this.state.isShowAddProvider} isBlocking={true} isDarkOverlay={true}>
+                    <div className='dialog-container dark-theme'>
+                        <div className='title-container'>Add a provider</div>
+                        <div className='content-container' role='presentation'>
+                            <form onSubmit={this.handleAddProvider}>
+                                <div role='presentation'>
+                                    <label htmlFor={this._newProviderNameId}>Name:</label>
+                                    <input id={this._newProviderNameId} type='input' value={this.state.newProfileName} onChange={this.handleNewProfileName}
+                                        placeholder='New profile name.'></input>
+                                </div>
+                                <div role='presentation'>
+                                    <label htmlFor={this._newProviderKeywordId}>Keyword:</label>
+                                    <input id={this._newProviderKeywordId} type='input' value={this.state.newProfileDescription} onChange={this.handleNewProfileDescription}
+                                        placeholder='Description of the Profile.'></input>
+                                </div>
+                                <div role='presentation'>
+                                    <label htmlFor={this._newProviderEventLevelId}>EventLevel:</label>
+                                    <input id={this._newProviderEventLevelId} type='input' value={this.state.newProfileDescription} onChange={this.handleNewProfileDescription}
+                                        placeholder='Description of the Profile.'></input>
+                                </div>
+                                <div role='presentation'>
+                                    <label htmlFor={this._newProviderFilterId}>Filter:</label>
+                                    <input id={this._newProviderFilterId} type='input' value={this.state.newProfileDescription} onChange={this.handleNewProfileDescription}
+                                        placeholder='Description of the Profile.'></input>
+                                </div>
+                                <div className='button-section'>
+                                    <input type='submit' className='button' value='Yes' />
+                                    <input type='button' className='button' value='No' onClick={() => {
+                                        this.setState({
+                                            isShowAddProvider: false,
+                                        });
+                                    }} />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </Modal>
             </>
         } else {
             profileDetails = <div>Select or create a profile first.</div>
@@ -138,7 +210,9 @@ export class ProfileManager extends React.Component<IProfileManagerProps, IProfi
             <div className='ProfileList'>
                 <div className='HeaderContainer'>
                     <h2>Pick a Profile</h2>
-                    &nbsp;(<div className='AddRemoveButton' onClick={() => this.setState({ isShowNewProfileModel: true })}>+</div>/<div>-</div>)
+                    &nbsp;(<div className='AddRemoveButton' onClick={() => this.setState({ isShowNewProfileModel: true })}>+</div>
+                    /
+                    <div className='AddRemoveButton' onClick={() => this.setState({ isConfirmDeletingProfile: true })}>-</div>)
                 </div>
                 {profileList}
             </div>
@@ -177,5 +251,33 @@ export class ProfileManager extends React.Component<IProfileManagerProps, IProfi
             });
             this.props.refreshProfile();
         }
+    }
+
+    private pickFirstProfile() {
+        if (!!this.props.profileArray && this.props.profileArray.length > 0 && !this.props.selectedProfile) {
+            this.props.setManageProfile(this.props.profileArray[0]);
+        }
+    }
+
+    private handleDeleteProfileSubmit: ((event: FormEvent<HTMLFormElement>) => void) | undefined = async (event) => {
+        event.preventDefault();
+        if (this.props.selectedProfile !== undefined) {
+            const result = await this.props.deleteProfileAsync(this.props.selectedProfile.name);
+            if (result) {
+                this.setState({
+                    isConfirmDeletingProfile: false,
+                });
+                this.props.setManageProfile(undefined);
+                this.props.refreshProfile();
+            } else {
+                alert('Fail to delete profiler: ' + this.props.selectedProfile.name);
+            }
+        } else {
+            alert('No selected profile.');
+        }
+    }
+
+    private handleAddProvider: ((event: FormEvent<HTMLFormElement>) => void) | undefined = async (event) => {
+        alert('Not implemented.');
     }
 }
