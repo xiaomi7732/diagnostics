@@ -61,6 +61,8 @@ export default class App extends Component<any, AppState>{
     this.removeProvider = this.removeProvider.bind(this);
     this.appendProvider = this.appendProvider.bind(this);
     this.takeDumpAsync = this.takeDumpAsync.bind(this);
+
+    this.goHome = this.goHome.bind(this);
   }
   render() {
     let content;
@@ -142,7 +144,12 @@ export default class App extends Component<any, AppState>{
 
     return (
       <div className='dark-theme'>
-        <AppHeader />
+        <AppHeader isHome={
+          (!this.state.isBackendReady) ||
+          (this.state.isBackendReady &&
+            !this.state.isShowMonitor &&
+            !this.state.isManageProfile)}
+          goHome={this.goHome} />
         <div className='app-container'>
           {content}
         </div>
@@ -570,5 +577,13 @@ export default class App extends Component<any, AppState>{
       this.setState({ isDumping: false })
     }
     return false;
+  }
+
+  // Others
+  private goHome: () => void = () => {
+    this.setState({
+      isShowMonitor: false,
+      isManageProfile: false,
+    });
   }
 }
