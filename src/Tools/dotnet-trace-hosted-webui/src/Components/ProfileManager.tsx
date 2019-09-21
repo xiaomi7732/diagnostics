@@ -184,7 +184,7 @@ export class ProfileManager extends React.Component<IProfileManagerProps, IProfi
                         <div className='title-container'>Add a provider</div>
                         <div className='content-container' role='presentation'>
                             <form onSubmit={this.handleAddProvider}>
-                                <table>
+                                <table className='ProviderTable'>
                                     <tbody>
                                         <tr>
                                             <td><label htmlFor={this._newProviderNameId}>Name:</label></td>
@@ -245,6 +245,11 @@ export class ProfileManager extends React.Component<IProfileManagerProps, IProfi
                         </div>
                     </div>
                 </Modal>
+                {!!this.props.selectedProfile && 
+                <div className='profileRawText'>
+                    <div>RAW:</div>
+                    <textarea className='profileRawTextArea' readOnly value={JSON.stringify(this.props.selectedProfile)}></textarea>
+                </div>}
             </>
         } else {
             profileDetails = <div>Select or create a profile first.</div>

@@ -10,6 +10,13 @@
     margin: 0 24px;
 }
 
+.ProfileManager .ProfileDetails {
+    display: flex;
+    align-items: baseline;
+    flex-flow: column;
+    flex-grow: 2;
+}
+
 .ProfileManager .ProfileList .HeaderContainer {
     display: flex;
     flex-flow: row;
@@ -27,6 +34,21 @@
     text-overflow: ellipsis;
 }
 
+.ProfileManager .ProviderTable {
+    min-width: 800px;
+}
+
 .ProfileManager td {
     height: 24px;
+}
+
+.ProfileManager .profileRawText {
+    margin-top: 24px;
+    display: flex;
+    flex-flow: column;
+}
+
+.ProfileManager .profileRawTextArea {
+    min-width: 800px;
+    min-height: 120px;
 }

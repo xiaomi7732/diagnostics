@@ -169,6 +169,11 @@ label {
     color: white;
 }
 
+.dark-theme textarea{
+    background-color: #1e1e1e;
+    color: white;
+}
+
 .dark-theme ::placeholder {
     /* Chrome, Firefox, Opera, Safari 10.1+ */
     color: #707070;
