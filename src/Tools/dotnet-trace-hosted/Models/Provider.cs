@@ -8,6 +8,12 @@ namespace HostedTrace
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
     public class Provider
     {
+        // Preserve for serialization / deserialization.
+        public Provider()
+        {
+
+        }
+
         public Provider(
             string name,
             ulong keywords = ulong.MaxValue,
