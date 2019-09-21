@@ -1,7 +1,7 @@
 export class Provider {
     constructor(
-        public keywords: string,
-        public eventLevel: string,
+        public keywords: number,
+        public eventLevel: number,
         public name: string,
         public filterData: string,
     ) { }

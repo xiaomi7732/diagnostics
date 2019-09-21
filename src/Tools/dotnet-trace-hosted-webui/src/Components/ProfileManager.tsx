@@ -3,6 +3,7 @@ import { Profile } from '../Models/Profile';
 import { Modal } from 'office-ui-fabric-react/lib/Modal';
 import './ProfileManager.css';
 import { getId } from '@uifabric/utilities';
+import { Provider } from '../Models/Provider';
 
 interface IProfileManagerProps {
     profileArray: Profile[] | undefined;
@@ -12,14 +13,20 @@ interface IProfileManagerProps {
     addProfileAsync: (newProfile: Profile) => Promise<Profile>;
     deleteProfileAsync: (name: string) => Promise<boolean>;
     refreshProfile: () => void;
+    appendProvider: (newProvider: Provider) => void;
+    removeProvider: (name: string) => void;
 }
 
 interface IProfileManagerState {
+    // New Profile
     isShowNewProfileModel: boolean;
     newProfileName: string;
     newProfileDescription: string;
+    // Delete Profile
     isConfirmDeletingProfile: boolean;
+    // Add Provider
     isShowAddProvider: boolean;
+    newProvider: Provider & { keywordsHex: string };
 }
 
 export class ProfileManager extends React.Component<IProfileManagerProps, IProfileManagerState> {
@@ -40,7 +47,15 @@ export class ProfileManager extends React.Component<IProfileManagerProps, IProfi
             isConfirmDeletingProfile: false,
             newProfileName: '',
             newProfileDescription: '',
+
             isShowAddProvider: false,
+            newProvider: {
+                name: '',
+                keywords: 0,
+                filterData: '',
+                eventLevel: 5,
+                keywordsHex: '0x0',
+            }
         };
     }
 
@@ -155,10 +170,10 @@ export class ProfileManager extends React.Component<IProfileManagerProps, IProfi
                         {selectedProfile.providers.map((provider, index) => {
                             return <tr key={provider.name}>
                                 <td>{provider.name}</td>
-                                <td>0x{parseInt(provider.keywords).toString(16)}</td>
+                                <td>0x{provider.keywords.toString(16)}</td>
                                 <td>{provider.eventLevel}</td>
                                 <td>{provider.filterData}</td>
-                                <td><input type='button' value='Delete' className='button' /></td>
+                                <td><input type='button' value='Delete' className='button' onClick={() => { this.handleRemoveProvider(provider.name); }} /></td>
                             </tr>;
                         })}
                     </tbody>
@@ -169,29 +184,58 @@ export class ProfileManager extends React.Component<IProfileManagerProps, IProfi
                         <div className='title-container'>Add a provider</div>
                         <div className='content-container' role='presentation'>
                             <form onSubmit={this.handleAddProvider}>
-                                <div role='presentation'>
-                                    <label htmlFor={this._newProviderNameId}>Name:</label>
-                                    <input id={this._newProviderNameId} type='input' value={this.state.newProfileName} onChange={this.handleNewProfileName}
-                                        placeholder='New profile name.'></input>
-                                </div>
-                                <div role='presentation'>
-                                    <label htmlFor={this._newProviderKeywordId}>Keyword:</label>
-                                    <input id={this._newProviderKeywordId} type='input' value={this.state.newProfileDescription} onChange={this.handleNewProfileDescription}
-                                        placeholder='Description of the Profile.'></input>
-                                </div>
-                                <div role='presentation'>
-                                    <label htmlFor={this._newProviderEventLevelId}>EventLevel:</label>
-                                    <input id={this._newProviderEventLevelId} type='input' value={this.state.newProfileDescription} onChange={this.handleNewProfileDescription}
-                                        placeholder='Description of the Profile.'></input>
-                                </div>
-                                <div role='presentation'>
-                                    <label htmlFor={this._newProviderFilterId}>Filter:</label>
-                                    <input id={this._newProviderFilterId} type='input' value={this.state.newProfileDescription} onChange={this.handleNewProfileDescription}
-                                        placeholder='Description of the Profile.'></input>
-                                </div>
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td><label htmlFor={this._newProviderNameId}>Name:</label></td>
+                                            <td><input id={this._newProviderNameId}
+                                                type='input'
+                                                value={this.state.newProvider.name}
+                                                onChange={this.handleChangeForNewProvider('name')}
+                                                placeholder='New provider name'></input></td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label htmlFor={this._newProviderKeywordId}>Keyword:</label>
+                                            </td>
+                                            <td>
+                                                <input id={this._newProviderKeywordId}
+                                                    type='input'
+                                                    value={this.state.newProvider.keywordsHex} onChange={this.handleChangeForNewProvider('keywords')}
+                                                    placeholder='Keywords'></input>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label htmlFor={this._newProviderEventLevelId}>Event Level:</label>
+                                            </td>
+                                            <td>
+                                                <select value={this.state.newProvider.eventLevel} onChange={this.handleChangeForNewProvider('eventLevel')}>
+                                                    <option value={0}>Always Log</option>
+                                                    <option value={1}>Critical</option>
+                                                    <option value={2}>Error</option>
+                                                    <option value={3}>Warning</option>
+                                                    <option value={4}>Informational</option>
+                                                    <option value={5}>Verbose</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label htmlFor={this._newProviderFilterId}>Filter:</label>
+                                            </td>
+                                            <td>
+                                                <input id={this._newProviderFilterId} type='input'
+                                                    value={this.state.newProvider.filterData}
+                                                    onChange={this.handleChangeForNewProvider('filterData')}
+                                                    placeholder='RegEx filter'></input>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                                 <div className='button-section'>
-                                    <input type='submit' className='button' value='Yes' />
-                                    <input type='button' className='button' value='No' onClick={() => {
+                                    <input type='submit' className='button' value='OK' />
+                                    <input type='button' className='button' value='Cancel' onClick={() => {
                                         this.setState({
                                             isShowAddProvider: false,
                                         });
@@ -219,8 +263,10 @@ export class ProfileManager extends React.Component<IProfileManagerProps, IProfi
             <div className='ProfileDetails'>
                 {profileDetails}
             </div>
-
         </div>
+    }
+    private handleRemoveProvider(name: string) {
+        this.props.removeProvider(name);
     }
 
     private handleNewProfileName: ((event: ChangeEvent<HTMLInputElement>) => void) | undefined = (event) => {
@@ -278,6 +324,35 @@ export class ProfileManager extends React.Component<IProfileManagerProps, IProfi
     }
 
     private handleAddProvider: ((event: FormEvent<HTMLFormElement>) => void) | undefined = async (event) => {
-        alert('Not implemented.');
+        event.preventDefault();
+        const { newProvider } = this.state;
+        if (!!newProvider.name && !!newProvider.keywords) {
+            this.props.appendProvider(newProvider);
+            this.setState({
+                newProvider: {
+                    name: '',
+                    keywords: 0,
+                    eventLevel: 5,
+                    filterData: '',
+                    keywordsHex: '0x0',
+                },
+                isShowAddProvider: false,
+            });
+        } else {
+            alert('Provider Name & Keywords are required.');
+        }
+    }
+
+    handleChangeForNewProvider = (propertyName: string) => (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { newProvider } = this.state;
+        const newState = {
+            ...newProvider,
+            [propertyName]: event.target.value
+        };
+        if (propertyName === 'keywords') {
+            newState.keywordsHex = event.target.value;
+            newState.keywords = parseInt(event.target.value, 16);
+        }
+        this.setState({ newProvider: newState });
     }
 }

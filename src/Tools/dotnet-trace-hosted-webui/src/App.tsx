@@ -16,6 +16,7 @@ import ProfilePicker from './Components/ProfilePicker';
 import { MonitorReport } from './Models/MonitorReport';
 import MonitorPage from './Components/MonitorPage';
 import { ProfileManager } from './Components/ProfileManager';
+import { Provider } from './Models/Provider';
 
 interface AppState {
   processArray: Process[] | undefined;
@@ -56,6 +57,10 @@ export default class App extends Component<any, AppState>{
       isShowMonitor: false,
       isManageProfile: false,
     };
+
+    this.removeProvider = this.removeProvider.bind(this);
+    this.appendProvider = this.appendProvider.bind(this);
+    this.takeDumpAsync = this.takeDumpAsync.bind(this);
   }
   render() {
     let content;
@@ -81,7 +86,7 @@ export default class App extends Component<any, AppState>{
           processId={selectedSession.processId}
           sessionId={selectedSession.sessionId}
           exitMonitor={() => { this.setShowMonitoring(false); }}
-          takeDumpAsync={this.takeDumpAsync.bind(this)}
+          takeDumpAsync={this.takeDumpAsync}
           startProfilingAsync={this.startProfilingAsync}
           stopProfilingAsync={this.stopProfilingAsync}
         />
@@ -94,6 +99,8 @@ export default class App extends Component<any, AppState>{
           addProfileAsync={this.addNewProfileAsync}
           refreshProfile={this.loadProfilesAsync}
           deleteProfileAsync={this.deleteProfileAsync}
+          appendProvider={this.appendProvider}
+          removeProvider={this.removeProvider}
         ></ProfileManager>
       } else {
         content = <>
@@ -471,6 +478,51 @@ export default class App extends Component<any, AppState>{
       alert(error);
     }
     return null;
+  }
+
+  /** Append a provider to selected profile */
+  private appendProvider(newProvider: Provider) {
+    const selectedProvider = Object.assign({}, this.state.selectedProfileForManage);
+    selectedProvider.providers.push(newProvider);
+    this.setState({
+      selectedProfileForManage: selectedProvider,
+    });
+
+    this.updateProfileAsync();
+  }
+
+  // Remove a provider from selected profile
+  private removeProvider(name: string): void {
+    if (!name) return;
+    const selectedProvider = Object.assign({}, this.state.selectedProfileForManage);
+    selectedProvider.providers = selectedProvider.providers.filter(p => p.name !== name);
+    this.setState({
+      selectedProfileForManage: selectedProvider,
+    });
+
+    this.updateProfileAsync();
+  }
+
+  private updateProfileAsync: () => Promise<any> = async () => {
+    if (!!this.state.selectedProfileForManage) {
+      const newProfile = this.state.selectedProfileForManage;
+
+      const response = await fetch(`${this.state.baseUrl}/profiles/${newProfile.name}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newProfile),
+      });
+      if (!!response && response.ok) {
+        return response.json();
+      } else {
+        const error = await response.json();
+        alert(error);
+      }
+    } else {
+      alert('No profile for updating...');
+    }
   }
 
   private deleteProfileAsync: (name: string) => Promise<boolean> = async (name) => {
