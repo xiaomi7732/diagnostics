@@ -2,7 +2,7 @@ import * as React from 'react';
 import MonitorViz from './MonitorViz';
 import './MonitorPage.css';
 import { TraceSession } from '../Models/TraceSession';
-import * as signalR from "@aspnet/signalr";
+import * as signalR from "@microsoft/signalr";
 
 interface MonitorPageProps {
     processId: number;
@@ -26,9 +26,9 @@ class MonitorPage extends React.Component<MonitorPageProps, MonitorPageStates> {
     constructor(props: MonitorPageProps) {
         super(props);
 
-
         let connection: signalR.HubConnection | null = new signalR.HubConnectionBuilder()
             .withUrl(`${this.props.selectedEndpoint}/counterHub`)
+            .withAutomaticReconnect()
             .build();
 
         connection.on("updateCounterAsync", this.onUpdate);
@@ -42,7 +42,7 @@ class MonitorPage extends React.Component<MonitorPageProps, MonitorPageStates> {
     }
 
     componentWillUnmount() {
-        if(this.state.counterHub!==null){
+        if (this.state.counterHub !== null) {
             this.state.counterHub.stop();
         }
     }
