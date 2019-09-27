@@ -56,7 +56,11 @@ namespace HostedTrace
 
             List<Microsoft.Diagnostics.Tools.RuntimeClient.Provider> providerCollection =
                 selectedProfile.Providers
-                .Select(p => new Microsoft.Diagnostics.Tools.RuntimeClient.Provider(p.Name, p.Keywords, p.EventLevel, p.FilterData))
+                .Select(p => new Microsoft.Diagnostics.Tools.RuntimeClient.Provider(
+                    p.Name,
+                    Convert.ToUInt64(p.KeywordsHex, 16),
+                    p.EventLevel,
+                    p.FilterData))
                 .ToList();
 
             if (providerCollection.Count <= 0)
