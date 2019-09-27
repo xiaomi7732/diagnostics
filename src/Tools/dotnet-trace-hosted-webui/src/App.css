@@ -155,3 +155,52 @@ label {
 .dark-theme .chart-title {
     text-align: center;
 }
+
+.dark-theme .back-home-button {
+    font-weight: bold;
+    cursor: pointer;
+    margin-right: 14px;
+}
+
+.dark-theme input {
+    background-color: #1e1e1e;
+    padding: 4px 8px;
+    border: 1px solid #1e1e1e;
+    color: white;
+}
+
+.dark-theme textarea{
+    background-color: #1e1e1e;
+    color: white;
+}
+
+.dark-theme ::placeholder {
+    /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #707070;
+    opacity: 1;
+    /* Firefox */
+}
+
+.dark-theme :-ms-input-placeholder {
+    /* Internet Explorer 10-11 */
+    color: #707070;
+}
+
+.dark-theme ::-ms-input-placeholder {
+    /* Microsoft Edge */
+    color: #707070;
+}
+
+.ms-Dialog-main .title-container {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 16px;
+}
+
+.ms-Dialog-main .content-container {
+    margin: 16px;
+}
+
+.ms-Dialog-main .button-section {
+    margin-top: 16px;
+}

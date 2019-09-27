@@ -18,6 +18,10 @@ namespace HostedTrace
 
         public async Task<Profile> AddProfileAsync(Profile newProfile)
         {
+            if (string.IsNullOrEmpty(newProfile.Name))
+            {
+                throw new ArgumentNullException("Name");
+            }
             IEnumerable<Profile> allProfiles = await LoadProfilesAsync().ConfigureAwait(false);
             if (allProfiles.FirstOrDefault(p => string.Equals(p.Name, newProfile.Name, StringComparison.InvariantCultureIgnoreCase)) == null)
             {
@@ -61,7 +65,9 @@ namespace HostedTrace
                 "runtime-basic",
                 new Provider[] {
                     new Provider("Microsoft-DotNETCore-SampleProfiler"),
-                    new Provider("Microsoft-Windows-DotNETRuntime", (ulong)ClrTraceEventParser.Keywords.Default, EventLevel.Informational),
+                    new Provider("Microsoft-Windows-DotNETRuntime",
+                        keywords: (ulong)ClrTraceEventParser.Keywords.Default,
+                        eventLevel: EventLevel.Informational),
                 },
                 "Useful for tracking CPU usage and general runtime information. This the default option if no profile is specified."),
 #if DEBUG // Coming soon: Preview6

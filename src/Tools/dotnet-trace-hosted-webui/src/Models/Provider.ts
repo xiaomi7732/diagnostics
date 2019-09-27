@@ -1,7 +1,7 @@
 export class Provider {
     constructor(
-        public keywords: string,
-        public eventLevel: string,
+        public keywordsHex: string, // C# HEX string of the keywords.
+        public eventLevel: number,
         public name: string,
         public filterData: string,
     ) { }

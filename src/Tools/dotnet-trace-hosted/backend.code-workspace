@@ -4,19 +4,19 @@
 			"path": "."
 		},
 		{
-			"path": "D:\\Repos\\fork-dotnet-diagnostics\\src\\Tools\\dotnet-counters"
+			"path": "../dotnet-counters"
 		},
 		{
-			"path": "D:\\Repos\\fork-dotnet-diagnostics\\src\\Tools\\dotnet-trace"
+			"path": "../dotnet-trace"
 		},
 		{
-			"path": "D:\\Repos\\fork-dotnet-diagnostics\\src\\Tools\\dotnet-trace-hosted-webui"
+			"path": "../dotnet-trace-hosted-webui"
 		},
 		{
-			"path": "D:\\Repos\\fork-dotnet-diagnostics"
+			"path": "../../../fork-dotnet-diagnostics"
 		},
 		{
-			"path": "D:\\Repos\\fork-dotnet-diagnostics\\src\\Tools\\dotnet-dump"
+			"path": "../dotnet-dump"
 		}
 	],
 	"settings": {}

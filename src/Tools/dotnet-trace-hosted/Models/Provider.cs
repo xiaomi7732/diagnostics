@@ -8,6 +8,12 @@ namespace HostedTrace
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
     public class Provider
     {
+        // Preserve for serialization / deserialization.
+        public Provider()
+        {
+
+        }
+
         public Provider(
             string name,
             ulong keywords = ulong.MaxValue,
@@ -19,24 +25,24 @@ namespace HostedTrace
                 throw new ArgumentNullException(nameof(name));
             }
             Name = name;
-            Keywords = keywords;
+            KeywordsHex = string.Format("0x{0:X}", keywords);
             EventLevel = eventLevel;
             FilterData = string.IsNullOrWhiteSpace(filterData) ? null : Regex.Unescape(filterData);
         }
 
-        [JsonProperty("keywords")]
-        public ulong Keywords { get; }
+        [JsonProperty("keywordsHex")]
+        public string KeywordsHex { get; set; }
 
         [JsonProperty("eventLevel")]
-        public EventLevel EventLevel { get; }
+        public EventLevel EventLevel { get; set; }
 
         [JsonProperty("name")]
-        public string Name { get; }
+        public string Name { get; set; }
 
         [JsonProperty("filterData")]
-        public string FilterData { get; }
+        public string FilterData { get; set; }
 
         public override string ToString() =>
-            $"{Name}:0x{Keywords:X16}:{(uint)EventLevel}{(FilterData == null ? "" : $":{FilterData}")}";
+            $"{Name}:{KeywordsHex}:{(uint)EventLevel}{(FilterData == null ? "" : $":{FilterData}")}";
     }
 }
