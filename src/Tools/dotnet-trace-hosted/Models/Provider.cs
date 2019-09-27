@@ -25,13 +25,13 @@ namespace HostedTrace
                 throw new ArgumentNullException(nameof(name));
             }
             Name = name;
-            Keywords = keywords;
+            KeywordsHex = string.Format("0x{0:X}", keywords);
             EventLevel = eventLevel;
             FilterData = string.IsNullOrWhiteSpace(filterData) ? null : Regex.Unescape(filterData);
         }
 
-        [JsonProperty("keywords")]
-        public ulong Keywords { get; set; }
+        [JsonProperty("keywordsHex")]
+        public string KeywordsHex { get; set; }
 
         [JsonProperty("eventLevel")]
         public EventLevel EventLevel { get; set; }
@@ -43,6 +43,6 @@ namespace HostedTrace
         public string FilterData { get; set; }
 
         public override string ToString() =>
-            $"{Name}:0x{Keywords:X16}:{(uint)EventLevel}{(FilterData == null ? "" : $":{FilterData}")}";
+            $"{Name}:{KeywordsHex}:{(uint)EventLevel}{(FilterData == null ? "" : $":{FilterData}")}";
     }
 }
