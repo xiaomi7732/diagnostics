@@ -100,8 +100,8 @@ class MonitorPage extends React.Component<MonitorPageProps, MonitorPageStates> {
                     // Exists
                     const array = newReport.get(metricName);
                     if (array != null) {
-                        while (array.length >= 60) {
-                            array.pop();
+                        while (array.length >= this.maxDataPointCount) {
+                            array.shift();
                         }
                         array.push(metricValue);
                         newReport.set(metricName, array);
@@ -116,7 +116,7 @@ class MonitorPage extends React.Component<MonitorPageProps, MonitorPageStates> {
                 if (this.lastUpdate === undefined) {
                     this.lastUpdate = new Date();
                     this.setState({
-                        report: newReport,
+                        report: this.reportCache,
                     });
                 } else {
                     const now = new Date();
@@ -137,8 +137,11 @@ class MonitorPage extends React.Component<MonitorPageProps, MonitorPageStates> {
             }
         }
 
+
     private reportCache: Map<string, number[]> = new Map();
     private lastUpdate: Date | undefined = undefined;
+
+    readonly maxDataPointCount: number = 60;
 }
 
 export default MonitorPage;
