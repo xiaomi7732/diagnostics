@@ -4,6 +4,7 @@ import { Modal } from 'office-ui-fabric-react/lib/Modal';
 import './ProfileManager.css';
 import { getId } from '@uifabric/utilities';
 import { Provider } from '../Models/Provider';
+import * as FileSaver from 'file-saver';
 
 interface IProfileManagerProps {
     profileArray: Profile[] | undefined;
@@ -26,7 +27,7 @@ interface IProfileManagerState {
     isConfirmDeletingProfile: boolean;
     // Add Provider
     isShowAddProvider: boolean;
-    newProvider: Provider & { keywordsHex: string };
+    newProvider: Provider;
 }
 
 export class ProfileManager extends React.Component<IProfileManagerProps, IProfileManagerState> {
@@ -51,10 +52,9 @@ export class ProfileManager extends React.Component<IProfileManagerProps, IProfi
             isShowAddProvider: false,
             newProvider: {
                 name: '',
-                keywords: 0,
+                keywordsHex: '0x0',
                 filterData: '',
                 eventLevel: 5,
-                keywordsHex: '0x0',
             }
         };
     }
@@ -170,7 +170,7 @@ export class ProfileManager extends React.Component<IProfileManagerProps, IProfi
                         {selectedProfile.providers.map((provider, index) => {
                             return <tr key={provider.name}>
                                 <td>{provider.name}</td>
-                                <td>0x{provider.keywords.toString(16)}</td>
+                                <td>{provider.keywordsHex}</td>
                                 <td>{provider.eventLevel}</td>
                                 <td>{provider.filterData}</td>
                                 <td><input type='button' value='Delete' className='button' onClick={() => { this.handleRemoveProvider(provider.name); }} /></td>
@@ -201,7 +201,7 @@ export class ProfileManager extends React.Component<IProfileManagerProps, IProfi
                                             <td>
                                                 <input id={this._newProviderKeywordId}
                                                     type='input'
-                                                    value={this.state.newProvider.keywordsHex} onChange={this.handleChangeForNewProvider('keywords')}
+                                                    value={this.state.newProvider.keywordsHex} onChange={this.handleChangeForNewProvider('keywordsHex')}
                                                     placeholder='Keywords'></input>
                                             </td>
                                         </tr>
@@ -245,14 +245,24 @@ export class ProfileManager extends React.Component<IProfileManagerProps, IProfi
                         </div>
                     </div>
                 </Modal>
-                {!!this.props.selectedProfile && 
-                <div className='profileRawText'>
-                    <div>RAW:</div>
-                    <textarea className='profileRawTextArea' readOnly value={JSON.stringify(this.props.selectedProfile)}></textarea>
-                </div>}
+                {!!this.props.selectedProfile &&
+                    <div className='profileRawText'>
+                        <div>RAW:</div>
+                        <textarea className='profileRawTextArea' readOnly value={JSON.stringify(this.props.selectedProfile)}></textarea>
+                    </div>}
             </>
         } else {
             profileDetails = <div>Select or create a profile first.</div>
+        }
+
+        let exportProfiles;
+        if (effectiveProfileArray !== undefined) {
+            exportProfiles = <div>
+                <input type='button' className='button' value='Export All'
+                    onClick={() => {
+                        FileSaver.saveAs('http://localhost:9400/profiles', 'profiles.json');
+                    }} />
+            </div>
         }
 
         return <div className='ProfileManager'>
@@ -264,6 +274,7 @@ export class ProfileManager extends React.Component<IProfileManagerProps, IProfi
                     <div className='AddRemoveButton' onClick={() => this.setState({ isConfirmDeletingProfile: true })}>-</div>)
                 </div>
                 {profileList}
+                {exportProfiles}
             </div>
             <div className='ProfileDetails'>
                 {profileDetails}
@@ -331,15 +342,14 @@ export class ProfileManager extends React.Component<IProfileManagerProps, IProfi
     private handleAddProvider: ((event: FormEvent<HTMLFormElement>) => void) | undefined = async (event) => {
         event.preventDefault();
         const { newProvider } = this.state;
-        if (!!newProvider.name && !!newProvider.keywords) {
+        if (!!newProvider.name && !!newProvider.keywordsHex) {
             this.props.appendProvider(newProvider);
             this.setState({
                 newProvider: {
                     name: '',
-                    keywords: 0,
+                    keywordsHex: '0x0',
                     eventLevel: 5,
                     filterData: '',
-                    keywordsHex: '0x0',
                 },
                 isShowAddProvider: false,
             });
@@ -354,10 +364,6 @@ export class ProfileManager extends React.Component<IProfileManagerProps, IProfi
             ...newProvider,
             [propertyName]: event.target.value
         };
-        if (propertyName === 'keywords') {
-            newState.keywordsHex = event.target.value;
-            newState.keywords = parseInt(event.target.value, 16);
-        }
         this.setState({ newProvider: newState });
     }
 }

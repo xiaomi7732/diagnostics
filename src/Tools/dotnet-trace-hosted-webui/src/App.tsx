@@ -525,7 +525,11 @@ export default class App extends Component<any, AppState>{
         return response.json();
       } else {
         const error = await response.json();
-        alert(error);
+        if (error.title) {
+          alert(error.title);
+        } else {
+          alert(error);
+        }
       }
     } else {
       alert('No profile for updating...');
