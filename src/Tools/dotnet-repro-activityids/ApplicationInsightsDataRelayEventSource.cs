@@ -32,7 +32,7 @@ namespace ServiceProfiler.EventPipe.Client.EventListeners
             public const int RequestStop = 2;
         }
 
-        [Event(EventIds.RequestStart, Keywords = Keywords.Request, Level = EventLevel.Verbose, Opcode = EventOpcode.Start, Task = Tasks.Request)]
+        [Event(EventIds.RequestStart, Keywords = Keywords.Request, Level = EventLevel.Verbose, Opcode = EventOpcode.Start, Task = Tasks.Request, ActivityOptions = EventActivityOptions.Disable)]
         public void RequestStart(
             string id,
             string name,
@@ -54,7 +54,7 @@ namespace ServiceProfiler.EventPipe.Client.EventListeners
             operationId);
         }
 
-        [Event(EventIds.RequestStop, Keywords = Keywords.Request, Level = EventLevel.Verbose, Opcode = EventOpcode.Stop, Task = Tasks.Request)]
+        [Event(EventIds.RequestStop, Keywords = Keywords.Request, Level = EventLevel.Verbose, Opcode = EventOpcode.Stop, Task = Tasks.Request, ActivityOptions = EventActivityOptions.Disable)]
         public void RequestStop(
             string id,
             string name,

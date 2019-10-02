@@ -9,6 +9,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using ServiceProfiler.EventPipe.Client.Utilities;
 
 namespace ServiceProfiler.EventPipe.Client.EventListeners
 {
@@ -63,6 +64,7 @@ namespace ServiceProfiler.EventPipe.Client.EventListeners
                 eventData.EventName,
                 eventData.Keywords,
                 eventData.Opcode);
+            string message = null;
             if (eventData.EventName.Equals(EventName.Request, StringComparison.InvariantCulture) && (eventData.Keywords.HasFlag(ApplicationInsightsDataRelayEventSource.Keywords.Operations)))
             {
                 // Operation is sent, handle Start and Stop for it.
@@ -70,6 +72,9 @@ namespace ServiceProfiler.EventPipe.Client.EventListeners
                 {
                     DateTimeOffset startTimeUTC = DateTimeOffset.UtcNow;
                     long startTimeUTCTicks = startTimeUTC.UtcTicks;
+                    message = "CurrentThreadActivityId:\t" + ApplicationInsightsDataRelayEventSource.CurrentThreadActivityId.GetActivityPath();
+                    System.Console.WriteLine(message);
+                    System.Console.WriteLine("LogStart() with ActivityOptions = EventActivityOptions.Disable");
                     ApplicationInsightsDataRelayEventSource.Log.RequestStart(
                         eventData.EventId.ToString(),
                         eventData.EventName,
@@ -80,7 +85,9 @@ namespace ServiceProfiler.EventPipe.Client.EventListeners
                         operationName: eventData.EventName,
                         machineName: Environment.MachineName,
                         operationId: eventData.Opcode.ToString());
-                    File.AppendAllLines("Debug.txt", new string[] { "Start" + ApplicationInsightsDataRelayEventSource.CurrentThreadActivityId });
+                    message = "Expect No Push, CurrentThreadActivityId (Pass):\t" + ApplicationInsightsDataRelayEventSource.CurrentThreadActivityId.GetActivityPath();
+                    System.Console.WriteLine(message);
+                    File.AppendAllLines("Debug.txt", new string[] { message, });
                 }
                 else if (eventData.Opcode == EventOpcode.Stop)
                 {
@@ -89,6 +96,7 @@ namespace ServiceProfiler.EventPipe.Client.EventListeners
                     DateTimeOffset endTimeUTC = DateTime.UtcNow;
                     long endTimeUTCTicks = endTimeUTC.UtcTicks;
 
+                    System.Console.WriteLine("LogStop() with ActivityOptions = EventActivityOptions.Disable");
                     ApplicationInsightsDataRelayEventSource.Log.RequestStop(
                         eventData.EventId.ToString(),
                         eventData.EventName,
@@ -98,9 +106,9 @@ namespace ServiceProfiler.EventPipe.Client.EventListeners
                         operationName: eventData.EventName,
                         machineName: Environment.MachineName,
                         operationId: eventData.Opcode.ToString());
-                    System.Console.WriteLine(ApplicationInsightsDataRelayEventSource.CurrentThreadActivityId);
-                    File.AppendAllLines("Debug.txt", new string[] { "Stop" + ApplicationInsightsDataRelayEventSource.CurrentThreadActivityId });
-
+                    message = "Expect No Pop Stop, CurrentThreadActivityId (Question?)\t" + ApplicationInsightsDataRelayEventSource.CurrentThreadActivityId.GetActivityPath();
+                    System.Console.WriteLine(message);
+                    File.AppendAllLines("Debug.txt", new string[] { message, });
                 }
             }
         }
