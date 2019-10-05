@@ -26,6 +26,7 @@ This repo does an experiment to put a web UI on top of the command lines to make
 ## Quick Start
 
 * [Dotnet Trace (Profiling) Basic Usage (Windows)](./documentation/dotnet-trace-hosted/GetStarted.md)
+* [Dotnet Trace in a container (Ubuntu)](./documentation/dotnet-trace-hosted/Container.md)
 * // More to come.
 
 ## Road map
