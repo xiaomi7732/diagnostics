@@ -13,7 +13,8 @@
 			"path": "../dotnet-trace-hosted-webui"
 		},
 		{
-			"path": "../../../fork-dotnet-diagnostics"
+			"name": "Repo",
+			"path": "../../../"
 		},
 		{
 			"path": "../dotnet-dump"
