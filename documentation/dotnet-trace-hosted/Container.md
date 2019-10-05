@@ -74,4 +74,4 @@ If you want the tool to be deployed into the production image, consider put the 
 
 There are also ways/challenges to start 2 processes within the same container. That makes the tool always running with the app.
 
-Feel free to [feedback or file isses](https://github.com/xiaomi7732/diagnostics/issues).
+Feel free to [feedback or file issues](https://github.com/xiaomi7732/diagnostics/issues).
