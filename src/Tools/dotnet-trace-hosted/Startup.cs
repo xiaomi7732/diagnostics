@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Diagnostics.Tools.Dump;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,7 +26,6 @@ namespace HostedTrace
             services.AddSingleton<ITraceSessionManager, TraceSessionManager>();
             services.AddScoped<ITraceRepoService, TraceRepoService>();
             services.AddScoped<IProfileRepo, ProfileRepo>();
-            services.AddScoped<Dumper>();
             services.AddScoped<IDumpService, DumpService>();
             services.AddSingleton<CounterConfiguration>(new CounterConfiguration());
             services.AddSingleton<ICounterMonitor, CounterMonitor2>();

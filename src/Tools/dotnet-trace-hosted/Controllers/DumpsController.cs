@@ -1,7 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using static Microsoft.Diagnostics.Tools.Dump.Dumper;
 
 namespace HostedTrace
 {

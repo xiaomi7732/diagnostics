@@ -1,6 +1,5 @@
 using System.Threading;
 using System.Threading.Tasks;
-using static Microsoft.Diagnostics.Tools.Dump.Dumper;
 
 namespace HostedTrace
 {

@@ -13,13 +13,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Microsoft.Diagnostics.Tools.RuntimeClient\Microsoft.Diagnostics.Tools.RuntimeClient.csproj" />
-    <ProjectReference Include="..\dotnet-dump\dotnet-dump.csproj" />
     <ProjectReference Include="..\dotnet-counters\dotnet-counters.csproj" />
     <ProjectReference Include="..\..\SOS\SOS.Package\SOS.Package.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.8.0-beta3" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.8.0" />
     <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="2.0.45" />
     <PackageReference Include="System.CommandLine.Experimental" Version="$(SystemCommandLineExperimentalVersion)" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
