@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Diagnostics.Tools.Counters;
 using Microsoft.Diagnostics.Tracing;
 
 namespace HostedTrace

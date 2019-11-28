@@ -28,6 +28,7 @@ namespace HostedTrace
             services.AddScoped<IProfileRepo, ProfileRepo>();
             services.AddScoped<IDumpService, DumpService>();
             services.AddSingleton<CounterConfiguration>(new CounterConfiguration());
+            services.AddSingleton<KnownCounterProvider>(KnownCounterProvider.Instance);
             services.AddSingleton<ICounterMonitor, CounterMonitor2>();
             services.AddSingleton<IMonitorService, MonitorService>();
         }

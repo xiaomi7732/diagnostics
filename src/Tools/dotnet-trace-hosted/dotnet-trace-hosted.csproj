@@ -6,14 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\dotnet-counters\KnownData.cs" Link="Models\KnownData.cs" />
     <Compile Include="../dotnet-trace/Extensions.cs" Link="Extensions.cs" />
-    <Compile Include="../dotnet-counters/CounterPayload.cs" Link="CounterPlayload.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Microsoft.Diagnostics.Tools.RuntimeClient\Microsoft.Diagnostics.Tools.RuntimeClient.csproj" />
-    <ProjectReference Include="..\dotnet-counters\dotnet-counters.csproj" />
     <ProjectReference Include="..\..\SOS\SOS.Package\SOS.Package.csproj" />
   </ItemGroup>
 
