@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Diagnostics.Tools.Counters;
 using Microsoft.Diagnostics.Tools.RuntimeClient;
 using Microsoft.Diagnostics.Tracing;
 
@@ -11,18 +10,21 @@ namespace HostedTrace
 {
     public class CounterMonitor2 : ICounterMonitor
     {
+        private readonly KnownCounterProvider _knownCounterProvider;
         CounterConfiguration _configuration;
         private readonly ITraceSessionManager _sessionManager;
         private readonly IHubContext<CounterHub> _counterHub;
 
         public CounterMonitor2(CounterConfiguration configuration,
             ITraceSessionManager sessionManager,
-            IHubContext<CounterHub> counterHub
+            IHubContext<CounterHub> counterHub,
+            KnownCounterProvider knownCounterProvider
         )
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _sessionManager = sessionManager ?? throw new ArgumentNullException(nameof(sessionManager));
             _counterHub = counterHub ?? throw new ArgumentNullException(nameof(counterHub));
+            _knownCounterProvider = knownCounterProvider ?? throw new ArgumentNullException(nameof(knownCounterProvider));
         }
 
         public Task<ulong> StartMonitorAsync(List<string> counterList, int processId, int intervalInSeconds)
@@ -32,7 +34,7 @@ namespace HostedTrace
             List<string> providerStringList = new List<string>();
             foreach (string providerName in _configuration.ProviderNames)
             {
-                if (KnownData.TryGetProvider(providerName, out CounterProvider provider))
+                if (_knownCounterProvider.TryGetProvider(providerName, out CounterProvider provider))
                 {
                     string providerString = provider.ToProviderString(_configuration.IntervalInSeconds);
                     providerStringList.Add(providerString);
