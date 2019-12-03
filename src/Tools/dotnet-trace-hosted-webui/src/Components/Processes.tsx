@@ -26,7 +26,11 @@ export default class Processes extends Component<ProcessesProps, {}>{
             content = this.props.processArray.map((process: Process, index: number) => {
                 return (
                     <div className='process-line' key={index}>
-                        <span className='process-id'>{process.id}</span> <span className='process-name'>{process.name}</span> <span className='process-path'>{process.mainModule}</span>
+                        <span className='process-id'>{process.id}</span>
+                        <div className='process-info'>
+                            <div className='process-name'>{process.name}</div>
+                            <div className='process-path'>{process.mainModule}</div>
+                        </div>
                         <input className='button' type='button' value='&#x25B6; Monitor'
                             onClick={() => {
                                 this.props.startMonitoringAsync(process.id);

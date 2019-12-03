@@ -6,7 +6,9 @@
 .processes .process-line {
     display: flex;
     flex-shrink: 1;
-    align-items: baseline;
+    align-items: center;
+    margin: 8px 0;
+    border-bottom: #333333 1px solid;
 }
 
 .processes .process-id {
@@ -15,10 +17,21 @@
     min-width: 60px;
 }
 
+.processes .process-info{
+    display: flex;
+    flex-grow: 2;
+    flex-direction: column;
+}
+
 .processes .process-name {
     min-width: 280px;
+    font-weight: bold;
+    font-size: 12px;
 }
 
 .processes .process-path {
-    min-width: 600px;
+    min-width: 250px;
+    font-size: 10px;
+    color: #CCC;
+    margin-right: 8px;
 }
