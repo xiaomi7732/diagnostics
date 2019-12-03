@@ -19,3 +19,9 @@
     flex-flow: column;
     overflow-y: auto;
 }
+
+.monitor-page .actionSection {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+}

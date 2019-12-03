@@ -3,6 +3,9 @@ import MonitorViz from './MonitorViz';
 import './MonitorPage.css';
 import { TraceSession } from '../Models/TraceSession';
 import * as signalR from "@microsoft/signalr";
+import { ProfilePickerPanel } from './ProfilePickerPanel';
+import { Profile } from '../Models/Profile';
+import { DefaultButton, PrimaryButton } from 'office-ui-fabric-react/lib/Button';
 
 interface MonitorPageProps {
     processId: number;
@@ -10,11 +13,16 @@ interface MonitorPageProps {
     isDumping: boolean;
     traceSessionArray: TraceSession[] | undefined;
     selectedEndpoint: string;
+    selectedProfile: string | undefined;
+    profileArray: Profile[] | undefined;
 
     exitMonitor: () => void;
     takeDumpAsync: (processId: number, isMini: boolean) => Promise<any>;
     startProfilingAsync: (processId: number) => Promise<boolean>;
     stopProfilingAsync: (processId: number, sessionId: number) => Promise<boolean>;
+    selectProfile: (newValue: string) => void
+    manageProfiles: () => void;
+    goHome: () => void;
 }
 
 interface MonitorPageStates {
@@ -56,6 +64,11 @@ class MonitorPage extends React.Component<MonitorPageProps, MonitorPageStates> {
             traceSessionArray,
             startProfilingAsync,
             stopProfilingAsync,
+            selectedProfile,
+            profileArray,
+            selectProfile,
+            manageProfiles: manageProfile,
+            goHome,
         } = this.props;
 
         const dumpButtonClassName: string = 'button' + (isDumping ? ' disabled' : '');
@@ -66,24 +79,35 @@ class MonitorPage extends React.Component<MonitorPageProps, MonitorPageStates> {
                 <h2>Monitoring</h2>
                 <h3>Session: {sessionId} Process: {processId}</h3>
 
-                <input type='button' value='Heap Dump' className={dumpButtonClassName} onClick={async () => await takeDumpAsync(processId, false)}
-                    disabled={isDumping} />
-                <input type='button' value='Mini Dump' className={dumpButtonClassName} onClick={async () => await takeDumpAsync(processId, true)}
-                    disabled={isDumping} />
+                <div className='actionSection'>
+                    <h3>Profiling:</h3>
+                    {!!profilingSession &&
+                        <PrimaryButton onClick={async () => {
+                            if (profilingSession !== undefined) {
+                                await stopProfilingAsync(profilingSession.processId, profilingSession.sessionId);
+                            }
+                        }}
+                        >Stop Profiling</PrimaryButton>}
+                    {!profilingSession &&
+                        <PrimaryButton onClick={async () => {
+                            await startProfilingAsync(processId);
+                        }}
+                        >Start Profiling</PrimaryButton>}
 
-                {!!profilingSession &&
-                    <input type='button' value='Stop Profiling' className={dumpButtonClassName} onClick={async () => {
-                        if (profilingSession !== undefined) {
-                            await stopProfilingAsync(profilingSession.processId, profilingSession.sessionId);
-                        }
-                    }}
-                    />}
-                {!profilingSession &&
-                    <input type='button' value='Start Profiling' className={dumpButtonClassName} onClick={async () => {
-                        await startProfilingAsync(processId);
-                    }}
-                    />}
-                <input type='button' value='Back' className='button' onClick={exitMonitor} />
+                    <h3>Configurations:</h3>
+                    <ProfilePickerPanel selectedProfile={selectedProfile}
+                        profileArray={profileArray}
+                        selectProfile={selectProfile}
+                        manageProfiles={manageProfile}
+                        goHome={goHome} />
+                    <DefaultButton onClick={this.onManageProfiles}>Manage Profiles</DefaultButton>
+                </div>
+
+                <div className='actionSection'>
+                    <h3>Dumps:</h3>
+                    <DefaultButton onClick={async () => await takeDumpAsync(processId, false)} disabled={isDumping}>Heap Dump</DefaultButton>
+                    <DefaultButton onClick={async () => await takeDumpAsync(processId, true)} disabled={isDumping}>Mini Dump</DefaultButton>
+                </div>
             </div>
             <div className='viz'>
                 <MonitorViz report={this.state.report} />
@@ -137,6 +161,10 @@ class MonitorPage extends React.Component<MonitorPageProps, MonitorPageStates> {
             }
         }
 
+    private onManageProfiles: () => void = () => {
+        this.props.goHome();
+        this.props.manageProfiles();
+    }
 
     private reportCache: Map<string, number[]> = new Map();
     private lastUpdate: Date | undefined = undefined;

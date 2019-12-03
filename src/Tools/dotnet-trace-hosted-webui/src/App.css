@@ -112,6 +112,36 @@ label {
     padding: 0 8px;
 }
 
+.dark-theme .ms-Button {
+    background: #005697;
+    color: white;
+    border: solid 1px #1F262A;
+    border-bottom: solid 1px black;
+    border-right: solid 1px black;
+    min-width: 100px;
+    min-height: 32px;
+    border-radius: 2px;
+    padding: 0 8px;
+    margin:4px;
+}
+
+.dark-theme .ms-Button--default {
+    background: #6699cc;
+    color: white;
+    border: solid 1px #1F262A;
+    border-bottom: solid 1px black;
+    border-right: solid 1px black;
+    min-width: 100px;
+    min-height: 32px;
+    border-radius: 2px;
+    padding: 0 8px;
+    margin:4px;
+}
+
+.dark-theme .ms-Button--default.is-disabled{
+    background: grey;
+}
+
 .dark-theme .button.disabled {
     cursor: auto;
     background: #707070;

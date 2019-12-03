@@ -61,6 +61,8 @@ export default class App extends Component<any, AppState>{
     this.removeProvider = this.removeProvider.bind(this);
     this.appendProvider = this.appendProvider.bind(this);
     this.takeDumpAsync = this.takeDumpAsync.bind(this);
+    this.selectProfile = this.selectProfile.bind(this);
+    this.manageProfile = this.manageProfile.bind(this);
 
     this.goHome = this.goHome.bind(this);
   }
@@ -91,6 +93,11 @@ export default class App extends Component<any, AppState>{
           takeDumpAsync={this.takeDumpAsync}
           startProfilingAsync={this.startProfilingAsync}
           stopProfilingAsync={this.stopProfilingAsync}
+          selectedProfile={this.state.selectedProfile}
+          profileArray={this.state.profileArray}
+          selectProfile={this.selectProfile}
+          manageProfiles={() => this.manageProfile(true)}
+          goHome={this.goHome}
         />
       }
       else if (isManageProfile) {
