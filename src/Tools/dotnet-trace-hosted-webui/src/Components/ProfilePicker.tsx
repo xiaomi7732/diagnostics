@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react';
 import { Profile } from '../Models/Profile';
 import './ProfilePicker.css';
+import { ProfilePickerPanel } from './ProfilePickerPanel';
+import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
 
 interface ProfileViewerProps {
     profileArray: Profile[] | undefined;
@@ -12,6 +14,7 @@ interface ProfileViewerProps {
 
 export default class ProfileViewer extends PureComponent<ProfileViewerProps, any> {
     render() {
+        const { selectedProfile, onSelected, manageProfile } = this.props;
         let count = 0;
         let content;
         const profileArray = this.getValidProfile();
@@ -19,18 +22,15 @@ export default class ProfileViewer extends PureComponent<ProfileViewerProps, any
         if (profileArray !== undefined) {
             count = profileArray.length;
             content = (<div className='ProfileListContainer'>
-                <select value={this.props.selectedProfile} onChange={e => {
-                    const target = e.target as any;
-                    if (!!target && !!target.value) {
-                        this.props.onSelected(target.value);
-                    }
-                }}>
-                    {
-                        profileArray.sort((a, b) => a > b ? 1 : -1).map((profile) => {
-                            return <option key={profile.name} value={profile.name}>{profile.name}: {profile.description}</option>;
-                        })
-                    }</select>
-                <input type='button' className='button' value='Manage ...' onClick={this.props.manageProfile} />
+                <ProfilePickerPanel
+                    selectedProfile={selectedProfile}
+                    selectProfile={onSelected}
+                    profileArray={profileArray}
+                    manageProfiles={manageProfile}
+                    // Already at home.
+                    goHome={() => { }}
+                />
+                <DefaultButton onClick={this.props.manageProfile}>Manage ...</DefaultButton>
             </div>);
         } else {
             content = "No tracing profile exist."

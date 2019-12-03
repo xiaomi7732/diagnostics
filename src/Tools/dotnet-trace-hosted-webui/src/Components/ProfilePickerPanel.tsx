@@ -79,7 +79,7 @@ export const ProfilePickerPanel: React.FunctionComponent<IProfilePickerPanelProp
                         <ChoiceGroup
                             defaultSelectedKey={selectedProfile}
                             options={
-                                validProfileArray.map(item => {
+                                validProfileArray.sort((a, b) => a.name > b.name ? 1 : -1).map(item => {
                                     return { key: item.name, text: item.name }
                                 })
                             }

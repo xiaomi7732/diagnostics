@@ -24,27 +24,23 @@ export default class Processes extends Component<ProcessesProps, {}>{
             len = this.props.processArray.length;
             const dumpButtonClassName: string = 'button' + (this.props.isDumping ? ' disabled' : '');
             content = this.props.processArray.map((process: Process, index: number) => {
-                return (<div className='process-line' key={index}>
-                    <span className='process-id'>{process.id}</span> <span className='process-name'>{process.name}</span> <span className='process-path'>{process.mainModule}</span>
-                    <input className='button' type='button' value='&#x25B6; Start Profiling'
-                        onClick={() => {
-                            this.props.startProfilingAsync(process.id)
-                        }} />
+                return (
+                    <div className='process-line' key={index}>
+                        <span className='process-id'>{process.id}</span> <span className='process-name'>{process.name}</span> <span className='process-path'>{process.mainModule}</span>
+                        <input className='button' type='button' value='&#x25B6; Monitor'
+                            onClick={() => {
+                                this.props.startMonitoringAsync(process.id);
+                            }} />
 
-                    <input className='button' type='button' value='&#x25B6; Start Monitoring'
-                        onClick={() => {
-                            this.props.startMonitoringAsync(process.id);
-                        }} />
-
-                    <input className={dumpButtonClassName} type='button' value='&#128248; Mini Dump' disabled={this.props.isDumping}
-                        onClick={async () => {
-                            await this.props.takeDumpAsync(process.id, true)
-                        }} />
-                    <input className={dumpButtonClassName} type='button' value='&#128248; Heap Dump' disabled={this.props.isDumping}
-                        onClick={async () => {
-                            await this.props.takeDumpAsync(process.id, false)
-                        }} />
-                </div>)
+                        <input className={dumpButtonClassName} type='button' value='&#128248; Mini Dump' disabled={this.props.isDumping}
+                            onClick={async () => {
+                                await this.props.takeDumpAsync(process.id, true)
+                            }} />
+                        <input className={dumpButtonClassName} type='button' value='&#128248; Heap Dump' disabled={this.props.isDumping}
+                            onClick={async () => {
+                                await this.props.takeDumpAsync(process.id, false)
+                            }} />
+                    </div>)
             });
         }
 
@@ -52,6 +48,9 @@ export default class Processes extends Component<ProcessesProps, {}>{
             <div className='header'>
                 <h2>Remote Process ({len})</h2>
                 <input className='button header-button refresh-button' type='button' onClick={this.handleRefresh} value='&#x1f5d8;'></input>
+            </div>
+            <div>
+                To begin monitoring, pick up a process and press the Monitor button.
             </div>
             {this.props.isDumping ? <div>Dump in progress . . .</div> : null}
             {content}

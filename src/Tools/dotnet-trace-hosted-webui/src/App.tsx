@@ -117,13 +117,6 @@ export default class App extends Component<any, AppState>{
             <ConnectionStatus baseUrl={this.state.baseUrl}
               disconnectBackend={this.disconnectBackend}
             />
-            <ProfilePicker
-              manageProfile={() => this.manageProfile(true)}
-              profileArray={this.state.profileArray}
-              onSelected={this.selectProfile}
-              selectedProfile={this.state.selectedProfile}
-              onRefresh={this.loadProfilesAsync}
-            />
             <Processes
               refreshProcessAsync={this.loadProcessesAsync}
               startProfilingAsync={this.startProfilingAsync}
