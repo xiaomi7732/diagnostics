@@ -1,13 +1,16 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace HostedTrace
+namespace APMExp.Backend
 {
     public class Startup
     {
+        private IHubContext<CounterHub> _hubContext;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -18,19 +21,13 @@ namespace HostedTrace
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddApplicationInsightsTelemetry();
             services.AddSignalR();
             services.AddControllers();
-            services.AddScoped<IProfileService, ProfileService>();
-            services.AddScoped<ITraceService, TraceService>();
-            services.AddSingleton<ITraceSessionManager, TraceSessionManager>();
-            services.AddScoped<ITraceRepoService, TraceRepoService>();
-            services.AddScoped<IProfileRepo, ProfileRepo>();
-            services.AddScoped<IDumpService, DumpService>();
-            services.AddSingleton<CounterConfiguration>(new CounterConfiguration());
-            services.AddSingleton<KnownCounterProvider>(KnownCounterProvider.Instance);
-            services.AddSingleton<ICounterMonitor, CounterMonitor2>();
-            services.AddSingleton<IMonitorService, MonitorService>();
+
+            services.AddAPMExp(new APMExpOptions(metric =>
+            {
+                _hubContext?.Clients.All.SendAsync("UpdateCounterAsync", metric.ProcessId, metric.SessionId, metric.MetricName, metric.MetricValue);
+            }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,11 +38,8 @@ namespace HostedTrace
                 app.UseCors(opt => opt.WithOrigins("http://localhost:9400", "http://localhost:3000").AllowAnyMethod().AllowAnyHeader().AllowCredentials());
                 app.UseDeveloperExceptionPage();
             }
-            var defaultFileOption = new DefaultFilesOptions();
-            defaultFileOption.DefaultFileNames.Clear();
-            defaultFileOption.DefaultFileNames.Add("index.html");
-            app.UseDefaultFiles(defaultFileOption);
-            app.UseStaticFiles();
+
+            app.UseHttpsRedirection();
 
             app.UseRouting();
 
@@ -57,7 +51,7 @@ namespace HostedTrace
                 endpoints.MapHub<CounterHub>("/counterHub");
             });
 
-            
+            _hubContext = app.ApplicationServices.GetRequiredService<IHubContext<CounterHub>>();
         }
     }
 }

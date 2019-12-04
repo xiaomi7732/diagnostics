@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "Common",
+			"path": "./APMExp.Library"
+		},
+		{
+			"name": "Backend",
+			"path": "./APMExp.Backend"
+		}
+	],
+	"settings": {}
+}
