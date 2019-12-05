@@ -1,8 +1,8 @@
 {
 	"folders": [
 		{
-			"name": "Common",
-			"path": "./APMExp.Library"
+			"name": "Core",
+			"path": "./APMExp.Core"
 		},
 		{
 			"name": "Backend",

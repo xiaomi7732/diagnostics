@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\APMExp.Library\APMExp.Library.csproj" />
+    <ProjectReference Include="..\APMExp.Core\APMExp.Core.csproj" />
   </ItemGroup>
 
 </Project>
