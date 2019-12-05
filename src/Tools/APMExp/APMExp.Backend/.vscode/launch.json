@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build backend",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/bin/Debug/netcoreapp3.0/APMExp.Backend.dll",
+            "program": "${workspaceFolder}/../../../../artifacts/bin/APMExp.Backend/Debug/netcoreapp3.0/apmexp.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
