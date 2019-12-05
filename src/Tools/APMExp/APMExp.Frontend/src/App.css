@@ -1,0 +1,236 @@
+html, body {
+    background: #1e1e1e;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    flex-flow: column;
+}
+
+#root {
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+}
+
+.dark-theme {
+    color: white;
+    background: #1e1e1e;
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+}
+
+.app-header {
+    margin: 0;
+    margin-bottom: 16px;
+    background-color: #005697;
+    display: flex;
+    flex-shrink: 1;
+    flex-grow: 0;
+    align-items: center;
+    padding: 0px;
+    padding-left: 24px;
+}
+
+.app-header h1 {
+    font-size: 20px;
+}
+
+h2 {
+    font-size: 18px;
+}
+
+h3 {
+    font-size: 14px;
+}
+
+h4 {
+    font-size: 12px;
+}
+
+.app-container {
+    display: flex;
+    margin: 0;
+    flex-shrink: 1;
+    flex-grow: 1;
+    height: 100%;
+    overflow-y: auto;
+}
+
+/* Connect to a backend */
+
+.new-endpoint-container {
+    margin: 12px 8px 12px 0;
+}
+
+.section {
+    margin: 24px;
+}
+
+label {
+    margin: 0 12px 0 0;
+}
+
+.tips {
+    font-style: italic;
+    font-size: 0.8rem;
+}
+
+.dark-theme a {
+    color: #48b0ff;
+    text-decoration: none;
+}
+
+.dark-theme a:hover {
+    color: #a9d3f2;
+    text-decoration: underline;
+}
+
+.dark-theme a:active {
+    color: #003157;
+}
+
+.dark-theme .text-input {
+    background-color: transparent;
+    border: inset 1px grey;
+    padding: 4px;
+    color: white;
+}
+
+.dark-theme .button {
+    cursor: pointer;
+    background: #005697;
+    border: solid 1px #1F262A;
+    border-bottom: solid 1px black;
+    border-right: solid 1px black;
+    margin: 4px 4px;
+    color: white;
+    min-width: 100px;
+    min-height: 32px;
+    border-radius: 2px;
+    padding: 0 8px;
+}
+
+.dark-theme .ms-Button {
+    background: #005697;
+    color: white;
+    border: solid 1px #1F262A;
+    border-bottom: solid 1px black;
+    border-right: solid 1px black;
+    min-width: 100px;
+    min-height: 32px;
+    border-radius: 2px;
+    padding: 0 8px;
+    margin:4px;
+}
+
+.dark-theme .ms-Button--default {
+    background: #6699cc;
+    color: white;
+    border: solid 1px #1F262A;
+    border-bottom: solid 1px black;
+    border-right: solid 1px black;
+    min-width: 100px;
+    min-height: 32px;
+    border-radius: 2px;
+    padding: 0 8px;
+    margin:4px;
+}
+
+.dark-theme .ms-Button--default.is-disabled{
+    background: grey;
+}
+
+.dark-theme .button.disabled {
+    cursor: auto;
+    background: #707070;
+    border: solid 1px #1F262A;
+    border-bottom: solid 1px black;
+    border-right: solid 1px black;
+    margin: 4px 4px;
+    color: #cccccc;
+    min-width: 100px;
+    min-height: 32px;
+}
+
+.dark-theme .button.disabled:hover {
+    background: #707070;
+}
+
+.dark-theme .button.header-button {
+    margin-left: 24px;
+    min-width: 48px;
+}
+
+.dark-theme .button:hover {
+    background: #0078d4;
+}
+
+.dark-theme .button:active {
+    border: solid 1px white;
+}
+
+.dark-theme select {
+    color: white;
+    background-color: #1e1e1e;
+    min-height: 32px;
+    padding: 4px;
+}
+
+.dark-theme option {
+    min-height: 32px;
+}
+
+.dark-theme .chart-title {
+    text-align: center;
+}
+
+.dark-theme .back-home-button {
+    font-weight: bold;
+    cursor: pointer;
+    margin-right: 14px;
+}
+
+.dark-theme input {
+    background-color: #1e1e1e;
+    padding: 4px 8px;
+    border: 1px solid #1e1e1e;
+    color: white;
+}
+
+.dark-theme textarea{
+    background-color: #1e1e1e;
+    color: white;
+}
+
+.dark-theme ::placeholder {
+    /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #707070;
+    opacity: 1;
+    /* Firefox */
+}
+
+.dark-theme :-ms-input-placeholder {
+    /* Internet Explorer 10-11 */
+    color: #707070;
+}
+
+.dark-theme ::-ms-input-placeholder {
+    /* Microsoft Edge */
+    color: #707070;
+}
+
+.ms-Dialog-main .title-container {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 16px;
+}
+
+.ms-Dialog-main .content-container {
+    margin: 16px;
+}
+
+.ms-Dialog-main .button-section {
+    margin-top: 16px;
+}

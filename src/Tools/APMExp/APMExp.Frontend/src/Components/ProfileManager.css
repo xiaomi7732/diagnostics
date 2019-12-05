@@ -1,0 +1,54 @@
+.ProfileManager {
+    display: flex;
+    flex-flow: row;
+}
+
+.ProfileManager .ProfileList {
+    display: flex;
+    flex-flow: column;
+    width: 200px;
+    margin: 0 24px;
+}
+
+.ProfileManager .ProfileDetails {
+    display: flex;
+    align-items: baseline;
+    flex-flow: column;
+    flex-grow: 2;
+}
+
+.ProfileManager .ProfileList .HeaderContainer {
+    display: flex;
+    flex-flow: row;
+    align-items: baseline;
+}
+
+.ProfileManager .ProfileList .HeaderContainer .AddRemoveButton {
+    cursor: pointer;
+}
+
+.ProfileManager .ProfileNameRadioButton {
+    margin: 8px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ProfileManager .ProviderTable {
+    min-width: 800px;
+}
+
+.ProfileManager td {
+    height: 24px;
+}
+
+.ProfileManager .profileRawText {
+    margin-top: 24px;
+    display: flex;
+    flex-flow: column;
+}
+
+.ProfileManager .profileRawTextArea {
+    min-width: 800px;
+    min-height: 120px;
+}

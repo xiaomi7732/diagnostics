@@ -1,0 +1,9 @@
+.profile-picker .header {
+    display: flex;
+    align-items: baseline;
+}
+
+.profile-picker .ProfileListContainer{
+    display: flex;
+    align-items: center;
+}
