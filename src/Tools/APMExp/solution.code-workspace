@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"name": "Core",
+			"path": "./APMExp.Core"
+		},
+		{
+			"name": "Backend",
+			"path": "./APMExp.Backend"
+		},
+		{
+			"name": "Frontend",
+			"path": "./APMExp.Frontend"
+		}
+	],
+	"settings": {}
+}
