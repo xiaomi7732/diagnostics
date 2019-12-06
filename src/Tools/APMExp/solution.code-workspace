@@ -7,6 +7,10 @@
 		{
 			"name": "Backend",
 			"path": "./APMExp.Backend"
+		},
+		{
+			"name": "Frontend",
+			"path": "./APMExp.Frontend"
 		}
 	],
 	"settings": {}
