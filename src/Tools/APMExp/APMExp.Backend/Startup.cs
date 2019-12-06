@@ -41,9 +41,17 @@ namespace APMExp.Backend
 
             app.UseHttpsRedirection();
 
+            var defaultFileOption = new DefaultFilesOptions();
+            defaultFileOption.DefaultFileNames.Clear();
+            defaultFileOption.DefaultFileNames.Add("index.html");
+            app.UseDefaultFiles(defaultFileOption);
+            app.UseStaticFiles();
+
             app.UseRouting();
 
             app.UseAuthorization();
+
+
 
             app.UseEndpoints(endpoints =>
             {

@@ -9,5 +9,4 @@
   <ItemGroup>
     <ProjectReference Include="..\APMExp.Core\APMExp.Core.csproj" />
   </ItemGroup>
-
 </Project>
