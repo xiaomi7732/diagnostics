@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+    <metadata>
+        <id>$id$</id>
+        <version>$version$</version>
+        <authors>$author$</authors>
+        <owners>$author$</owners>
+        <requireLicenseAcceptance>true</requireLicenseAcceptance>
+        <license type="expression">MIT</license>
+        <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+        <projectUrl>https://github.com/xiaomi7732/diagnostics</projectUrl>
+        <description>$description$</description>
+        <copyright>All rights reserved.</copyright>
+        <serviceable>true</serviceable>
+        <dependencies>
+            <group targetFramework=".NETStandard2.1">
+                <dependency id="Microsoft.AspNetCore.Mvc.Core" version="2.2.5" exclude="Build,Analyzers" />
+                <dependency id="Microsoft.Diagnostics.Tracing.TraceEvent" version="2.0.48" exclude="Build,Analyzers" />
+            </group>
+        </dependencies>
+    </metadata>
+
+    <files>
+        <!--Assemblies-->
+        <file src="$configuration$\netstandard2.1\APMExp.Core.dll" target="lib\netstandard2.1"></file>
+        <file src="$configuration$\netstandard2.1\APMExp.Core.xml" target="lib\netstandard2.1"></file>
+        <file src="$configuration$\netstandard2.1\Microsoft.Diagnostics.Tools.RuntimeClient.dll" target="lib\netstandard2.1"></file>
+        <file src="$configuration$\netstandard2.1\Microsoft.Diagnostics.Tools.RuntimeClient.xml" target="lib\netstandard2.1"></file>
+    </files>
+</package>
