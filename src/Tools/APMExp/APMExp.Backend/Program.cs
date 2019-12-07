@@ -17,7 +17,7 @@ namespace APMExp.Backend
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     string root = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-                    webBuilder.UseContentRoot(root).UseStartup<Startup>().UseUrls("http://*:9400");
+                    webBuilder.UseContentRoot(root).UseStartup<Startup>();
                 });
     }
 }

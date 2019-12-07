@@ -18,8 +18,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Microsoft.Diagnostics.Tools.RuntimeClient\Microsoft.Diagnostics.Tools.RuntimeClient.csproj" />
-    <ProjectReference Include="..\..\..\SOS\SOS.Package\SOS.Package.csproj" />
+    <ProjectReference Condition="Exists('..\Microsoft.Diagnostics.Tools.RuntimeClient\Microsoft.Diagnostics.Tools.RuntimeClient.csproj')" Include="..\Microsoft.Diagnostics.Tools.RuntimeClient\Microsoft.Diagnostics.Tools.RuntimeClient.csproj" />
+    <ProjectReference Condition="Exists('..\..\..\Microsoft.Diagnostics.Tools.RuntimeClient\Microsoft.Diagnostics.Tools.RuntimeClient.csproj')" Include="..\..\..\Microsoft.Diagnostics.Tools.RuntimeClient\Microsoft.Diagnostics.Tools.RuntimeClient.csproj" />
   </ItemGroup>
 
 

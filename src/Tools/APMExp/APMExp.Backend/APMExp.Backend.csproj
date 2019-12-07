@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <ProjectReference Include="..\APMExp.Core\APMExp.Core.csproj" />
   </ItemGroup>
 </Project>

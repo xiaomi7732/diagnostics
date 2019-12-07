@@ -390,7 +390,7 @@ export default class App extends Component<any, AppState>{
     const urlListSerialized: string | null = localStorage.getItem(this.BackendListKey);
     let list: string[];
     if (urlListSerialized === null || urlListSerialized === '' || urlListSerialized === '[]') {
-      list = ['http://localhost:9400'];
+      list = ['http://localhost:9400', 'http://apmexp-demo.southcentralus.azurecontainer.io'];
     } else {
       list = JSON.parse(urlListSerialized);
     }

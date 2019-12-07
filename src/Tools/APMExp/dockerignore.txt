@@ -1,0 +1,11 @@
+inc/
+Microsoft.Diagnostics.DebugServices/
+Microsoft.Diagnostics.Repl/
+Microsoft.Diagnostics.TestHelpers/
+pal/
+palrt/
+SOS/
+tests/
+Tools/Common
+Tools/dotnet-*
+Tools/APMExp/APMExp.Frontend/

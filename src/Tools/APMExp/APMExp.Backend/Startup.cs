@@ -35,10 +35,9 @@ namespace APMExp.Backend
         {
             if (env.IsDevelopment())
             {
-                app.UseCors(opt => opt.WithOrigins("http://localhost:9400", "http://localhost:3000").AllowAnyMethod().AllowAnyHeader().AllowCredentials());
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseCors(opt => opt.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseHttpsRedirection();
 
             var defaultFileOption = new DefaultFilesOptions();
@@ -50,8 +49,6 @@ namespace APMExp.Backend
             app.UseRouting();
 
             app.UseAuthorization();
-
-
 
             app.UseEndpoints(endpoints =>
             {
