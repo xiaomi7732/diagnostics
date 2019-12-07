@@ -4,6 +4,8 @@ This is a fork of the [.NET Core Diagnostics Repo](https://github.com/dotnet/dia
 
 ## First glance
 
+[Live Demo](http://apmexp-demo.southcentralus.azurecontainer.io/)
+
 ![First glance](documentation/dotnet-trace-hosted/media/webui-03.png)
 
 ## Motivation
